@@ -56,6 +56,90 @@ namespace facebook::react {
   }
 } // namespace facebook::react
 
+@implementation NativeModuleMaterialDatePickerSpecBase
+
+
+- (void)setEventEmitterCallback:(EventEmitterCallbackWrapper *)eventEmitterCallbackWrapper
+{
+  _eventEmitterCallback = std::move(eventEmitterCallbackWrapper->_eventEmitterCallback);
+}
+@end
+
+@implementation RCTCxxConvert (NativeModuleMaterialDatePicker_SpecOpenParamsDialogButtons)
++ (RCTManagedPointer *)JS_NativeModuleMaterialDatePicker_SpecOpenParamsDialogButtons:(id)json
+{
+  return facebook::react::managedPointer<JS::NativeModuleMaterialDatePicker::SpecOpenParamsDialogButtons>(json);
+}
+@end
+@implementation RCTCxxConvert (NativeModuleMaterialDatePicker_SpecOpenParams)
++ (RCTManagedPointer *)JS_NativeModuleMaterialDatePicker_SpecOpenParams:(id)json
+{
+  return facebook::react::managedPointer<JS::NativeModuleMaterialDatePicker::SpecOpenParams>(json);
+}
+@end
+namespace facebook::react {
+  
+    static facebook::jsi::Value __hostFunction_NativeModuleMaterialDatePickerSpecJSI_dismiss(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
+      return static_cast<ObjCTurboModule&>(turboModule).invokeObjCMethod(rt, PromiseKind, "dismiss", @selector(dismiss:reject:), args, count);
+    }
+
+    static facebook::jsi::Value __hostFunction_NativeModuleMaterialDatePickerSpecJSI_open(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
+      return static_cast<ObjCTurboModule&>(turboModule).invokeObjCMethod(rt, PromiseKind, "open", @selector(open:resolve:reject:), args, count);
+    }
+
+  NativeModuleMaterialDatePickerSpecJSI::NativeModuleMaterialDatePickerSpecJSI(const ObjCTurboModule::InitParams &params)
+    : ObjCTurboModule(params) {
+      
+        methodMap_["dismiss"] = MethodMetadata {0, __hostFunction_NativeModuleMaterialDatePickerSpecJSI_dismiss};
+        
+        
+        methodMap_["open"] = MethodMetadata {1, __hostFunction_NativeModuleMaterialDatePickerSpecJSI_open};
+        setMethodArgConversionSelector(@"open", 0, @"JS_NativeModuleMaterialDatePicker_SpecOpenParams:");
+  }
+} // namespace facebook::react
+
+@implementation NativeModuleMaterialTimePickerSpecBase
+
+
+- (void)setEventEmitterCallback:(EventEmitterCallbackWrapper *)eventEmitterCallbackWrapper
+{
+  _eventEmitterCallback = std::move(eventEmitterCallbackWrapper->_eventEmitterCallback);
+}
+@end
+
+@implementation RCTCxxConvert (NativeModuleMaterialTimePicker_SpecOpenParamsDialogButtons)
++ (RCTManagedPointer *)JS_NativeModuleMaterialTimePicker_SpecOpenParamsDialogButtons:(id)json
+{
+  return facebook::react::managedPointer<JS::NativeModuleMaterialTimePicker::SpecOpenParamsDialogButtons>(json);
+}
+@end
+@implementation RCTCxxConvert (NativeModuleMaterialTimePicker_SpecOpenParams)
++ (RCTManagedPointer *)JS_NativeModuleMaterialTimePicker_SpecOpenParams:(id)json
+{
+  return facebook::react::managedPointer<JS::NativeModuleMaterialTimePicker::SpecOpenParams>(json);
+}
+@end
+namespace facebook::react {
+  
+    static facebook::jsi::Value __hostFunction_NativeModuleMaterialTimePickerSpecJSI_dismiss(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
+      return static_cast<ObjCTurboModule&>(turboModule).invokeObjCMethod(rt, PromiseKind, "dismiss", @selector(dismiss:reject:), args, count);
+    }
+
+    static facebook::jsi::Value __hostFunction_NativeModuleMaterialTimePickerSpecJSI_open(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
+      return static_cast<ObjCTurboModule&>(turboModule).invokeObjCMethod(rt, PromiseKind, "open", @selector(open:resolve:reject:), args, count);
+    }
+
+  NativeModuleMaterialTimePickerSpecJSI::NativeModuleMaterialTimePickerSpecJSI(const ObjCTurboModule::InitParams &params)
+    : ObjCTurboModule(params) {
+      
+        methodMap_["dismiss"] = MethodMetadata {0, __hostFunction_NativeModuleMaterialTimePickerSpecJSI_dismiss};
+        
+        
+        methodMap_["open"] = MethodMetadata {1, __hostFunction_NativeModuleMaterialTimePickerSpecJSI_open};
+        setMethodArgConversionSelector(@"open", 0, @"JS_NativeModuleMaterialTimePicker_SpecOpenParams:");
+  }
+} // namespace facebook::react
+
 @implementation NativeModuleTimePickerSpecBase
 
 

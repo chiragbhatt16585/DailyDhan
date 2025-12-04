@@ -1,0 +1,13 @@
+diff --git a/node_modules/@react-native-community/datetimepicker/ios/fabric/cpp/react/renderer/components/RNDateTimePicker/ComponentDescriptors.h b/node_modules/@react-native-community/datetimepicker/ios/fabric/cpp/react/renderer/components/RNDateTimePicker/ComponentDescriptors.h
+index d51a327..384ebc7 100644
+--- a/node_modules/@react-native-community/datetimepicker/ios/fabric/cpp/react/renderer/components/RNDateTimePicker/ComponentDescriptors.h
++++ b/node_modules/@react-native-community/datetimepicker/ios/fabric/cpp/react/renderer/components/RNDateTimePicker/ComponentDescriptors.h
+@@ -18,7 +18,7 @@ class RNDateTimePickerComponentDescriptor final : public ConcreteComponentDescri
+   public:
+     using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
+ 
+-    void adopt(ShadowNode& shadowNode) const override {
++    void adopt(ShadowNode& shadowNode) const {
+       auto& pickerShadowNode = static_cast<RNDateTimePickerShadowNode&>(shadowNode);
+       auto& layoutableShadowNode = static_cast<YogaLayoutableShadowNode&>(pickerShadowNode);
+ 

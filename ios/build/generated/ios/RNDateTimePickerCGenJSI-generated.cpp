@@ -28,6 +28,40 @@ NativeModuleDatePickerCxxSpecJSI::NativeModuleDatePickerCxxSpecJSI(std::shared_p
   methodMap_["dismiss"] = MethodMetadata {0, __hostFunction_NativeModuleDatePickerCxxSpecJSI_dismiss};
   methodMap_["open"] = MethodMetadata {1, __hostFunction_NativeModuleDatePickerCxxSpecJSI_open};
 }
+static jsi::Value __hostFunction_NativeModuleMaterialDatePickerCxxSpecJSI_dismiss(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+  return static_cast<NativeModuleMaterialDatePickerCxxSpecJSI *>(&turboModule)->dismiss(
+    rt
+  );
+}
+static jsi::Value __hostFunction_NativeModuleMaterialDatePickerCxxSpecJSI_open(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+  return static_cast<NativeModuleMaterialDatePickerCxxSpecJSI *>(&turboModule)->open(
+    rt,
+    count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt)
+  );
+}
+
+NativeModuleMaterialDatePickerCxxSpecJSI::NativeModuleMaterialDatePickerCxxSpecJSI(std::shared_ptr<CallInvoker> jsInvoker)
+  : TurboModule("RNCMaterialDatePicker", jsInvoker) {
+  methodMap_["dismiss"] = MethodMetadata {0, __hostFunction_NativeModuleMaterialDatePickerCxxSpecJSI_dismiss};
+  methodMap_["open"] = MethodMetadata {1, __hostFunction_NativeModuleMaterialDatePickerCxxSpecJSI_open};
+}
+static jsi::Value __hostFunction_NativeModuleMaterialTimePickerCxxSpecJSI_dismiss(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+  return static_cast<NativeModuleMaterialTimePickerCxxSpecJSI *>(&turboModule)->dismiss(
+    rt
+  );
+}
+static jsi::Value __hostFunction_NativeModuleMaterialTimePickerCxxSpecJSI_open(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+  return static_cast<NativeModuleMaterialTimePickerCxxSpecJSI *>(&turboModule)->open(
+    rt,
+    count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt)
+  );
+}
+
+NativeModuleMaterialTimePickerCxxSpecJSI::NativeModuleMaterialTimePickerCxxSpecJSI(std::shared_ptr<CallInvoker> jsInvoker)
+  : TurboModule("RNCMaterialTimePicker", jsInvoker) {
+  methodMap_["dismiss"] = MethodMetadata {0, __hostFunction_NativeModuleMaterialTimePickerCxxSpecJSI_dismiss};
+  methodMap_["open"] = MethodMetadata {1, __hostFunction_NativeModuleMaterialTimePickerCxxSpecJSI_open};
+}
 static jsi::Value __hostFunction_NativeModuleTimePickerCxxSpecJSI_dismiss(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
   return static_cast<NativeModuleTimePickerCxxSpecJSI *>(&turboModule)->dismiss(
     rt

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import {
   Button,
   Card,
@@ -10,6 +10,7 @@ import {
   Text,
   TextInput,
   useTheme,
+  IconButton,
 } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { getDB } from '../../database';
@@ -99,6 +100,8 @@ const CategoriesScreen = ({ navigation }) => {
   const [editingCategory, setEditingCategory] = useState(null);
   const [editName, setEditName] = useState('');
   const [editType, setEditType] = useState('expense');
+  const [addCategoryModalVisible, setAddCategoryModalVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState('expense');
 
   const loadCategories = async () => {
     if (!isMountedRef.current) return;
@@ -235,6 +238,7 @@ const CategoriesScreen = ({ navigation }) => {
       setIcon('');
       setColor('#1A73E8');
       setType('expense');
+      setAddCategoryModalVisible(false);
       loadCategories();
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -242,18 +246,155 @@ const CategoriesScreen = ({ navigation }) => {
     }
   };
 
+  // Filter categories by active tab
+  const filteredItems = items.filter(item => item.type === activeTab);
+  const expenseCount = items.filter(item => item.type === 'expense').length;
+  const incomeCount = items.filter(item => item.type === 'income').length;
+
   return (
     <>
       <AppHeader showBack title="Categories" onBackPress={handleBackPress} />
       <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        {/* Tabs */}
+        <View style={[styles.tabContainer, { backgroundColor: theme.colors.surface }]}>
+          <TouchableOpacity
+            style={[
+              styles.tab,
+              activeTab === 'expense' && [
+                styles.tabActive,
+                { backgroundColor: theme.colors.primary },
+              ],
+            ]}
+            onPress={() => setActiveTab('expense')}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                {
+                  color:
+                    activeTab === 'expense'
+                      ? theme.colors.onPrimary || '#FFFFFF'
+                      : theme.colors.onSurface,
+                },
+              ]}
+            >
+              Expense {expenseCount > 0 && `(${expenseCount})`}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.tab,
+              activeTab === 'income' && [
+                styles.tabActive,
+                { backgroundColor: theme.colors.primary },
+              ],
+            ]}
+            onPress={() => setActiveTab('income')}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                {
+                  color:
+                    activeTab === 'income'
+                      ? theme.colors.onPrimary || '#FFFFFF'
+                      : theme.colors.onSurface,
+                },
+              ]}
+            >
+              Income {incomeCount > 0 && `(${incomeCount})`}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <Card style={[styles.card, { backgroundColor: theme.colors.surface }]}>
           <Card.Content>
+            {filteredItems.length === 0 ? (
+              <Text style={[styles.emptyText, { color: theme.colors.onSurface }]}>
+                No {activeTab} categories yet. Tap the + button to add your first one.
+              </Text>
+            ) : (
+              <FlatList
+                data={filteredItems}
+                keyExtractor={item => String(item.id)}
+                removeClippedSubviews={false}
+                initialNumToRender={10}
+                maxToRenderPerBatch={10}
+                windowSize={5}
+                ItemSeparatorComponent={() => <View style={styles.listDivider} />}
+                renderItem={({ item }) => (
+                  <List.Item
+                    title={item.name}
+                    description={item.color || theme.colors.primary}
+                    left={props => (
+                      <List.Icon
+                        {...props}
+                        icon={item.icon || (item.type === 'income' ? 'arrow-down' : 'arrow-up')}
+                      />
+                    )}
+                    onPress={() => {
+                      setEditingCategory(item);
+                      setEditName(item.name);
+                      setEditType(item.type);
+                      setIcon(item.icon || '');
+                      setColor(item.color || '#1A73E8');
+                    }}
+                    right={props => <List.Icon {...props} icon="pencil" />}
+                  />
+                )}
+              />
+            )}
+          </Card.Content>
+        </Card>
+      </View>
+      
+      {/* FAB for adding new category */}
+      <TouchableOpacity
+        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+        onPress={() => {
+          setName('');
+          setIcon('');
+          setColor('#1A73E8');
+          setType('expense');
+          setAddCategoryModalVisible(true);
+        }}
+      >
+        <Text style={styles.fabIcon}>+</Text>
+      </TouchableOpacity>
+      
+      {/* Add Category Modal */}
+      <Portal>
+        <Modal
+          visible={addCategoryModalVisible}
+          onDismiss={() => setAddCategoryModalVisible(false)}
+          contentContainerStyle={[
+            styles.editModal,
+            {
+              backgroundColor: theme.dark ? '#1E1E1E' : theme.colors.surface,
+              borderWidth: 1,
+              borderColor: theme.colors.outline,
+            },
+          ]}
+        >
+          <View style={styles.modalHeader}>
             <Text
               variant="titleMedium"
-              style={[styles.sectionTitle, { color: theme.colors.onSurface }]}
+              style={[styles.modalHeaderTitle, { color: theme.colors.onSurface }]}
             >
-              New Category
+              Add Category
             </Text>
+            <IconButton
+              icon="close"
+              size={24}
+              iconColor={theme.colors.onSurface}
+              onPress={() => setAddCategoryModalVisible(false)}
+              style={styles.closeButton}
+            />
+          </View>
+          <ScrollView 
+            style={styles.modalScrollView}
+            showsVerticalScrollIndicator={false}
+          >
             <TextInput
               mode="outlined"
               label="Name"
@@ -297,7 +438,6 @@ const CategoriesScreen = ({ navigation }) => {
               placeholder="#1A73E8"
               style={styles.input}
             />
-
             <Text style={[styles.label, { color: theme.colors.onSurface }]}>
               Type
             </Text>
@@ -313,71 +453,28 @@ const CategoriesScreen = ({ navigation }) => {
                 </Text>
               </View>
             </RadioButton.Group>
-
-            <Button
-              mode="contained"
-              style={styles.saveButton}
-              onPress={onSave}
-              buttonColor={theme.colors.primary}
-              textColor={theme.colors.onPrimary || '#FFFFFF'}
-            >
-              Save Category
-            </Button>
-          </Card.Content>
-        </Card>
-
-        <Card style={[styles.card, { backgroundColor: theme.colors.surface }]}>
-          <Card.Content>
-            <Text
-              variant="titleMedium"
-              style={[styles.sectionTitle, { color: theme.colors.onSurface }]}
-            >
-              Existing Categories
-            </Text>
-            {items.length === 0 ? (
-              <Text style={[styles.emptyText, { color: theme.colors.onSurface }]}>
-                No categories yet. Add your first one above.
-              </Text>
-            ) : (
-              <FlatList
-                data={items}
-                keyExtractor={item => String(item.id)}
-                removeClippedSubviews={false}
-                initialNumToRender={10}
-                maxToRenderPerBatch={10}
-                windowSize={5}
-                ItemSeparatorComponent={() => <View style={styles.listDivider} />}
-                renderItem={({ item }) => (
-                  <List.Item
-                    title={item.name}
-                    description={`${item.type.toUpperCase()}  •  ${item.color || theme.colors.primary}`}
-                    left={props => (
-                      <List.Icon
-                        {...props}
-                        icon={item.icon || (item.type === 'income' ? 'arrow-down' : 'arrow-up')}
-                      />
-                    )}
-                    onPress={() => {
-                      setEditingCategory(item);
-                      setEditName(item.name);
-                      setEditType(item.type);
-                      setIcon(item.icon || '');
-                      setColor(item.color || '#1A73E8');
-                    }}
-                    right={props => <List.Icon {...props} icon="pencil" />}
-                  />
-                )}
-              />
-            )}
-          </Card.Content>
-        </Card>
-      </View>
+            <View style={styles.modalActions}>
+              <Button
+                mode="contained"
+                buttonColor={theme.colors.primary}
+                textColor={theme.colors.onPrimary || '#FFFFFF'}
+                onPress={onSave}
+                style={styles.saveButton}
+              >
+                Save Category
+              </Button>
+            </View>
+          </ScrollView>
+        </Modal>
+      </Portal>
+      
+      {/* Edit Category Modal */}
       <Portal>
         <Modal
           visible={!!editingCategory}
           onDismiss={() => setEditingCategory(null)}
           contentContainerStyle={[
-            styles.iconModal,
+            styles.editModal,
             {
               backgroundColor: theme.dark ? '#1E1E1E' : theme.colors.surface,
               borderWidth: 1,
@@ -385,12 +482,25 @@ const CategoriesScreen = ({ navigation }) => {
             },
           ]}
         >
-          <Text
-            variant="titleMedium"
-            style={[styles.iconModalTitle, { color: theme.colors.onSurface }]}
+          <View style={styles.modalHeader}>
+            <Text
+              variant="titleMedium"
+              style={[styles.modalHeaderTitle, { color: theme.colors.onSurface }]}
+            >
+              Edit Category
+            </Text>
+            <IconButton
+              icon="close"
+              size={24}
+              iconColor={theme.colors.onSurface}
+              onPress={() => setEditingCategory(null)}
+              style={styles.closeButton}
+            />
+          </View>
+          <ScrollView 
+            style={styles.modalScrollView}
+            showsVerticalScrollIndicator={false}
           >
-            Edit Category
-          </Text>
           <TextInput
             mode="outlined"
             label="Name"
@@ -448,52 +558,55 @@ const CategoriesScreen = ({ navigation }) => {
             placeholder="#1A73E8"
             style={styles.input}
           />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 12 }}>
-            <Button
-              mode="contained-tonal"
-              buttonColor={theme.colors.secondaryContainer}
-              textColor={theme.colors.onSecondaryContainer || theme.colors.onSurface}
-              onPress={async () => {
-                if (!editingCategory || !editName.trim()) {
-                  return;
-                }
-                try {
-                  const db = await getDB();
-                  await db.executeSql(
-                    'UPDATE categories SET name = ?, type = ?, icon = ?, color = ? WHERE id = ?',
-                    [editName.trim(), editType, icon.trim(), color.trim(), editingCategory.id],
-                  );
-                  setEditingCategory(null);
-                  loadCategories();
-                } catch (e) {
-                  // eslint-disable-next-line no-console
-                  console.warn('Failed to update category', e);
-                }
-              }}
-            >
-              Save
-            </Button>
-            <Button
-              mode="text"
-              textColor="red"
-              onPress={async () => {
-                if (!editingCategory) {
-                  return;
-                }
-                try {
-                  const db = await getDB();
-                  await db.executeSql('DELETE FROM categories WHERE id = ?', [editingCategory.id]);
-                  setEditingCategory(null);
-                  loadCategories();
-                } catch (e) {
-                  // eslint-disable-next-line no-console
-                  console.warn('Failed to delete category', e);
-                }
-              }}
-            >
-              Delete
-            </Button>
-          </View>
+            <View style={styles.modalActions}>
+              <Button
+                mode="text"
+                textColor="red"
+                onPress={async () => {
+                  if (!editingCategory) {
+                    return;
+                  }
+                  try {
+                    const db = await getDB();
+                    await db.executeSql('DELETE FROM categories WHERE id = ?', [editingCategory.id]);
+                    setEditingCategory(null);
+                    loadCategories();
+                  } catch (e) {
+                    // eslint-disable-next-line no-console
+                    console.warn('Failed to delete category', e);
+                  }
+                }}
+                style={styles.deleteButton}
+              >
+                Delete
+              </Button>
+              <Button
+                mode="contained"
+                buttonColor={theme.colors.primary}
+                textColor={theme.colors.onPrimary || '#FFFFFF'}
+                onPress={async () => {
+                  if (!editingCategory || !editName.trim()) {
+                    return;
+                  }
+                  try {
+                    const db = await getDB();
+                    await db.executeSql(
+                      'UPDATE categories SET name = ?, type = ?, icon = ?, color = ? WHERE id = ?',
+                      [editName.trim(), editType, icon.trim(), color.trim(), editingCategory.id],
+                    );
+                    setEditingCategory(null);
+                    loadCategories();
+                  } catch (e) {
+                    // eslint-disable-next-line no-console
+                    console.warn('Failed to update category', e);
+                  }
+                }}
+                style={styles.saveButton}
+              >
+                Save
+              </Button>
+            </View>
+          </ScrollView>
         </Modal>
         <Modal
           visible={iconPickerVisible}
@@ -507,47 +620,61 @@ const CategoriesScreen = ({ navigation }) => {
             },
           ]}
         >
-          <Text
-            variant="titleMedium"
-            style={[styles.iconModalTitle, { color: theme.colors.onSurface }]}
+          <View style={styles.modalHeader}>
+            <Text
+              variant="titleMedium"
+              style={[styles.modalHeaderTitle, { color: theme.colors.onSurface }]}
+            >
+              Choose Icon
+            </Text>
+            <IconButton
+              icon="close"
+              size={24}
+              iconColor={theme.colors.onSurface}
+              onPress={() => setIconPickerVisible(false)}
+              style={styles.closeButton}
+            />
+          </View>
+          <ScrollView 
+            style={styles.iconModalScrollView}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.iconModalContent}
           >
-            Choose Icon
-          </Text>
-          {ICON_GROUPS.map(group => (
-            <View key={group.key} style={styles.iconGroup}>
-              <Text
-                style={[styles.iconGroupLabel, { color: theme.colors.onSurface }]}
-              >
-                {group.label}
-              </Text>
-              <View style={styles.iconGrid}>
-                {group.icons.map(option => {
-                  const selected = icon === option.icon;
-                  return (
-                    <TouchableOpacity
-                      key={option.icon}
-                      style={[
-                        styles.iconOption,
-                        {
-                          backgroundColor: theme.colors.surface,
-                          borderColor: theme.colors.outline,
-                        },
-                        selected && styles.iconOptionSelected,
-                      ]}
-                      onPress={() => {
-                        setIcon(option.icon);
-                        setColor(group.color);
-                        setIconPickerVisible(false);
-                      }}
-                    >
-                      <List.Icon icon={option.icon} />
-                    </TouchableOpacity>
-                  );
-                })}
+            {ICON_GROUPS.map(group => (
+              <View key={group.key} style={styles.iconGroup}>
+                <Text
+                  style={[styles.iconGroupLabel, { color: theme.colors.onSurface }]}
+                >
+                  {group.label}
+                </Text>
+                <View style={styles.iconGrid}>
+                  {group.icons.map(option => {
+                    const selected = icon === option.icon;
+                    return (
+                      <TouchableOpacity
+                        key={option.icon}
+                        style={[
+                          styles.iconOption,
+                          {
+                            backgroundColor: theme.colors.surface,
+                            borderColor: theme.colors.outline,
+                          },
+                          selected && styles.iconOptionSelected,
+                        ]}
+                        onPress={() => {
+                          setIcon(option.icon);
+                          setColor(group.color);
+                          setIconPickerVisible(false);
+                        }}
+                      >
+                        <List.Icon icon={option.icon} />
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
               </View>
-            </View>
-          ))}
-          <Button onPress={() => setIconPickerVisible(false)}>Close</Button>
+            ))}
+          </ScrollView>
         </Modal>
       </Portal>
     </>
@@ -600,19 +727,73 @@ const styles = StyleSheet.create({
     opacity: 0.1,
   },
   iconModal: {
-    margin: 16,
-    padding: 16,
-    borderRadius: 12,
-    maxHeight: '80%',
-    elevation: 6,
+    margin: 20,
+    padding: 0,
+    borderRadius: 16,
+    maxHeight: '85%',
+    elevation: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    overflow: 'hidden',
   },
-  iconModalTitle: {
-    marginBottom: 8,
-    textAlign: 'center',
+  iconModalScrollView: {
+    maxHeight: 500,
+  },
+  iconModalContent: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 20,
+  },
+  editModal: {
+    margin: 20,
+    padding: 0,
+    borderRadius: 16,
+    maxHeight: '85%',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    overflow: 'hidden',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.1)',
+  },
+  modalHeaderTitle: {
+    fontWeight: '600',
+    flex: 1,
+  },
+  closeButton: {
+    margin: 0,
+  },
+  modalScrollView: {
+    maxHeight: 400,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 20,
+    paddingHorizontal: 20,
+    gap: 12,
+  },
+  deleteButton: {
+    minWidth: 80,
+  },
+  saveButton: {
+    minWidth: 80,
   },
   colorModal: {
     margin: 16,
@@ -664,6 +845,57 @@ const styles = StyleSheet.create({
     borderColor: '#1A73E8',
     borderWidth: 2,
     backgroundColor: '#E3F2FD',
+  },
+  fab: {
+    position: 'absolute',
+    right: 16,
+    bottom: 80,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+  },
+  fabIcon: {
+    fontSize: 32,
+    color: '#FFFFFF',
+    fontWeight: '300',
+    lineHeight: 32,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    borderRadius: 12,
+    padding: 4,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabActive: {
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+  },
+  tabText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
 

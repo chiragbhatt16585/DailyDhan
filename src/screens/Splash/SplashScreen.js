@@ -5,7 +5,7 @@ import { ActivityIndicator, Text } from 'react-native-paper';
 const SplashScreen = ({ navigation }) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
-      navigation.replace('Dashboard');
+      navigation.replace('Main');
     }, 1200);
 
     return () => clearTimeout(timeout);

@@ -7,7 +7,7 @@ const OnboardingScreen = ({ navigation }) => {
   const { isDark, toggleTheme } = useAppTheme();
 
   const handleContinue = () => {
-    navigation.replace('Dashboard');
+    navigation.replace('Main');
   };
 
   return (

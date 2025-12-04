@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, StyleSheet, ScrollView, Dimensions, TouchableOpacity, Animated } from 'react-native';
-import { FAB, Text, useTheme, Card, List, IconButton, Icon } from 'react-native-paper';
+import { Text, useTheme, Card, List, IconButton, Icon } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { PieChart } from 'react-native-chart-kit';
 import { AppHeader } from '../../components/AppHeader';
@@ -483,11 +483,13 @@ const DashboardScreen = () => {
         <AdBanner />
       </View>
       
-      <FAB
-        icon="plus"
-        style={styles.fab}
+      {/* FAB for adding new transaction */}
+      <TouchableOpacity
+        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         onPress={() => navigation.navigate('AddTransaction')}
-      />
+      >
+        <Text style={styles.fabIcon}>+</Text>
+      </TouchableOpacity>
     </>
   );
 };
@@ -822,6 +824,22 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 16,
     bottom: 80,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+  },
+  fabIcon: {
+    fontSize: 32,
+    color: '#FFFFFF',
+    fontWeight: '300',
+    lineHeight: 32,
   },
 });
 

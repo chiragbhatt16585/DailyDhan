@@ -22,6 +22,39 @@ import IncomeExpenseReportScreen from '../screens/Report/ReportScreen';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+// Stack navigators for each tab
+const DashboardStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Dashboard" component={DashboardScreen} />
+      <Stack.Screen name="AddTransaction" component={AddTransactionScreen} />
+      <Stack.Screen name="Wallets" component={WalletsScreen} />
+      <Stack.Screen name="Transactions" component={TransactionsScreen} />
+      <Stack.Screen name="Analytics" component={AnalyticsScreen} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="AffiliateAccounts" component={AffiliateAccountsScreen} />
+    </Stack.Navigator>
+  );
+};
+
+const ReportsStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Reports" component={ReportsListScreen} />
+      <Stack.Screen name="IncomeExpenseReport" component={IncomeExpenseReportScreen} />
+      <Stack.Screen name="CategoryExpenseReport" component={CategoryExpenseReportScreen} />
+    </Stack.Navigator>
+  );
+};
+
+const CategoriesStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Categories" component={CategoriesScreen} />
+    </Stack.Navigator>
+  );
+};
+
 const MainTabs = () => {
   const theme = useTheme();
   
@@ -71,17 +104,17 @@ const MainTabs = () => {
     >
       <Tab.Screen
         name="DashboardTab"
-        component={DashboardScreen}
+        component={DashboardStack}
         options={{ title: 'Dashboard', tabBarLabel: 'Dashboard' }}
       />
       <Tab.Screen
         name="ReportsTab"
-        component={ReportsListScreen}
+        component={ReportsStack}
         options={{ title: 'Reports', tabBarLabel: 'Reports' }}
       />
       <Tab.Screen
         name="CategoriesTab"
-        component={CategoriesScreen}
+        component={CategoriesStack}
         options={{ title: 'Categories', tabBarLabel: 'Categories' }}
       />
     </Tab.Navigator>
@@ -93,17 +126,7 @@ export const RootNavigator = () => {
     <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-      <Stack.Screen name="Dashboard" component={MainTabs} />
-      <Stack.Screen name="AddTransaction" component={AddTransactionScreen} />
-      <Stack.Screen name="Categories" component={CategoriesScreen} />
-      <Stack.Screen name="Wallets" component={WalletsScreen} />
-      <Stack.Screen name="Transactions" component={TransactionsScreen} />
-      <Stack.Screen name="Analytics" component={AnalyticsScreen} />
-      <Stack.Screen name="Settings" component={SettingsScreen} />
-      <Stack.Screen name="CategoryExpenseReport" component={CategoryExpenseReportScreen} />
-      <Stack.Screen name="AffiliateAccounts" component={AffiliateAccountsScreen} />
-      <Stack.Screen name="Reports" component={ReportsListScreen} />
-      <Stack.Screen name="IncomeExpenseReport" component={IncomeExpenseReportScreen} />
+      <Stack.Screen name="Main" component={MainTabs} />
     </Stack.Navigator>
   );
 };
