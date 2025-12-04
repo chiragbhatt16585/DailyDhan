@@ -8,7 +8,16 @@ export const AppHeader = ({ showBack = false, title, subtitle, onBackPress }) =>
   const theme = useTheme();
 
   const handleSettingsPress = () => {
-    navigation.navigate('Settings');
+    // Try to navigate to Settings in current stack first
+    // If not found, navigate to DashboardTab which contains Settings
+    const parent = navigation.getParent();
+    if (parent) {
+      // Navigate to DashboardTab, then Settings
+      parent.navigate('DashboardTab', { screen: 'Settings' });
+    } else {
+      // Fallback: try direct navigation
+      navigation.navigate('Settings');
+    }
   };
 
   const handleBackPress = () => {

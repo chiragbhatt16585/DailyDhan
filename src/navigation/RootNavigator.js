@@ -18,6 +18,12 @@ import CategoryExpenseReportScreen from '../screens/CategoryExpenseReport/Catego
 import AffiliateAccountsScreen from '../screens/AffiliateAccounts/AffiliateAccountsScreen';
 import ReportsListScreen from '../screens/Reports/ReportsListScreen';
 import IncomeExpenseReportScreen from '../screens/Report/ReportScreen';
+import CategoryAnalysisReportScreen from '../screens/CategoryAnalysisReport/CategoryAnalysisReportScreen';
+import YearlySummaryReportScreen from '../screens/YearlySummaryReport/YearlySummaryReportScreen';
+import MonthlySummaryReportScreen from '../screens/MonthlySummaryReport/MonthlySummaryReportScreen';
+import WalletWiseReportScreen from '../screens/WalletWiseReport/WalletWiseReportScreen';
+import TopSpendingReportScreen from '../screens/TopSpendingReport/TopSpendingReportScreen';
+import IncomeTrendsReportScreen from '../screens/IncomeTrendsReport/IncomeTrendsReportScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -43,6 +49,12 @@ const ReportsStack = () => {
       <Stack.Screen name="Reports" component={ReportsListScreen} />
       <Stack.Screen name="IncomeExpenseReport" component={IncomeExpenseReportScreen} />
       <Stack.Screen name="CategoryExpenseReport" component={CategoryExpenseReportScreen} />
+      <Stack.Screen name="CategoryAnalysisReport" component={CategoryAnalysisReportScreen} />
+      <Stack.Screen name="YearlySummaryReport" component={YearlySummaryReportScreen} />
+      <Stack.Screen name="MonthlySummaryReport" component={MonthlySummaryReportScreen} />
+      <Stack.Screen name="WalletWiseReport" component={WalletWiseReportScreen} />
+      <Stack.Screen name="TopSpendingReport" component={TopSpendingReportScreen} />
+      <Stack.Screen name="IncomeTrendsReport" component={IncomeTrendsReportScreen} />
     </Stack.Navigator>
   );
 };

@@ -79,7 +79,10 @@ const SettingsScreen = ({ navigation }) => {
         <List.Item
           title="Reports"
           description="View detailed financial reports and analysis"
-          onPress={() => navigation.navigate('Reports')}
+          onPress={() => {
+            // Navigate to ReportsTab to switch to the Reports tab
+            navigation.getParent()?.navigate('ReportsTab');
+          }}
           left={props => <List.Icon {...props} icon="file-chart" />}
           right={props => <List.Icon {...props} icon="chevron-right" />}
         />

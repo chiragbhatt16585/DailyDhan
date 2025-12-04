@@ -385,6 +385,229 @@ export const getExpenseBreakdownByCategory = async (year, month) => {
   return rows;
 };
 
+// Get yearly summary data
+export const getYearlySummary = async (year) => {
+  const db = await getDB();
+  const yearStart = `${year}-01-01`;
+  const yearEnd = `${year}-12-31`;
+
+  const [result] = await db.executeSql(
+    `
+      SELECT
+        SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) AS income,
+        SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) AS expense,
+        COUNT(CASE WHEN type = 'income' THEN 1 END) AS income_count,
+        COUNT(CASE WHEN type = 'expense' THEN 1 END) AS expense_count
+      FROM transactions
+      WHERE date >= ? AND date <= ?
+    `,
+    [yearStart, yearEnd],
+  );
+
+  const row = result.rows.length > 0 ? result.rows.item(0) : {};
+  return {
+    income: row.income || 0,
+    expense: row.expense || 0,
+    balance: (row.income || 0) - (row.expense || 0),
+    incomeCount: row.income_count || 0,
+    expenseCount: row.expense_count || 0,
+  };
+};
+
+// Get monthly data for a year
+export const getYearlyMonthlyData = async (year) => {
+  const db = await getDB();
+  const data = [];
+
+  for (let month = 1; month <= 12; month += 1) {
+    const monthStr = String(month).padStart(2, '0');
+    const start = `${year}-${monthStr}-01`;
+    const end = `${year}-${monthStr}-31`;
+
+    try {
+      const [result] = await db.executeSql(
+        `
+          SELECT
+            SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) AS income,
+            SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) AS expense
+          FROM transactions
+          WHERE date >= ? AND date <= ?
+        `,
+        [start, end],
+      );
+
+      const row = result.rows.length > 0 ? result.rows.item(0) : {};
+      const date = new Date(year, month - 1, 1);
+      data.push({
+        month: month,
+        year: year,
+        monthName: date.toLocaleString('default', { month: 'short' }),
+        income: row.income || 0,
+        expense: row.expense || 0,
+      });
+    } catch (e) {
+      console.warn(`Failed to load data for ${year}-${month}`, e);
+      const date = new Date(year, month - 1, 1);
+      data.push({
+        month: month,
+        year: year,
+        monthName: date.toLocaleString('default', { month: 'short' }),
+        income: 0,
+        expense: 0,
+      });
+    }
+  }
+
+  return data;
+};
+
+// Get wallet-wise transaction data
+export const getWalletWiseData = async (year, month) => {
+  const db = await getDB();
+  const monthStr = String(month).padStart(2, '0');
+  const monthStart = `${year}-${monthStr}-01`;
+  const nextMonth = month === 12 ? 1 : month + 1;
+  const nextYear = month === 12 ? year + 1 : year;
+  const nextMonthStr = String(nextMonth).padStart(2, '0');
+  const monthEnd = `${nextYear}-${nextMonthStr}-01`;
+
+  const [result] = await db.executeSql(
+    `
+      SELECT 
+        w.id,
+        w.name,
+        COALESCE(SUM(CASE WHEN t.type = 'income' THEN t.amount ELSE 0 END), 0) AS total_income,
+        COALESCE(SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END), 0) AS total_expense
+      FROM wallets w
+      LEFT JOIN transactions t ON t.wallet_id = w.id 
+        AND t.date >= ? AND t.date < ?
+      GROUP BY w.id, w.name
+      HAVING total_income > 0 OR total_expense > 0
+      ORDER BY (total_income + total_expense) DESC
+    `,
+    [monthStart, monthEnd],
+  );
+
+  const rows = [];
+  for (let i = 0; i < result.rows.length; i += 1) {
+    rows.push(result.rows.item(i));
+  }
+  return rows;
+};
+
+// Get top spending categories (all time or for a period)
+export const getTopSpendingCategories = async (limit = 10, year = null, month = null) => {
+  const db = await getDB();
+  let query = `
+    SELECT 
+      c.id,
+      c.name,
+      c.color,
+      c.icon,
+      COALESCE(SUM(t.amount), 0) AS total_amount,
+      COUNT(t.id) AS transaction_count
+    FROM categories c
+    INNER JOIN transactions t ON t.category_id = c.id 
+    WHERE c.type = 'expense'
+  `;
+  const params = [];
+
+  if (year && month) {
+    const monthStr = String(month).padStart(2, '0');
+    const monthStart = `${year}-${monthStr}-01`;
+    const nextMonth = month === 12 ? 1 : month + 1;
+    const nextYear = month === 12 ? year + 1 : year;
+    const nextMonthStr = String(nextMonth).padStart(2, '0');
+    const monthEnd = `${nextYear}-${nextMonthStr}-01`;
+    query += ` AND t.date >= ? AND t.date < ?`;
+    params.push(monthStart, monthEnd);
+  }
+
+  query += `
+    GROUP BY c.id, c.name, c.color, c.icon
+    HAVING total_amount > 0
+    ORDER BY total_amount DESC
+    LIMIT ?
+  `;
+  params.push(limit);
+
+  const [result] = await db.executeSql(query, params);
+
+  const rows = [];
+  for (let i = 0; i < result.rows.length; i += 1) {
+    rows.push(result.rows.item(i));
+  }
+  return rows;
+};
+
+// Get income breakdown by category
+export const getIncomeBreakdownByCategory = async (year, month) => {
+  const db = await getDB();
+  const monthStr = String(month).padStart(2, '0');
+  const monthStart = `${year}-${monthStr}-01`;
+  const nextMonth = month === 12 ? 1 : month + 1;
+  const nextYear = month === 12 ? year + 1 : year;
+  const nextMonthStr = String(nextMonth).padStart(2, '0');
+  const monthEnd = `${nextYear}-${nextMonthStr}-01`;
+
+  const [result] = await db.executeSql(
+    `
+      SELECT 
+        c.id,
+        c.name,
+        c.color,
+        c.icon,
+        COALESCE(SUM(t.amount), 0) AS total_amount
+      FROM categories c
+      LEFT JOIN transactions t ON t.category_id = c.id 
+        AND t.type = 'income'
+        AND t.date >= ? AND t.date < ?
+      WHERE c.type = 'income'
+      GROUP BY c.id, c.name, c.color, c.icon
+      HAVING total_amount > 0
+      ORDER BY total_amount DESC
+    `,
+    [monthStart, monthEnd],
+  );
+
+  const rows = [];
+  for (let i = 0; i < result.rows.length; i += 1) {
+    rows.push(result.rows.item(i));
+  }
+  return rows;
+};
+
+// Get category analysis (all categories with spending over time)
+export const getCategoryAnalysis = async (limit = 20) => {
+  const db = await getDB();
+  const [result] = await db.executeSql(
+    `
+      SELECT 
+        c.id,
+        c.name,
+        c.type,
+        c.color,
+        c.icon,
+        COALESCE(SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END), 0) AS total_expense,
+        COALESCE(SUM(CASE WHEN t.type = 'income' THEN t.amount ELSE 0 END), 0) AS total_income,
+        COUNT(t.id) AS transaction_count
+      FROM categories c
+      LEFT JOIN transactions t ON t.category_id = c.id
+      GROUP BY c.id, c.name, c.type, c.color, c.icon
+      HAVING total_expense > 0 OR total_income > 0
+      ORDER BY (total_expense + total_income) DESC
+      LIMIT ?
+    `,
+    [limit],
+  );
+
+  const rows = [];
+  for (let i = 0; i < result.rows.length; i += 1) {
+    rows.push(result.rows.item(i));
+  }
+  return rows;
+};
+
 const initSchema = async db => {
   const schema = `
     CREATE TABLE IF NOT EXISTS wallets (

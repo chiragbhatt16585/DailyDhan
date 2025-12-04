@@ -18,21 +18,48 @@ const REPORTS = [
     icon: 'chart-pie',
     screen: 'CategoryExpenseReport',
   },
-  // Add more reports here in the future
-  // {
-  //   id: 'category-analysis',
-  //   title: 'Category Analysis',
-  //   description: 'Detailed analysis of spending by category',
-  //   icon: 'chart-bar',
-  //   screen: 'CategoryAnalysisReport',
-  // },
-  // {
-  //   id: 'yearly-summary',
-  //   title: 'Yearly Summary',
-  //   description: 'Complete financial summary for the year',
-  //   icon: 'calendar-year',
-  //   screen: 'YearlySummaryReport',
-  // },
+  {
+    id: 'category-analysis',
+    title: 'Category Analysis',
+    description: 'Detailed analysis of spending by category',
+    icon: 'chart-bar',
+    screen: 'CategoryAnalysisReport',
+  },
+  {
+    id: 'yearly-summary',
+    title: 'Yearly Summary',
+    description: 'Complete financial summary for the year',
+    icon: 'calendar-range',
+    screen: 'YearlySummaryReport',
+  },
+  {
+    id: 'monthly-summary',
+    title: 'Monthly Summary',
+    description: 'Detailed monthly financial overview and trends',
+    icon: 'calendar-month',
+    screen: 'MonthlySummaryReport',
+  },
+  {
+    id: 'wallet-wise',
+    title: 'Wallet Wise Report',
+    description: 'Track income and expenses by wallet (Cash, Bank, UPI, etc.)',
+    icon: 'wallet',
+    screen: 'WalletWiseReport',
+  },
+  {
+    id: 'top-spending',
+    title: 'Top Spending Categories',
+    description: 'See your highest spending categories and trends',
+    icon: 'trending-up',
+    screen: 'TopSpendingReport',
+  },
+  {
+    id: 'income-trends',
+    title: 'Income Trends',
+    description: 'Analyze your income patterns and sources over time',
+    icon: 'chart-timeline-variant',
+    screen: 'IncomeTrendsReport',
+  },
 ];
 
 const ReportsListScreen = ({ navigation }) => {
