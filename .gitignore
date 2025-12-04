@@ -1,0 +1,93 @@
+# Node / JavaScript
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json*
+*.log
+
+# React Native / Metro
+.DS_Store
+dist/
+build/
+*.tmp
+*.temp
+.expo/
+.expo-shared/
+.bundle/
+*.jsbundle
+
+# TypeScript
+*.tsbuildinfo
+
+# Jest / Testing
+coverage/
+jest-cache/
+jest-results.json
+.nyc_output/
+
+# OS / Editor
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+*.orig
+.history/
+.Trash-*/
+
+# Android
+android/.gradle/
+android/.idea/
+android/local.properties
+android/**/build/
+android/**/captures/
+android/**/generated/
+android/**/.cxx/
+android/**/intermediates/
+android/**/outputs/
+android/**/release/
+android/app/release/
+android/app/debug.keystore
+
+# Gradle
+**/build/
+**/.gradle/
+**/local.properties
+
+# iOS
+ios/build/
+ios/DerivedData/
+ios/Pods/
+ios/**/xcuserdata/
+ios/*.xcworkspace/xcuserdata/
+ios/*.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+ios/*/xcshareddata/IDEWorkspaceChecks.plist
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+
+# Xcode
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+
+# CocoaPods
+Podfile.lock
+Pods/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Misc cache
+.cache/
+.gradle/
+.tmp/
+tmp/
+
+node_modules

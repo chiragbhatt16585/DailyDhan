@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "360463759060",
+    "project_id": "dailydhan-7959b",
+    "storage_bucket": "dailydhan-7959b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:360463759060:android:d14e49ee30b08110d42d41",
+        "android_client_info": {
+          "package_name": "com.google.hrivya.dailydhan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9mwH7Xb103FX6jvl91ALxwQik54z4RHs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
