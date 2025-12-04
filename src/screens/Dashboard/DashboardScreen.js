@@ -134,14 +134,15 @@ const DashboardScreen = () => {
     ? expenseBreakdown.map((item, index) => {
         const percentage = expense > 0 ? ((item.total_amount / expense) * 100).toFixed(1) : 0;
         // Use category color if set, otherwise use default color from palette
-        const categoryColor = item.color && item.color.trim() 
-          ? item.color.trim() 
+        const categoryColor = item.color && item.color.trim()
+          ? item.color.trim()
           : defaultColors[index % defaultColors.length];
         return {
           name: item.name,
           population: item.total_amount,
           color: categoryColor,
-          legendFontColor: theme.colors.onBackground || '#000',
+          // Legend text adapts to theme so it's visible in dark mode
+          legendFontColor: theme.colors.onSurface || '#FFFFFF',
           legendFontSize: 12,
           percentage,
         };
@@ -151,7 +152,7 @@ const DashboardScreen = () => {
           name: 'No expenses',
           population: 1,
           color: '#CCCCCC',
-          legendFontColor: theme.colors.onBackground || '#000',
+          legendFontColor: theme.colors.onSurface || '#FFFFFF',
           legendFontSize: 12,
           percentage: 0,
         },
@@ -180,36 +181,72 @@ const DashboardScreen = () => {
         {/* Modern Financial Summary Cards - All in One Row */}
         <View style={styles.summaryRow}>
           {/* Income Card */}
-          <View style={[styles.financialCard, styles.incomeCard]}>
+          <View
+            style={[
+              styles.financialCard,
+              styles.incomeCard,
+              { backgroundColor: theme.colors.surface },
+            ]}
+          >
             <View style={styles.financialCardHeader}>
               <View style={[styles.financialIconContainer, { backgroundColor: '#E8F5E9' }]}>
                 <Icon source="arrow-down" size={18} color="#34A853" />
               </View>
               <Text style={styles.financialCardLabel}>Income</Text>
             </View>
-            <Text style={styles.financialCardAmount}>{formatCurrency(income, currency)}</Text>
+            <Text style={[styles.financialCardAmount, { color: theme.colors.onSurface }]}>
+              {formatCurrency(income, currency)}
+            </Text>
           </View>
 
           {/* Expense Card */}
-          <View style={[styles.financialCard, styles.expenseCard]}>
+          <View
+            style={[
+              styles.financialCard,
+              styles.expenseCard,
+              { backgroundColor: theme.colors.surface },
+            ]}
+          >
             <View style={styles.financialCardHeader}>
               <View style={[styles.financialIconContainer, { backgroundColor: '#FCE4EC' }]}>
                 <Icon source="arrow-up" size={18} color="#E91E63" />
               </View>
               <Text style={styles.financialCardLabel}>Expense</Text>
             </View>
-            <Text style={styles.financialCardAmount}>{formatCurrency(expense, currency)}</Text>
+            <Text style={[styles.financialCardAmount, { color: theme.colors.onSurface }]}>
+              {formatCurrency(expense, currency)}
+            </Text>
           </View>
 
           {/* Balance Card */}
-          <View style={[styles.financialCard, styles.balanceCardRow, { backgroundColor: balance >= 0 ? '#E8F5E9' : '#FFEBEE' }]}>
+          <View
+            style={[
+              styles.financialCard,
+              styles.balanceCardRow,
+              {
+                // In light mode keep the original solid cards, in dark mode use subtle tints
+                backgroundColor: theme.dark
+                  ? balance >= 0
+                    ? 'rgba(76, 175, 80, 0.18)'
+                    : 'rgba(244, 67, 54, 0.18)'
+                  : balance >= 0
+                    ? '#E8F5E9'
+                    : '#FFEBEE',
+              },
+            ]}
+          >
             <View style={styles.financialCardHeader}>
               <View style={[styles.financialIconContainer, { backgroundColor: balance >= 0 ? '#34A853' : '#E91E63' }]}>
                 <Icon source="wallet" size={18} color="#FFFFFF" />
               </View>
               <Text style={styles.financialCardLabel}>Balance</Text>
             </View>
-            <Text style={[styles.financialCardAmount, { color: balance >= 0 ? '#2E7D32' : '#C62828' }]}>
+            <Text
+              style={[
+                styles.financialCardAmount,
+                { color: balance >= 0 ? '#2E7D32' : '#C62828' },
+              ]}
+            >
               {formatCurrency(Math.abs(balance), currency)}
             </Text>
           </View>
@@ -220,13 +257,14 @@ const DashboardScreen = () => {
           <Card style={styles.fullCard}>
             <Card.Title title="Expense Breakdown" />
             <Card.Content>
-              <View style={styles.chartContainer}>
+              <View style={[styles.chartContainer, { backgroundColor: theme.colors.surface }]}>
                 <PieChart
                   data={pieData}
                   width={screenWidth - 64}
                   height={220}
                   chartConfig={{
-                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                    // Use theme onSurface color for labels so they are visible on both themes
+                    color: () => theme.colors.onSurface || '#FFFFFF',
                   }}
                   accessor="population"
                   backgroundColor="transparent"
@@ -359,7 +397,12 @@ const DashboardScreen = () => {
                           <Text style={styles.transactionCategory}>
                             {item.category_name || (isIncome ? 'Income' : 'Expense')}
                           </Text>
-                          <Text style={styles.transactionAmount}>
+                          <Text
+                            style={[
+                              styles.transactionAmount,
+                              { color: theme.colors.onSurface },
+                            ]}
+                          >
                             {isIncome ? '+' : '-'} {formatCurrency(item.amount, currency)}
                           </Text>
                         </View>
@@ -415,7 +458,12 @@ const DashboardScreen = () => {
                             </View>
                           </View>
                           <View style={styles.categoryRight}>
-                            <Text style={styles.categoryAmount}>
+                            <Text
+                              style={[
+                                styles.categoryAmount,
+                                { color: theme.colors.onSurface },
+                              ]}
+                            >
                               {formatCurrency(item.total_amount, currency)}
                             </Text>
                           </View>
@@ -463,7 +511,6 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 12,
     padding: 12,
-    backgroundColor: '#FFFFFF',
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -511,7 +558,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
   },
   row: {

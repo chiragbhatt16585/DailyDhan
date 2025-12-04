@@ -38,7 +38,7 @@ const ReportScreen = () => {
     return (
       <>
         <AppHeader showBack title="Income vs Expense Report" />
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
           <Card style={styles.fullCard}>
             <Card.Content>
               <Text style={styles.loadingText}>Loading chart data...</Text>
@@ -53,7 +53,7 @@ const ReportScreen = () => {
     return (
       <>
         <AppHeader showBack title="Income vs Expense Report" />
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
           <Card style={styles.fullCard}>
             <Card.Content>
               <Text style={styles.emptyText}>
@@ -74,7 +74,7 @@ const ReportScreen = () => {
     return (
       <>
         <AppHeader showBack title="Income vs Expense Report" />
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
           <Card style={styles.fullCard}>
             <Card.Content>
               <Text style={styles.emptyText}>
@@ -96,27 +96,34 @@ const ReportScreen = () => {
   return (
     <>
       <AppHeader showBack title="Income vs Expense Report" />
-      <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        contentContainerStyle={styles.scrollContent}
+      >
         {/* Summary Cards */}
         <View style={styles.summaryRow}>
-          <Card style={styles.summaryCard}>
+          <Card style={[styles.summaryCard, { backgroundColor: theme.colors.surface }]}>
             <Card.Content>
-              <Text style={styles.summaryLabel}>Total Income</Text>
+              <Text style={[styles.summaryLabel, { color: theme.colors.onSurface }]}>
+                Total Income
+              </Text>
               <Text style={[styles.summaryValue, { color: '#34A853' }]}>
                 {currency.symbol}{totalIncome.toFixed(2)}
               </Text>
-              <Text style={styles.summarySubtext}>
+              <Text style={[styles.summarySubtext, { color: theme.colors.onSurface }]}>
                 Avg: {currency.symbol}{averageIncome.toFixed(2)}/month
               </Text>
             </Card.Content>
           </Card>
-          <Card style={styles.summaryCard}>
+          <Card style={[styles.summaryCard, { backgroundColor: theme.colors.surface }]}>
             <Card.Content>
-              <Text style={styles.summaryLabel}>Total Expense</Text>
+              <Text style={[styles.summaryLabel, { color: theme.colors.onSurface }]}>
+                Total Expense
+              </Text>
               <Text style={[styles.summaryValue, { color: '#E91E63' }]}>
                 {currency.symbol}{totalExpense.toFixed(2)}
               </Text>
-              <Text style={styles.summarySubtext}>
+              <Text style={[styles.summarySubtext, { color: theme.colors.onSurface }]}>
                 Avg: {currency.symbol}{averageExpense.toFixed(2)}/month
               </Text>
             </Card.Content>
@@ -124,7 +131,7 @@ const ReportScreen = () => {
         </View>
 
         {/* Line Chart */}
-        <Card style={styles.fullCard}>
+        <Card style={[styles.fullCard, { backgroundColor: theme.colors.surface }]}>
           <Card.Title title="Income vs Expense (Last 6 Months)" />
           <Card.Content>
             <View style={styles.chartContainer}>
@@ -148,12 +155,18 @@ const ReportScreen = () => {
                 width={screenWidth - 64}
                 height={280}
                 chartConfig={{
-                  backgroundColor: '#FFFFFF',
-                  backgroundGradientFrom: '#FFFFFF',
-                  backgroundGradientTo: '#FFFFFF',
+                  backgroundColor: theme.colors.surface,
+                  backgroundGradientFrom: theme.colors.surface,
+                  backgroundGradientTo: theme.colors.surface,
                   decimalPlaces: 0,
-                  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                  color: (opacity = 1) =>
+                    theme.dark
+                      ? `rgba(255, 255, 255, ${opacity})`
+                      : `rgba(0, 0, 0, ${opacity})`,
+                  labelColor: (opacity = 1) =>
+                    theme.dark
+                      ? `rgba(255, 255, 255, ${opacity})`
+                      : `rgba(0, 0, 0, ${opacity})`,
                   style: {
                     borderRadius: 16,
                   },
@@ -185,18 +198,22 @@ const ReportScreen = () => {
             <View style={styles.chartLegend}>
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, { backgroundColor: '#34A853' }]} />
-                <Text style={styles.legendText}>Income</Text>
+                <Text style={[styles.legendText, { color: theme.colors.onSurface }]}>
+                  Income
+                </Text>
               </View>
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, { backgroundColor: '#E91E63' }]} />
-                <Text style={styles.legendText}>Expense</Text>
+                <Text style={[styles.legendText, { color: theme.colors.onSurface }]}>
+                  Expense
+                </Text>
               </View>
             </View>
           </Card.Content>
         </Card>
 
         {/* Monthly Breakdown */}
-        <Card style={styles.fullCard}>
+        <Card style={[styles.fullCard, { backgroundColor: theme.colors.surface }]}>
           <Card.Title title="Monthly Breakdown" />
           <Card.Content>
             {monthlyData.map((month, index) => {
@@ -204,8 +221,10 @@ const ReportScreen = () => {
               return (
                 <View key={index} style={styles.monthRow}>
                   <View style={styles.monthInfo}>
-                    <Text style={styles.monthName}>{month.monthName} {month.year}</Text>
-                    <Text style={styles.monthBalance}>
+                    <Text style={[styles.monthName, { color: theme.colors.onSurface }]}>
+                      {month.monthName} {month.year}
+                    </Text>
+                    <Text style={[styles.monthBalance, { color: theme.colors.onSurface }]}>
                       Balance: {currency.symbol}{balance.toFixed(2)}
                     </Text>
                   </View>
@@ -232,7 +251,6 @@ export default ReportScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
   },
   scrollContent: {
     padding: 16,
@@ -264,7 +282,6 @@ const styles = StyleSheet.create({
   },
   legendText: {
     fontSize: 12,
-    color: '#666',
     fontWeight: '500',
   },
   summaryRow: {
@@ -278,7 +295,6 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     fontSize: 12,
-    color: '#666',
     marginBottom: 4,
   },
   summaryValue: {
@@ -288,7 +304,6 @@ const styles = StyleSheet.create({
   },
   summarySubtext: {
     fontSize: 11,
-    color: '#999',
   },
   monthRow: {
     flexDirection: 'row',
@@ -308,7 +323,6 @@ const styles = StyleSheet.create({
   },
   monthBalance: {
     fontSize: 12,
-    color: '#666',
   },
   monthAmounts: {
     alignItems: 'flex-end',

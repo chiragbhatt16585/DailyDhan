@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { List, Switch, Text, Portal, Modal, TextInput, Searchbar } from 'react-native-paper';
+import { View, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { List, Switch, Text, Portal, Modal, TextInput, Searchbar, ActivityIndicator } from 'react-native-paper';
 import { useAppTheme } from '../../theme/ThemeProvider';
 import { AppHeader } from '../../components/AppHeader';
 import { useAppStore } from '../../store/useAppStore';
 import { CURRENCIES } from '../../utils/currencies';
 import { useFocusEffect } from '@react-navigation/native';
 import { APP_VERSION } from '../../config/version';
+import { createDatabaseBackup } from '../../utils/backup';
 
 const SettingsScreen = ({ navigation }) => {
   const { isDark, toggleTheme } = useAppTheme();
@@ -14,6 +15,7 @@ const SettingsScreen = ({ navigation }) => {
   const [currencyModalVisible, setCurrencyModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredCurrencies, setFilteredCurrencies] = useState(CURRENCIES);
+  const [isBackingUp, setIsBackingUp] = useState(false);
 
   // Initialize currency on mount
   useEffect(() => {
@@ -43,14 +45,37 @@ const SettingsScreen = ({ navigation }) => {
     setSearchQuery('');
   };
 
+  const handleBackupPress = async () => {
+    if (isBackingUp) return;
+
+    try {
+      setIsBackingUp(true);
+      const backupPath = await createDatabaseBackup();
+      Alert.alert(
+        'Backup created',
+        `Your data backup was saved here:\n\n${backupPath}`,
+      );
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('Failed to create backup', e);
+      Alert.alert(
+        'Backup failed',
+        e?.message || 'Could not create a backup. Please try again.',
+      );
+    } finally {
+      setIsBackingUp(false);
+    }
+  };
+
   return (
     <>
       <AppHeader showBack title="Settings" />
       <View style={styles.container}>
-        <List.Item
+        {/* <List.Item
           title="Dark Mode"
           right={() => <Switch value={isDark} onValueChange={toggleTheme} />}
         />
+         */}
         <List.Item
           title="Reports"
           description="View detailed financial reports and analysis"
@@ -78,6 +103,20 @@ const SettingsScreen = ({ navigation }) => {
           onPress={() => navigation.navigate('AffiliateAccounts')}
           left={props => <List.Icon {...props} icon="link-variant" />}
           right={props => <List.Icon {...props} icon="chevron-right" />}
+        />
+
+      <List.Item
+          title="Backup data"
+          description={isBackingUp ? 'Creating backup...' : 'Save a backup of your data to device storage'}
+          onPress={handleBackupPress}
+          left={props => <List.Icon {...props} icon="cloud-upload" />}
+          right={props =>
+            isBackingUp ? (
+              <ActivityIndicator animating size="small" />
+            ) : (
+              <List.Icon {...props} icon="chevron-right" />
+            )
+          }
         />
         <View style={styles.footer}>
           <Text variant="bodySmall">DailyDhan · Track Today, Save for Tomorrow</Text>

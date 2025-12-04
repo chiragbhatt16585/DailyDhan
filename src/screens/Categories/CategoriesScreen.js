@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import {
   Button,
+  Card,
   List,
   Portal,
   Modal,
@@ -244,109 +245,150 @@ const CategoriesScreen = ({ navigation }) => {
   return (
     <>
       <AppHeader showBack title="Categories" onBackPress={handleBackPress} />
-      <View style={styles.container}>
-        <Text variant="titleMedium" style={styles.sectionTitle}>
-          New Category
-        </Text>
-        <TextInput
-          mode="outlined"
-          label="Name"
-          value={name}
-          onChangeText={setName}
-          placeholder="e.g. Food, Salary"
-          style={styles.input}
-        />
-        <Button
-          mode="outlined"
-          onPress={() => setIconPickerVisible(true)}
-          style={styles.iconButton}
-          icon={icon || 'shape'}
-        >
-          {icon ? 'Change Icon' : 'Choose Icon'}
-        </Button>
-        <Text style={styles.label}>Chart Color</Text>
-        <View style={styles.colorRow}>
-          {COLOR_PRESETS.map(preset => {
-            const selected = color.toLowerCase() === preset.value.toLowerCase();
-            return (
-              <TouchableOpacity
-                key={preset.value}
-                style={[
-                  styles.colorOption,
-                  { backgroundColor: preset.value },
-                  selected && styles.colorOptionSelected,
-                ]}
-                onPress={() => setColor(preset.value)}
-              />
-            );
-          })}
-        </View>
-        <TextInput
-          mode="outlined"
-          label="Custom Color (hex, optional)"
-          value={color}
-          onChangeText={setColor}
-          placeholder="#1A73E8"
-          style={styles.input}
-        />
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <Card style={[styles.card, { backgroundColor: theme.colors.surface }]}>
+          <Card.Content>
+            <Text
+              variant="titleMedium"
+              style={[styles.sectionTitle, { color: theme.colors.onSurface }]}
+            >
+              New Category
+            </Text>
+            <TextInput
+              mode="outlined"
+              label="Name"
+              value={name}
+              onChangeText={setName}
+              placeholder="e.g. Food, Salary"
+              style={styles.input}
+            />
+            <Button
+              mode="outlined"
+              onPress={() => setIconPickerVisible(true)}
+              style={styles.iconButton}
+              icon={icon || 'shape'}
+            >
+              {icon ? 'Change Icon' : 'Choose Icon'}
+            </Button>
+            <Text style={[styles.label, { color: theme.colors.onSurface }]}>
+              Chart Color
+            </Text>
+            <View style={styles.colorRow}>
+              {COLOR_PRESETS.map(preset => {
+                const selected = color.toLowerCase() === preset.value.toLowerCase();
+                return (
+                  <TouchableOpacity
+                    key={preset.value}
+                    style={[
+                      styles.colorOption,
+                      { backgroundColor: preset.value },
+                      selected && styles.colorOptionSelected,
+                    ]}
+                    onPress={() => setColor(preset.value)}
+                  />
+                );
+              })}
+            </View>
+            <TextInput
+              mode="outlined"
+              label="Custom Color (hex, optional)"
+              value={color}
+              onChangeText={setColor}
+              placeholder="#1A73E8"
+              style={styles.input}
+            />
 
-        <Text style={styles.label}>Type</Text>
-        <RadioButton.Group value={type} onValueChange={setType}>
-          <View style={styles.typeRow}>
-            <RadioButton value="expense" />
-            <Text style={styles.typeLabel}>Expense</Text>
-            <RadioButton value="income" />
-            <Text style={styles.typeLabel}>Income</Text>
-          </View>
-        </RadioButton.Group>
+            <Text style={[styles.label, { color: theme.colors.onSurface }]}>
+              Type
+            </Text>
+            <RadioButton.Group value={type} onValueChange={setType}>
+              <View style={styles.typeRow}>
+                <RadioButton value="expense" />
+                <Text style={[styles.typeLabel, { color: theme.colors.onSurface }]}>
+                  Expense
+                </Text>
+                <RadioButton value="income" />
+                <Text style={[styles.typeLabel, { color: theme.colors.onSurface }]}>
+                  Income
+                </Text>
+              </View>
+            </RadioButton.Group>
 
-        <Button mode="contained" style={styles.saveButton} onPress={onSave}>
-          Save Category
-        </Button>
+            <Button
+              mode="contained"
+              style={styles.saveButton}
+              onPress={onSave}
+              buttonColor={theme.colors.primary}
+              textColor={theme.colors.onPrimary || '#FFFFFF'}
+            >
+              Save Category
+            </Button>
+          </Card.Content>
+        </Card>
 
-        <Text variant="titleMedium" style={styles.sectionTitle}>
-          Existing Categories
-        </Text>
-        {items.length === 0 ? (
-          <Text style={styles.emptyText}>No categories yet. Add your first one above.</Text>
-        ) : (
-          <FlatList
-            data={items}
-            keyExtractor={item => String(item.id)}
-            removeClippedSubviews={false}
-            initialNumToRender={10}
-            maxToRenderPerBatch={10}
-            windowSize={5}
-            renderItem={({ item }) => (
-              <List.Item
-                title={item.name}
-                description={`${item.type.toUpperCase()}  •  ${item.color || theme.colors.primary}`}
-                left={props => (
-                  <List.Icon
-                    {...props}
-                    icon={item.icon || (item.type === 'income' ? 'arrow-down' : 'arrow-up')}
+        <Card style={[styles.card, { backgroundColor: theme.colors.surface }]}>
+          <Card.Content>
+            <Text
+              variant="titleMedium"
+              style={[styles.sectionTitle, { color: theme.colors.onSurface }]}
+            >
+              Existing Categories
+            </Text>
+            {items.length === 0 ? (
+              <Text style={[styles.emptyText, { color: theme.colors.onSurface }]}>
+                No categories yet. Add your first one above.
+              </Text>
+            ) : (
+              <FlatList
+                data={items}
+                keyExtractor={item => String(item.id)}
+                removeClippedSubviews={false}
+                initialNumToRender={10}
+                maxToRenderPerBatch={10}
+                windowSize={5}
+                ItemSeparatorComponent={() => <View style={styles.listDivider} />}
+                renderItem={({ item }) => (
+                  <List.Item
+                    title={item.name}
+                    description={`${item.type.toUpperCase()}  •  ${item.color || theme.colors.primary}`}
+                    left={props => (
+                      <List.Icon
+                        {...props}
+                        icon={item.icon || (item.type === 'income' ? 'arrow-down' : 'arrow-up')}
+                      />
+                    )}
+                    onPress={() => {
+                      setEditingCategory(item);
+                      setEditName(item.name);
+                      setEditType(item.type);
+                      setIcon(item.icon || '');
+                      setColor(item.color || '#1A73E8');
+                    }}
+                    right={props => <List.Icon {...props} icon="pencil" />}
                   />
                 )}
-                onPress={() => {
-                  setEditingCategory(item);
-                  setEditName(item.name);
-                  setEditType(item.type);
-                  setIcon(item.icon || '');
-                  setColor(item.color || '#1A73E8');
-                }}
-                right={props => <List.Icon {...props} icon="pencil" />}
               />
             )}
-          />
-        )}
+          </Card.Content>
+        </Card>
       </View>
       <Portal>
         <Modal
           visible={!!editingCategory}
           onDismiss={() => setEditingCategory(null)}
-          contentContainerStyle={styles.iconModal}
+          contentContainerStyle={[
+            styles.iconModal,
+            {
+              backgroundColor: theme.dark ? '#1E1E1E' : theme.colors.surface,
+              borderWidth: 1,
+              borderColor: theme.colors.outline,
+            },
+          ]}
         >
-          <Text variant="titleMedium" style={styles.iconModalTitle}>
+          <Text
+            variant="titleMedium"
+            style={[styles.iconModalTitle, { color: theme.colors.onSurface }]}
+          >
             Edit Category
           </Text>
           <TextInput
@@ -356,13 +398,19 @@ const CategoriesScreen = ({ navigation }) => {
             onChangeText={setEditName}
             style={styles.input}
           />
-          <Text style={styles.label}>Type</Text>
+          <Text style={[styles.label, { color: theme.colors.onSurface }]}>
+            Type
+          </Text>
           <RadioButton.Group value={editType} onValueChange={setEditType}>
             <View style={styles.typeRow}>
               <RadioButton value="expense" />
-              <Text style={styles.typeLabel}>Expense</Text>
+              <Text style={[styles.typeLabel, { color: theme.colors.onSurface }]}>
+                Expense
+              </Text>
               <RadioButton value="income" />
-              <Text style={styles.typeLabel}>Income</Text>
+              <Text style={[styles.typeLabel, { color: theme.colors.onSurface }]}>
+                Income
+              </Text>
             </View>
           </RadioButton.Group>
           <Button
@@ -373,7 +421,9 @@ const CategoriesScreen = ({ navigation }) => {
           >
             Change Icon
           </Button>
-          <Text style={styles.label}>Chart Color</Text>
+          <Text style={[styles.label, { color: theme.colors.onSurface }]}>
+            Chart Color
+          </Text>
           <View style={styles.colorRow}>
             {COLOR_PRESETS.map(preset => {
               const selected = color.toLowerCase() === preset.value.toLowerCase();
@@ -401,6 +451,8 @@ const CategoriesScreen = ({ navigation }) => {
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 12 }}>
             <Button
               mode="contained-tonal"
+              buttonColor={theme.colors.secondaryContainer}
+              textColor={theme.colors.onSecondaryContainer || theme.colors.onSurface}
               onPress={async () => {
                 if (!editingCategory || !editName.trim()) {
                   return;
@@ -446,14 +498,28 @@ const CategoriesScreen = ({ navigation }) => {
         <Modal
           visible={iconPickerVisible}
           onDismiss={() => setIconPickerVisible(false)}
-          contentContainerStyle={styles.iconModal}
+          contentContainerStyle={[
+            styles.iconModal,
+            {
+              backgroundColor: theme.dark ? '#1E1E1E' : theme.colors.surface,
+              borderWidth: 1,
+              borderColor: theme.colors.outline,
+            },
+          ]}
         >
-          <Text variant="titleMedium" style={styles.iconModalTitle}>
+          <Text
+            variant="titleMedium"
+            style={[styles.iconModalTitle, { color: theme.colors.onSurface }]}
+          >
             Choose Icon
           </Text>
           {ICON_GROUPS.map(group => (
             <View key={group.key} style={styles.iconGroup}>
-              <Text style={styles.iconGroupLabel}>{group.label}</Text>
+              <Text
+                style={[styles.iconGroupLabel, { color: theme.colors.onSurface }]}
+              >
+                {group.label}
+              </Text>
               <View style={styles.iconGrid}>
                 {group.icons.map(option => {
                   const selected = icon === option.icon;
@@ -462,6 +528,10 @@ const CategoriesScreen = ({ navigation }) => {
                       key={option.icon}
                       style={[
                         styles.iconOption,
+                        {
+                          backgroundColor: theme.colors.surface,
+                          borderColor: theme.colors.outline,
+                        },
                         selected && styles.iconOptionSelected,
                       ]}
                       onPress={() => {
@@ -490,6 +560,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+  },
+  card: {
+    marginBottom: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
   },
   sectionTitle: {
     marginTop: 8,
@@ -520,12 +595,20 @@ const styles = StyleSheet.create({
   emptyText: {
     marginTop: 8,
   },
+  listDivider: {
+    height: 1,
+    opacity: 0.1,
+  },
   iconModal: {
     margin: 16,
     padding: 16,
     borderRadius: 12,
-    backgroundColor: 'white',
     maxHeight: '80%',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
   iconModalTitle: {
     marginBottom: 8,
@@ -535,7 +618,6 @@ const styles = StyleSheet.create({
     margin: 16,
     padding: 16,
     borderRadius: 12,
-    backgroundColor: 'white',
     maxHeight: '70%',
   },
   colorRow: {
@@ -575,10 +657,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#ddd',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f5f5f5',
   },
   iconOptionSelected: {
     borderColor: '#1A73E8',

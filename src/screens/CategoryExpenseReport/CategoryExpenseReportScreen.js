@@ -61,11 +61,14 @@ const CategoryExpenseReportScreen = () => {
   return (
     <>
       <AppHeader showBack title="Category Wise Expense" />
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        contentContainerStyle={styles.content}
+      >
         <View style={styles.monthSelector}>
           <IconButton icon="chevron-left" size={24} onPress={() => changeMonth(-1)} />
           <TouchableOpacity style={styles.monthLabelContainer}>
-            <Text variant="titleMedium" style={styles.monthLabel}>
+            <Text variant="titleMedium" style={[styles.monthLabel, { color: theme.colors.onBackground }]}>
               {monthLabel}
             </Text>
           </TouchableOpacity>
@@ -83,12 +86,16 @@ const CategoryExpenseReportScreen = () => {
           </Card.Content>
         </Card>
 
-        <Text style={styles.sectionTitle}>Expenses by Category</Text>
+        <Text style={[styles.sectionTitle, { color: theme.colors.onBackground }]}>
+          Expenses by Category
+        </Text>
 
         {expenseBreakdown.length === 0 ? (
-          <Card style={styles.fullCard}>
+          <Card style={[styles.fullCard, { backgroundColor: theme.colors.surface }]}>
             <Card.Content style={styles.emptyCardContent}>
-              <Text style={styles.emptyText}>No expenses found for this month.</Text>
+              <Text style={[styles.emptyText, { color: theme.colors.onSurface }]}>
+                No expenses found for this month.
+              </Text>
             </Card.Content>
           </Card>
         ) : (
@@ -106,7 +113,10 @@ const CategoryExpenseReportScreen = () => {
                 : defaultColors[index % defaultColors.length];
 
               return (
-                <Card key={item.id} style={styles.categoryCard}>
+                <Card
+                  key={item.id}
+                  style={[styles.categoryCard, { backgroundColor: theme.colors.surface }]}
+                >
                   <Card.Content style={styles.categoryCardContent}>
                     <View style={styles.categoryRow}>
                       <View style={styles.categoryLeft}>
@@ -117,12 +127,18 @@ const CategoryExpenseReportScreen = () => {
                           ]}
                         />
                         <View style={styles.categoryInfo}>
-                          <Text style={styles.categoryName}>{item.name}</Text>
-                          <Text style={styles.categoryPercentage}>{percentage}% of total</Text>
+                          <Text style={[styles.categoryName, { color: theme.colors.onSurface }]}>
+                            {item.name}
+                          </Text>
+                          <Text
+                            style={[styles.categoryPercentage, { color: theme.colors.onSurface }]}
+                          >
+                            {percentage}% of total
+                          </Text>
                         </View>
                       </View>
                       <View style={styles.categoryRight}>
-                        <Text style={styles.categoryAmount}>
+                        <Text style={[styles.categoryAmount, { color: theme.colors.onSurface }]}>
                           {formatCurrency(item.total_amount, currency)}
                         </Text>
                       </View>

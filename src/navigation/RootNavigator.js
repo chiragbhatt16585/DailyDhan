@@ -1,5 +1,9 @@
 import React from 'react';
+import { Text, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useTheme } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import SplashScreen from '../screens/Splash/SplashScreen';
 import OnboardingScreen from '../screens/Onboarding/OnboardingScreen';
@@ -16,13 +20,80 @@ import ReportsListScreen from '../screens/Reports/ReportsListScreen';
 import IncomeExpenseReportScreen from '../screens/Report/ReportScreen';
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+const MainTabs = () => {
+  const theme = useTheme();
+  
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.dark ? '#888888' : '#666666',
+        tabBarStyle: {
+          backgroundColor: theme.colors.surface,
+          borderTopWidth: 0,
+          elevation: 0,
+          shadowOpacity: 0,
+          height: 65,
+          paddingBottom: 8,
+          paddingTop: 6,
+        },
+        tabBarShowLabel: true,
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: '600',
+          marginTop: -4,
+          marginBottom: 2,
+        },
+        tabBarIcon: ({ color, focused }) => {
+          let iconName = 'home';
+          if (route.name === 'DashboardTab') {
+            iconName = 'view-dashboard';
+          }
+          if (route.name === 'ReportsTab') {
+            iconName = 'file-chart';
+          }
+          if (route.name === 'CategoriesTab') {
+            iconName = 'shape';
+          }
+          return (
+            <Icon 
+              name={iconName} 
+              size={24} 
+              color={color}
+              style={{ marginTop: 4 }}
+            />
+          );
+        },
+      })}
+    >
+      <Tab.Screen
+        name="DashboardTab"
+        component={DashboardScreen}
+        options={{ title: 'Dashboard', tabBarLabel: 'Dashboard' }}
+      />
+      <Tab.Screen
+        name="ReportsTab"
+        component={ReportsListScreen}
+        options={{ title: 'Reports', tabBarLabel: 'Reports' }}
+      />
+      <Tab.Screen
+        name="CategoriesTab"
+        component={CategoriesScreen}
+        options={{ title: 'Categories', tabBarLabel: 'Categories' }}
+      />
+    </Tab.Navigator>
+  );
+};
 
 export const RootNavigator = () => {
   return (
     <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-      <Stack.Screen name="Dashboard" component={DashboardScreen} />
+      <Stack.Screen name="Dashboard" component={MainTabs} />
       <Stack.Screen name="AddTransaction" component={AddTransactionScreen} />
       <Stack.Screen name="Categories" component={CategoriesScreen} />
       <Stack.Screen name="Wallets" component={WalletsScreen} />
