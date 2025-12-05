@@ -329,6 +329,10 @@ a {
   gap: 20px;
 }
 
+.dd-grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .dd-grid-3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -435,8 +439,244 @@ a {
   background-color: #ef4444;
 }
 
+.dd-report-desc {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.dd-report-pie {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #16a34a 0deg 120deg,
+    #ef4444 120deg 240deg,
+    #3b82f6 240deg 360deg
+  );
+  margin: 20px auto;
+}
+
+.dd-report-pie-small {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #16a34a 0deg 90deg,
+    #ef4444 90deg 180deg,
+    #3b82f6 180deg 270deg,
+    #f59e0b 270deg 360deg
+  );
+  margin: 30px auto;
+}
+
+.dd-report-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 100%;
+  padding: 16px 12px;
+  gap: 8px;
+}
+
+.dd-report-bar {
+  flex: 1;
+  background: linear-gradient(180deg, #3b82f6, #1e40af);
+  border-radius: 4px 4px 0 0;
+  min-height: 20px;
+  max-width: 24px;
+}
+
+.dd-report-bars-horizontal {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 100%;
+  padding: 20px 16px;
+  gap: 12px;
+}
+
+.dd-report-bar-horizontal {
+  height: 20px;
+  background: linear-gradient(90deg, #8b5cf6, #6d28d9);
+  border-radius: 0 4px 4px 0;
+  min-width: 30px;
+}
+
+.dd-report-stacked {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 100%;
+  padding: 16px 12px;
+  gap: 8px;
+}
+
+.dd-report-stacked-bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  max-width: 24px;
+  border-radius: 4px 4px 0 0;
+  overflow: hidden;
+}
+
+.dd-report-stacked-segment {
+  width: 100%;
+  transition: height 0.3s ease;
+}
+
+.dd-report-stacked-segment.income {
+  background: linear-gradient(180deg, #16a34a, #15803d);
+}
+
+.dd-report-stacked-segment.expense {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+}
+
+.dd-report-donut {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #16a34a 0deg 180deg,
+    #ef4444 180deg 360deg
+  );
+  margin: 25px auto;
+  position: relative;
+}
+
+.dd-report-donut::before {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f9fafb;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.dd-report-bars-top {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 100%;
+  padding: 20px 16px;
+  gap: 10px;
+}
+
+.dd-report-bar-top {
+  height: 12px;
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+  border-radius: 0 6px 6px 0;
+  min-width: 20px;
+}
+
 .dd-section-center {
   text-align: center;
+}
+
+.dd-section-affiliate {
+  background-color: #f9fafb;
+}
+
+.dd-affiliate-info {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.dd-affiliate-note {
+  display: inline-block;
+  padding: 16px 20px;
+  background-color: #e3f2fd;
+  border-left: 4px solid #1a73e8;
+  border-radius: 8px;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.dd-affiliate-note strong {
+  color: #1a73e8;
+}
+
+.dd-affiliate-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.dd-affiliate-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.dd-affiliate-logo {
+  width: 64px;
+  height: 64px;
+  background-color: #f5f5f5;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  padding: 8px;
+}
+
+.dd-amazon-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.dd-affiliate-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.dd-affiliate-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  color: #0f172a;
+}
+
+.dd-affiliate-card p {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+  flex-grow: 1;
+}
+
+.dd-btn-affiliate {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dd-btn-icon {
+  font-size: 18px;
+  transition: transform 0.2s;
+}
+
+.dd-btn-affiliate:hover .dd-btn-icon {
+  transform: translateX(4px);
 }
 
 .dd-pricing-card {
@@ -605,12 +845,20 @@ a {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .dd-grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .dd-grid-3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 720px) {
+  .dd-grid-2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .dd-grid-3 {
     grid-template-columns: minmax(0, 1fr);
   }

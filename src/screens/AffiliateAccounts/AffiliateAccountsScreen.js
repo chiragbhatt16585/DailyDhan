@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity, Linking, ScrollView } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity, Linking, ScrollView, Image } from 'react-native';
 import {
   List,
   Text,
@@ -34,20 +34,27 @@ const AffiliateAccountsScreen = ({ navigation }) => {
 
   const renderAccountItem = ({ item }) => {
     const platform = getPlatformById(item.platformId);
+    const isAmazon = platform.id === 'amazon' || platform.id === 'amazon_in';
+    
     return (
       <Card style={styles.accountCard}>
         <Card.Content>
           <View style={styles.accountHeader}>
             <View style={styles.accountInfo}>
-              <View style={[styles.platformIcon, { backgroundColor: platform.color + '20' }]}>
-                <List.Icon icon={platform.icon} color={platform.color} size={24} />
+              <View style={[styles.platformIcon, { backgroundColor: isAmazon ? '#F5F5F5' : platform.color + '20' }]}>
+                {isAmazon ? (
+                  <Image 
+                    source={require('../../assets/amazon-logo.webp')} 
+                    style={styles.amazonLogo}
+                    resizeMode="contain"
+                  />
+                ) : (
+                  <List.Icon icon={platform.icon} color={platform.color} size={24} />
+                )}
               </View>
               <View style={styles.accountDetails}>
                 <Text style={styles.accountName}>{item.name}</Text>
                 <Text style={styles.accountPlatform}>{platform.description}</Text>
-                <Text style={styles.accountId} numberOfLines={1}>
-                  ID: {item.affiliateId}
-                </Text>
               </View>
             </View>
           </View>
@@ -251,6 +258,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
+  },
+  amazonLogo: {
+    width: 40,
+    height: 40,
   },
   accountDetails: {
     flex: 1,

@@ -130,5 +130,12 @@ export const AFFILIATE_ACCOUNTS = [
 
   // Add your affiliate accounts below (uncomment and fill in your details):
   
+  // Amazon India Affiliate
+  {
+    platformId: 'amazon_in',
+    name: 'Amazon India',
+    affiliateId: 'dailydhan1658-21',
+  },
+  
 ];
 

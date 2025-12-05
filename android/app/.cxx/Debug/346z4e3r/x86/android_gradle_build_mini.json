@@ -1,7 +1,6 @@
 {
   "buildFiles": [
     "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/CMakeLists.txt",
-    "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/@react-native-community/datetimepicker/android/build/generated/source/codegen/jni/CMakeLists.txt",
     "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-google-mobile-ads/android/build/generated/source/codegen/jni/CMakeLists.txt",
     "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
     "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
@@ -48,11 +47,6 @@
         "/Users/chiragbhatt/.gradle/caches/8.10.2/transforms/5cd2cbc1b333eed575972d1ab45c2d56/transformed/react-android-0.76.0-debug/prefab/modules/jsi/libs/android.x86/libjsi.so",
         "/Users/chiragbhatt/.gradle/caches/8.10.2/transforms/3edf1a87345f97a0a10d63bef50c344e/transformed/fbjni-0.6.0/prefab/modules/fbjni/libs/android.x86/libfbjni.so"
       ]
-    },
-    "react_codegen_RNDateTimePickerCGen::@59b70ddc31ba2f8ef1d2": {
-      "artifactName": "react_codegen_RNDateTimePickerCGen",
-      "abi": "x86",
-      "runtimeFiles": []
     },
     "appmodules::@6890427a1f51a3e7e1df": {
       "artifactName": "appmodules",

@@ -45,7 +45,6 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/armeabi-v7a/rnasyncstorage_autolinked_build/cmake_install.cmake")
-  include("/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/armeabi-v7a/RNDateTimePickerCGen_autolinked_build/cmake_install.cmake")
   include("/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/armeabi-v7a/RNGoogleMobileAdsSpec_autolinked_build/cmake_install.cmake")
   include("/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/armeabi-v7a/safeareacontext_autolinked_build/cmake_install.cmake")
   include("/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/armeabi-v7a/rnscreens_autolinked_build/cmake_install.cmake")

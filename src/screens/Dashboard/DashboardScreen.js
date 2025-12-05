@@ -189,7 +189,7 @@ const DashboardScreen = () => {
             ]}
           >
             <View style={styles.financialCardHeader}>
-              <View style={[styles.financialIconContainer, { backgroundColor: '#E8F5E9' }]}>
+              <View style={[styles.financialIconContainer, { backgroundColor: '#F5F5F5' }]}>
                 <Icon source="arrow-down" size={18} color="#34A853" />
               </View>
               <Text style={styles.financialCardLabel}>Income</Text>
@@ -208,7 +208,7 @@ const DashboardScreen = () => {
             ]}
           >
             <View style={styles.financialCardHeader}>
-              <View style={[styles.financialIconContainer, { backgroundColor: '#FCE4EC' }]}>
+              <View style={[styles.financialIconContainer, { backgroundColor: '#F5F5F5' }]}>
                 <Icon source="arrow-up" size={18} color="#E91E63" />
               </View>
               <Text style={styles.financialCardLabel}>Expense</Text>
@@ -251,6 +251,41 @@ const DashboardScreen = () => {
             </Text>
           </View>
         </View>
+
+        {/* Quick Access to All Transactions with Search */}
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Transactions')}
+          activeOpacity={0.7}
+        >
+          <Card style={styles.fullCard}>
+            <Card.Content style={styles.quickAccessCard}>
+              <View style={styles.quickAccessContent}>
+                <View style={styles.quickAccessLeft}>
+                  <View style={[styles.quickAccessIconContainer, { backgroundColor: theme.colors.primary + '20' }]}>
+                    <Icon
+                      source="magnify"
+                      size={24}
+                      color={theme.colors.primary}
+                    />
+                  </View>
+                  <View style={styles.quickAccessText}>
+                    <Text style={[styles.quickAccessTitle, { color: theme.colors.onSurface }]}>
+                      Search & Filter Transactions
+                    </Text>
+                    <Text style={[styles.quickAccessSubtitle, { color: theme.colors.onSurfaceVariant }]}>
+                      Find transactions by amount, category, or date
+                    </Text>
+                  </View>
+                </View>
+                <IconButton
+                  icon="chevron-right"
+                  size={24}
+                  iconColor={theme.colors.primary}
+                />
+              </View>
+            </Card.Content>
+          </Card>
+        </TouchableOpacity>
 
         {/* Expense Breakdown Chart */}
         {expense > 0 && expenseBreakdown.length > 0 && (
@@ -366,6 +401,27 @@ const DashboardScreen = () => {
                 </Card.Content>
               </Card>
             ) : (
+              <>
+                {/* Recent Transactions Header */}
+                <View style={styles.sectionHeader}>
+                  <Text style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
+                    Recent Transactions
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('Transactions')}
+                    style={styles.viewAllButton}
+                  >
+                    <Text style={[styles.viewAllText, { color: theme.colors.primary }]}>
+                      View All
+                    </Text>
+                    <IconButton
+                      icon="chevron-right"
+                      size={18}
+                      iconColor={theme.colors.primary}
+                      style={styles.viewAllIcon}
+                    />
+                  </TouchableOpacity>
+                </View>
               <View style={styles.transactionsContainer}>
                 {recent.slice(0, 5).map(item => {
               const date = new Date(item.date);
@@ -380,7 +436,7 @@ const DashboardScreen = () => {
                       <View
                         style={[
                           styles.transactionIconContainer,
-                          { backgroundColor: isIncome ? '#E8F5E9' : '#FCE4EC' },
+                          { backgroundColor: '#F5F5F5' },
                         ]}
                       >
                         <List.Icon
@@ -421,6 +477,7 @@ const DashboardScreen = () => {
               );
             })}
           </View>
+              </>
             )}
           </>
         ) : (
@@ -704,12 +761,31 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
   },
-  viewAllButton: {
-    marginTop: 12,
-    paddingVertical: 12,
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
+    marginBottom: 12,
+    marginTop: 8,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#000',
+  },
+  viewAllButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  viewAllText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  viewAllIcon: {
+    margin: 0,
+    padding: 0,
   },
   viewAllButtonText: {
     color: '#1A73E8',
@@ -723,6 +799,7 @@ const styles = StyleSheet.create({
   transactionCard: {
     marginBottom: 0,
     elevation: 1,
+    backgroundColor: '#FFFFFF',
   },
   transactionContent: {
     paddingVertical: 8,
@@ -779,6 +856,7 @@ const styles = StyleSheet.create({
   categoryCard: {
     marginBottom: 0,
     elevation: 2,
+    backgroundColor: '#FFFFFF',
   },
   categoryCardContent: {
     paddingVertical: 12,
@@ -792,6 +870,41 @@ const styles = StyleSheet.create({
   },
   categoryRight: {
     alignItems: 'flex-end',
+  },
+  quickAccessCard: {
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+  },
+  quickAccessContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  quickAccessLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  quickAccessIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  quickAccessText: {
+    flex: 1,
+  },
+  quickAccessTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+    color: '#000',
+  },
+  quickAccessSubtitle: {
+    fontSize: 12,
+    color: '#666',
   },
   adContainer: {
     marginTop: 20,

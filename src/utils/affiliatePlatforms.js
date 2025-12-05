@@ -12,7 +12,7 @@ export const AFFILIATE_PLATFORMS = [
   {
     id: 'amazon',
     name: 'Amazon',
-    icon: 'amazon',
+    icon: 'package-variant',
     color: '#FF9900',
     placeholder: 'Enter your Amazon affiliate tag',
     description: 'Amazon Associates',
@@ -21,7 +21,7 @@ export const AFFILIATE_PLATFORMS = [
   {
     id: 'amazon_in',
     name: 'Amazon India',
-    icon: 'amazon',
+    icon: 'package-variant',
     color: '#FF9900',
     placeholder: 'Enter your Amazon.in affiliate tag',
     description: 'Amazon Associates India',
@@ -175,8 +175,8 @@ export const formatAffiliateLink = (platform, affiliateId, productUrl = '') => {
   
   const baseUrls = {
     flipkart: `https://www.flipkart.com?affid=${affiliateId}`,
-    amazon: `https://www.amazon.com/dp/PRODUCT_ID?tag=${affiliateId}`,
-    amazon_in: `https://www.amazon.in/dp/PRODUCT_ID?tag=${affiliateId}`,
+    amazon: productUrl ? `https://www.amazon.com/dp/${productUrl}?tag=${affiliateId}` : `https://www.amazon.com/?tag=${affiliateId}`,
+    amazon_in: productUrl ? `https://www.amazon.in/dp/${productUrl}?tag=${affiliateId}` : `https://www.amazon.in/?tag=${affiliateId}`,
     myntra: `https://www.myntra.com?affid=${affiliateId}`,
     paytm: `https://paytmmall.com?affid=${affiliateId}`,
     snapdeal: `https://www.snapdeal.com?affid=${affiliateId}`,
@@ -198,7 +198,12 @@ export const formatAffiliateLink = (platform, affiliateId, productUrl = '') => {
   }
 
   const baseUrl = baseUrls[platform.id] || '';
-  if (productUrl) {
+  // For Amazon links, productUrl is already handled in baseUrls
+  if (platform.id === 'amazon' || platform.id === 'amazon_in') {
+    return baseUrl;
+  }
+  // For other platforms, replace PRODUCT_ID if needed
+  if (productUrl && baseUrl.includes('PRODUCT_ID')) {
     return baseUrl.replace('PRODUCT_ID', productUrl);
   }
   return baseUrl;

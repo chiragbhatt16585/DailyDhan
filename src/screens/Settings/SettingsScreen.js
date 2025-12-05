@@ -94,6 +94,14 @@ const SettingsScreen = ({ navigation }) => {
         />
         
         <List.Item
+          title="Manage Wallets"
+          description="Add, edit or delete your wallets"
+          onPress={() => navigation.navigate('Wallets')}
+          left={props => <List.Icon {...props} icon="wallet" />}
+          right={props => <List.Icon {...props} icon="chevron-right" />}
+        />
+        
+        <List.Item
           title="Currency"
           description={`${currency.symbol} ${currency.name} (${currency.code})`}
           onPress={() => setCurrencyModalVisible(true)}

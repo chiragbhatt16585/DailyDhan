@@ -37,31 +37,6 @@ if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   file(TOUCH_NOCREATE "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/armeabi-v7a/CMakeFiles/cmake.verify_globs")
 endif()
 
-# react_codegen_SRCS at /Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/@react-native-community/datetimepicker/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
-file(GLOB NEW_GLOB LIST_DIRECTORIES true "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/@react-native-community/datetimepicker/android/build/generated/source/codegen/jni/*.cpp")
-set(OLD_GLOB
-  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/@react-native-community/datetimepicker/android/build/generated/source/codegen/jni/RNDateTimePickerCGen-generated.cpp"
-  )
-if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
-  message("-- GLOB mismatch!")
-  file(TOUCH_NOCREATE "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/armeabi-v7a/CMakeFiles/cmake.verify_globs")
-endif()
-
-# react_codegen_SRCS at /Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/@react-native-community/datetimepicker/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
-file(GLOB NEW_GLOB LIST_DIRECTORIES true "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/@react-native-community/datetimepicker/android/build/generated/source/codegen/jni/react/renderer/components/RNDateTimePickerCGen/*.cpp")
-set(OLD_GLOB
-  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/@react-native-community/datetimepicker/android/build/generated/source/codegen/jni/react/renderer/components/RNDateTimePickerCGen/ComponentDescriptors.cpp"
-  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/@react-native-community/datetimepicker/android/build/generated/source/codegen/jni/react/renderer/components/RNDateTimePickerCGen/EventEmitters.cpp"
-  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/@react-native-community/datetimepicker/android/build/generated/source/codegen/jni/react/renderer/components/RNDateTimePickerCGen/Props.cpp"
-  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/@react-native-community/datetimepicker/android/build/generated/source/codegen/jni/react/renderer/components/RNDateTimePickerCGen/RNDateTimePickerCGenJSI-generated.cpp"
-  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/@react-native-community/datetimepicker/android/build/generated/source/codegen/jni/react/renderer/components/RNDateTimePickerCGen/ShadowNodes.cpp"
-  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/@react-native-community/datetimepicker/android/build/generated/source/codegen/jni/react/renderer/components/RNDateTimePickerCGen/States.cpp"
-  )
-if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
-  message("-- GLOB mismatch!")
-  file(TOUCH_NOCREATE "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/armeabi-v7a/CMakeFiles/cmake.verify_globs")
-endif()
-
 # react_codegen_SRCS at /Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-google-mobile-ads/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
 file(GLOB NEW_GLOB LIST_DIRECTORIES true "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-google-mobile-ads/android/build/generated/source/codegen/jni/*.cpp")
 set(OLD_GLOB

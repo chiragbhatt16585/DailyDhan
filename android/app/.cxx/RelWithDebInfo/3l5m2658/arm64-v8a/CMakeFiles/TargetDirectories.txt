@@ -4,9 +4,6 @@
 /Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/RelWithDebInfo/3l5m2658/arm64-v8a/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir
 /Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/RelWithDebInfo/3l5m2658/arm64-v8a/rnasyncstorage_autolinked_build/CMakeFiles/edit_cache.dir
 /Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/RelWithDebInfo/3l5m2658/arm64-v8a/rnasyncstorage_autolinked_build/CMakeFiles/rebuild_cache.dir
-/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/RelWithDebInfo/3l5m2658/arm64-v8a/RNDateTimePickerCGen_autolinked_build/CMakeFiles/react_codegen_RNDateTimePickerCGen.dir
-/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/RelWithDebInfo/3l5m2658/arm64-v8a/RNDateTimePickerCGen_autolinked_build/CMakeFiles/edit_cache.dir
-/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/RelWithDebInfo/3l5m2658/arm64-v8a/RNDateTimePickerCGen_autolinked_build/CMakeFiles/rebuild_cache.dir
 /Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/RelWithDebInfo/3l5m2658/arm64-v8a/RNGoogleMobileAdsSpec_autolinked_build/CMakeFiles/react_codegen_RNGoogleMobileAdsSpec.dir
 /Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/RelWithDebInfo/3l5m2658/arm64-v8a/RNGoogleMobileAdsSpec_autolinked_build/CMakeFiles/edit_cache.dir
 /Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/RelWithDebInfo/3l5m2658/arm64-v8a/RNGoogleMobileAdsSpec_autolinked_build/CMakeFiles/rebuild_cache.dir

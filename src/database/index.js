@@ -476,12 +476,16 @@ export const getWalletWiseData = async (year, month) => {
       SELECT 
         w.id,
         w.name,
+        w.type,
+        w.bank_name,
+        w.last_4_digits,
         COALESCE(SUM(CASE WHEN t.type = 'income' THEN t.amount ELSE 0 END), 0) AS total_income,
-        COALESCE(SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END), 0) AS total_expense
+        COALESCE(SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END), 0) AS total_expense,
+        COUNT(t.id) AS transaction_count
       FROM wallets w
       LEFT JOIN transactions t ON t.wallet_id = w.id 
         AND t.date >= ? AND t.date < ?
-      GROUP BY w.id, w.name
+      GROUP BY w.id, w.name, w.type, w.bank_name, w.last_4_digits
       HAVING total_income > 0 OR total_expense > 0
       ORDER BY (total_income + total_expense) DESC
     `,
@@ -613,6 +617,9 @@ const initSchema = async db => {
     CREATE TABLE IF NOT EXISTS wallets (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
+      type TEXT DEFAULT 'cash',
+      bank_name TEXT,
+      last_4_digits TEXT,
       balance REAL DEFAULT 0
     );
     CREATE TABLE IF NOT EXISTS categories (
@@ -648,6 +655,31 @@ const initSchema = async db => {
       tx.executeSql(stmt + ';');
     });
   });
+
+  // Migrate wallets table to add new columns if they don't exist
+  try {
+    await db.executeSql(`
+      ALTER TABLE wallets ADD COLUMN type TEXT DEFAULT 'cash';
+    `);
+  } catch (e) {
+    // Column might already exist, ignore
+  }
+  
+  try {
+    await db.executeSql(`
+      ALTER TABLE wallets ADD COLUMN bank_name TEXT;
+    `);
+  } catch (e) {
+    // Column might already exist, ignore
+  }
+  
+  try {
+    await db.executeSql(`
+      ALTER TABLE wallets ADD COLUMN last_4_digits TEXT;
+    `);
+  } catch (e) {
+    // Column might already exist, ignore
+  }
 };
 
 
