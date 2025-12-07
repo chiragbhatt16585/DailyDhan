@@ -325,12 +325,19 @@ const CategoriesScreen = ({ navigation }) => {
                 renderItem={({ item }) => (
                   <List.Item
                     title={item.name}
-                    description={item.color || theme.colors.primary}
                     left={props => (
-                      <List.Icon
-                        {...props}
-                        icon={item.icon || (item.type === 'income' ? 'arrow-down' : 'arrow-up')}
-                      />
+                      <View style={styles.categoryLeftContainer}>
+                        <View
+                          style={[
+                            styles.colorBar,
+                            { backgroundColor: item.color || theme.colors.primary },
+                          ]}
+                        />
+                        <List.Icon
+                          {...props}
+                          icon={item.icon || (item.type === 'income' ? 'arrow-down' : 'arrow-up')}
+                        />
+                      </View>
                     )}
                     onPress={() => {
                       setEditingCategory(item);
@@ -896,6 +903,16 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 14,
     fontWeight: '600',
+  },
+  categoryLeftContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  colorBar: {
+    width: 4,
+    height: 40,
+    borderRadius: 2,
+    marginRight: 12,
   },
 });
 

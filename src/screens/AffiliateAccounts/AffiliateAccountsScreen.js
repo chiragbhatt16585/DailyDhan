@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity, Linking, ScrollView, Image } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity, Linking, ScrollView, Image, Platform } from 'react-native';
 import {
   List,
   Text,
@@ -12,14 +12,69 @@ import { getPlatformById, formatAffiliateLink } from '../../utils/affiliatePlatf
 import { AFFILIATE_ACCOUNTS } from '../../config/affiliateAccounts';
 
 const AffiliateAccountsScreen = ({ navigation }) => {
-  // Handle open affiliate link
-  const handleOpenAffiliateLink = (account) => {
+  // Handle open affiliate link with app preference for Amazon
+  const handleOpenAffiliateLink = async (account) => {
     const platform = getPlatformById(account.platformId);
-    const link = formatAffiliateLink(platform, account.affiliateId);
-    if (link) {
-      Linking.openURL(link).catch(err =>
-        console.warn('Failed to open affiliate link:', err)
-      );
+    const webLink = formatAffiliateLink(platform, account.affiliateId);
+    
+    if (!webLink) return;
+
+    // For Amazon platforms, try to open in app first
+    if (platform.id === 'amazon' || platform.id === 'amazon_in') {
+      try {
+        let appScheme;
+        
+        if (Platform.OS === 'android') {
+          // Android: Package name for Amazon Shopping app
+          const packageName = platform.id === 'amazon_in' 
+            ? 'in.amazon.mShop.android.shopping' 
+            : 'com.amazon.mShop.android.shopping';
+          
+          // Try to open Amazon app using amzn:// scheme
+          // This will open the app if installed
+          appScheme = `amzn://apps/android?p=${packageName}`;
+        } else if (Platform.OS === 'ios') {
+          // iOS: Use amzn:// scheme to open Amazon app
+          appScheme = 'amzn://apps/ios';
+        }
+
+        if (appScheme) {
+          // Check if Amazon app is installed
+          const canOpenApp = await Linking.canOpenURL(appScheme);
+          if (canOpenApp) {
+            try {
+              // For Android, use intent URL that opens app and navigates to web URL
+              if (Platform.OS === 'android') {
+                const packageName = platform.id === 'amazon_in' 
+                  ? 'in.amazon.mShop.android.shopping' 
+                  : 'com.amazon.mShop.android.shopping';
+                // Intent URL that opens app and passes the web URL
+                // This will open the Amazon app directly and navigate to the URL
+                const intentUrl = `intent://#Intent;package=${packageName};scheme=https;S.browser_fallback_url=${encodeURIComponent(webLink)};end`;
+                await Linking.openURL(intentUrl);
+                return;
+              } else {
+                // For iOS, use the web URL directly - iOS will automatically open it in the Amazon app if installed
+                // The web URL format is recognized by iOS and will open in app
+                await Linking.openURL(webLink);
+                return;
+              }
+            } catch (err) {
+              console.warn('Failed to open Amazon app, falling back to browser:', err);
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Error checking Amazon app availability, falling back to browser:', err);
+      }
+    }
+
+    // Fallback to web browser (will open in app if installed, otherwise in browser)
+    // Both Android and iOS will automatically open Amazon web URLs in the app if installed
+    try {
+      await Linking.openURL(webLink);
+    } catch (err) {
+      console.warn('Failed to open affiliate link:', err);
     }
   };
 
@@ -49,7 +104,7 @@ const AffiliateAccountsScreen = ({ navigation }) => {
                     resizeMode="contain"
                   />
                 ) : (
-                  <List.Icon icon={platform.icon} color={platform.color} size={24} />
+                <List.Icon icon={platform.icon} color={platform.color} size={24} />
                 )}
               </View>
               <View style={styles.accountDetails}>
@@ -89,7 +144,35 @@ const AffiliateAccountsScreen = ({ navigation }) => {
     <>
       <AppHeader showBack title="Affiliate Programme" />
       <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-        {/* Information Card */}
+        {AFFILIATE_ACCOUNTS.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <List.Icon icon="link-variant" size={64} color="#9E9E9E" />
+            <Text variant="titleMedium" style={styles.emptyTitle}>
+              No Affiliate Accounts Configured
+            </Text>
+            <Text style={styles.emptyText}>
+              Configure your affiliate accounts in{'\n'}
+              <Text style={styles.codeText}>src/config/affiliateAccounts.js</Text>
+            </Text>
+          </View>
+        ) : (
+          <>
+            <View style={styles.header}>
+              <Text variant="titleMedium" style={styles.headerTitle}>
+                Available Affiliate Links ({AFFILIATE_ACCOUNTS.length})
+              </Text>
+            </View>
+            <View style={styles.listContent}>
+              {AFFILIATE_ACCOUNTS.map((item, index) => (
+                <View key={`${item.platformId}-${index}`}>
+                  {renderAccountItem({ item })}
+                </View>
+              ))}
+            </View>
+          </>
+        )}
+
+        {/* Information Card - Moved to bottom */}
         <Card style={styles.infoCard}>
           <Card.Content>
             <View style={styles.infoHeader}>
@@ -131,34 +214,6 @@ const AffiliateAccountsScreen = ({ navigation }) => {
             </View>
           </Card.Content>
         </Card>
-
-        {AFFILIATE_ACCOUNTS.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <List.Icon icon="link-variant" size={64} color="#9E9E9E" />
-            <Text variant="titleMedium" style={styles.emptyTitle}>
-              No Affiliate Accounts Configured
-            </Text>
-            <Text style={styles.emptyText}>
-              Configure your affiliate accounts in{'\n'}
-              <Text style={styles.codeText}>src/config/affiliateAccounts.js</Text>
-            </Text>
-          </View>
-        ) : (
-          <>
-            <View style={styles.header}>
-              <Text variant="titleMedium" style={styles.headerTitle}>
-                Available Affiliate Links ({AFFILIATE_ACCOUNTS.length})
-              </Text>
-            </View>
-            <View style={styles.listContent}>
-              {AFFILIATE_ACCOUNTS.map((item, index) => (
-                <View key={`${item.platformId}-${index}`}>
-                  {renderAccountItem({ item })}
-                </View>
-              ))}
-            </View>
-          </>
-        )}
       </ScrollView>
     </>
   );
@@ -176,6 +231,7 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     margin: 16,
+    marginTop: 8,
     marginBottom: 8,
     backgroundColor: '#E3F2FD',
     borderLeftWidth: 4,

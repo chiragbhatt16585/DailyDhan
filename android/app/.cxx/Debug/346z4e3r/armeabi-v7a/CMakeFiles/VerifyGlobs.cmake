@@ -37,6 +37,31 @@ if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   file(TOUCH_NOCREATE "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/armeabi-v7a/CMakeFiles/cmake.verify_globs")
 endif()
 
+# react_codegen_SRCS at /Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-document-picker/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-document-picker/android/build/generated/source/codegen/jni/*.cpp")
+set(OLD_GLOB
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-document-picker/android/build/generated/source/codegen/jni/rndocumentpicker-generated.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/armeabi-v7a/CMakeFiles/cmake.verify_globs")
+endif()
+
+# react_codegen_SRCS at /Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-document-picker/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-document-picker/android/build/generated/source/codegen/jni/react/renderer/components/rndocumentpicker/*.cpp")
+set(OLD_GLOB
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-document-picker/android/build/generated/source/codegen/jni/react/renderer/components/rndocumentpicker/ComponentDescriptors.cpp"
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-document-picker/android/build/generated/source/codegen/jni/react/renderer/components/rndocumentpicker/EventEmitters.cpp"
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-document-picker/android/build/generated/source/codegen/jni/react/renderer/components/rndocumentpicker/Props.cpp"
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-document-picker/android/build/generated/source/codegen/jni/react/renderer/components/rndocumentpicker/ShadowNodes.cpp"
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-document-picker/android/build/generated/source/codegen/jni/react/renderer/components/rndocumentpicker/States.cpp"
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-document-picker/android/build/generated/source/codegen/jni/react/renderer/components/rndocumentpicker/rndocumentpickerJSI-generated.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/armeabi-v7a/CMakeFiles/cmake.verify_globs")
+endif()
+
 # react_codegen_SRCS at /Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-google-mobile-ads/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
 file(GLOB NEW_GLOB LIST_DIRECTORIES true "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-google-mobile-ads/android/build/generated/source/codegen/jni/*.cpp")
 set(OLD_GLOB
@@ -56,6 +81,31 @@ set(OLD_GLOB
   "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-google-mobile-ads/android/build/generated/source/codegen/jni/react/renderer/components/RNGoogleMobileAdsSpec/RNGoogleMobileAdsSpecJSI-generated.cpp"
   "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-google-mobile-ads/android/build/generated/source/codegen/jni/react/renderer/components/RNGoogleMobileAdsSpec/ShadowNodes.cpp"
   "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-google-mobile-ads/android/build/generated/source/codegen/jni/react/renderer/components/RNGoogleMobileAdsSpec/States.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/armeabi-v7a/CMakeFiles/cmake.verify_globs")
+endif()
+
+# react_codegen_SRCS at /Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-iap/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-iap/android/build/generated/source/codegen/jni/*.cpp")
+set(OLD_GLOB
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-iap/android/build/generated/source/codegen/jni/RNIap-generated.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/armeabi-v7a/CMakeFiles/cmake.verify_globs")
+endif()
+
+# react_codegen_SRCS at /Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-iap/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-iap/android/build/generated/source/codegen/jni/react/renderer/components/RNIap/*.cpp")
+set(OLD_GLOB
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-iap/android/build/generated/source/codegen/jni/react/renderer/components/RNIap/ComponentDescriptors.cpp"
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-iap/android/build/generated/source/codegen/jni/react/renderer/components/RNIap/EventEmitters.cpp"
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-iap/android/build/generated/source/codegen/jni/react/renderer/components/RNIap/Props.cpp"
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-iap/android/build/generated/source/codegen/jni/react/renderer/components/RNIap/RNIapJSI-generated.cpp"
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-iap/android/build/generated/source/codegen/jni/react/renderer/components/RNIap/ShadowNodes.cpp"
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-iap/android/build/generated/source/codegen/jni/react/renderer/components/RNIap/States.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")
@@ -152,6 +202,31 @@ set(OLD_GLOB
   "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-screens/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnscreens/ShadowNodes.cpp"
   "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-screens/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnscreens/States.cpp"
   "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-screens/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnscreens/rnscreensJSI-generated.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/armeabi-v7a/CMakeFiles/cmake.verify_globs")
+endif()
+
+# react_codegen_SRCS at /Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-share/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-share/android/build/generated/source/codegen/jni/*.cpp")
+set(OLD_GLOB
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-share/android/build/generated/source/codegen/jni/RNShareSpec-generated.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/armeabi-v7a/CMakeFiles/cmake.verify_globs")
+endif()
+
+# react_codegen_SRCS at /Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-share/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-share/android/build/generated/source/codegen/jni/react/renderer/components/RNShareSpec/*.cpp")
+set(OLD_GLOB
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-share/android/build/generated/source/codegen/jni/react/renderer/components/RNShareSpec/ComponentDescriptors.cpp"
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-share/android/build/generated/source/codegen/jni/react/renderer/components/RNShareSpec/EventEmitters.cpp"
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-share/android/build/generated/source/codegen/jni/react/renderer/components/RNShareSpec/Props.cpp"
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-share/android/build/generated/source/codegen/jni/react/renderer/components/RNShareSpec/RNShareSpecJSI-generated.cpp"
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-share/android/build/generated/source/codegen/jni/react/renderer/components/RNShareSpec/ShadowNodes.cpp"
+  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-share/android/build/generated/source/codegen/jni/react/renderer/components/RNShareSpec/States.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")

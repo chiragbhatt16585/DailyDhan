@@ -50,6 +50,9 @@ android/**/outputs/
 android/**/release/
 android/app/release/
 android/app/debug.keystore
+android/keystore.properties
+android/app/*.jks
+android/app/*.keystore
 
 # Gradle
 **/build/

@@ -158,7 +158,7 @@ const TransactionsScreen = ({ navigation }) => {
       setAllItems(rows);
       } catch (e) {
         console.warn('Failed to load transactions', e);
-    }
+      }
   }, []);
 
   useFocusEffect(
@@ -788,7 +788,7 @@ const TransactionsScreen = ({ navigation }) => {
               }}
               minimumDate={filterStartDate}
               maximumDate={new Date()}
-            />
+              />
             <Button onPress={() => {
               if (isMountedRef.current) {
                 setShowEndDatePicker(false);

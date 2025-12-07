@@ -1,4 +1,4 @@
-package com.google.hrivya.dailydhan
+package com.dailydhan
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

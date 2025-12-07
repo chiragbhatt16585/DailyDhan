@@ -361,7 +361,7 @@ const AddTransactionScreen = ({ navigation }) => {
             onPress={() => setCategoryPickerVisible(true)}
             style={styles.listItem}
           />
-          
+
           <List.Item
             title="Wallet"
             description={walletName || 'Not Selected'}
@@ -550,8 +550,8 @@ const AddTransactionScreen = ({ navigation }) => {
         >
           <View style={styles.walletModalHeader}>
             <Text variant="titleLarge" style={[styles.walletModalTitle, { color: theme.colors.onSurface }]}>
-              Select Wallet
-            </Text>
+            Select Wallet
+          </Text>
             <TouchableOpacity
               onPress={() => {
                 if (isMountedRef.current) {
@@ -613,7 +613,7 @@ const AddTransactionScreen = ({ navigation }) => {
                       setNewWalletName(w.name || '');
                       setNewWalletBankName(w.bank_name || '');
                       setNewWalletLast4Digits(w.last_4_digits || '');
-                      setWalletModalVisible(false);
+              setWalletModalVisible(false);
                       setShowAddWalletModal(true);
                     }
                   }}
@@ -621,7 +621,7 @@ const AddTransactionScreen = ({ navigation }) => {
                 >
                   <List.Icon icon="pencil" iconColor="#666" size={20} />
                 </TouchableOpacity>
-              </View>
+          </View>
             ))}
             
             <TouchableOpacity
@@ -889,9 +889,9 @@ const AddTransactionScreen = ({ navigation }) => {
           display="default"
           onChange={(event, date) => {
             if (isMountedRef.current) {
-              setShowDatePicker(false);
-              if (event.type !== 'dismissed' && date) {
-                setSelectedDate(date);
+            setShowDatePicker(false);
+            if (event.type !== 'dismissed' && date) {
+              setSelectedDate(date);
               }
             }
           }}

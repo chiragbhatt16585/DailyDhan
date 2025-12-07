@@ -1,11 +1,9 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import {
   Button,
   Card,
   List,
-  Portal,
-  Modal,
   Text,
   TextInput,
   useTheme,
@@ -19,12 +17,6 @@ const WalletsScreen = ({ navigation }) => {
   const theme = useTheme();
   const isMountedRef = useRef(true);
   const [wallets, setWallets] = useState([]);
-  const [addWalletModalVisible, setAddWalletModalVisible] = useState(false);
-  const [editingWallet, setEditingWallet] = useState(null);
-  const [newWalletType, setNewWalletType] = useState('cash');
-  const [newWalletName, setNewWalletName] = useState('');
-  const [newWalletBankName, setNewWalletBankName] = useState('');
-  const [newWalletLast4Digits, setNewWalletLast4Digits] = useState('');
 
   const loadWallets = async () => {
     if (!isMountedRef.current) return;
@@ -39,22 +31,23 @@ const WalletsScreen = ({ navigation }) => {
         rows.push(result.rows.item(i));
       }
       
-      if (isMountedRef.current) {
-        setWallets(rows);
-      }
+      // Use setTimeout to ensure we're not updating during unmount
+      setTimeout(() => {
+        if (isMountedRef.current) {
+          setWallets(rows);
+        }
+      }, 0);
     } catch (e) {
       console.warn('Failed to load wallets', e);
     }
   };
 
   useFocusEffect(
-    useCallback(() => {
+    React.useCallback(() => {
       isMountedRef.current = true;
       loadWallets();
       return () => {
         isMountedRef.current = false;
-        setAddWalletModalVisible(false);
-        setEditingWallet(null);
       };
     }, []),
   );
@@ -87,62 +80,6 @@ const WalletsScreen = ({ navigation }) => {
       case 'upi': return 'UPI';
       case 'credit_card': return 'Credit Card';
       default: return 'Wallet';
-    }
-  };
-
-  const getWalletNamePlaceholder = (type) => {
-    switch (type) {
-      case 'cash': return 'e.g. Cash, Wallet';
-      case 'bank': return 'e.g. Savings Account, Current Account';
-      case 'upi': return 'e.g. PhonePe, Google Pay, Paytm';
-      case 'credit_card': return 'e.g. HDFC Credit Card, SBI Credit Card';
-      default: return 'Wallet Name';
-    }
-  };
-
-  const handleSaveWallet = async () => {
-    if (!newWalletName.trim()) return;
-    
-    try {
-      const db = await getDB();
-      
-      if (editingWallet) {
-        // Update existing wallet
-        await db.executeSql(
-          'UPDATE wallets SET name = ?, type = ?, bank_name = ?, last_4_digits = ? WHERE id = ?',
-          [
-            newWalletName.trim(),
-            newWalletType,
-            newWalletType === 'bank' || newWalletType === 'credit_card' ? newWalletBankName.trim() : null,
-            newWalletType === 'credit_card' ? newWalletLast4Digits.trim() : null,
-            editingWallet.id,
-          ],
-        );
-      } else {
-        // Create new wallet
-        await db.executeSql(
-          'INSERT INTO wallets (name, type, bank_name, last_4_digits) VALUES (?, ?, ?, ?)',
-          [
-            newWalletName.trim(),
-            newWalletType,
-            newWalletType === 'bank' || newWalletType === 'credit_card' ? newWalletBankName.trim() : null,
-            newWalletType === 'credit_card' ? newWalletLast4Digits.trim() : null,
-          ],
-        );
-      }
-      
-      await loadWallets();
-      if (isMountedRef.current) {
-        setAddWalletModalVisible(false);
-        setEditingWallet(null);
-        setNewWalletType('cash');
-        setNewWalletName('');
-        setNewWalletBankName('');
-        setNewWalletLast4Digits('');
-      }
-    } catch (e) {
-      console.warn('Failed to save wallet', e);
-      Alert.alert('Error', 'Failed to save wallet. Please try again.');
     }
   };
 
@@ -186,32 +123,11 @@ const WalletsScreen = ({ navigation }) => {
   };
 
   const handleEditWallet = (wallet) => {
-    setEditingWallet(wallet);
-    setNewWalletType(wallet.type || 'cash');
-    setNewWalletName(wallet.name || '');
-    setNewWalletBankName(wallet.bank_name || '');
-    setNewWalletLast4Digits(wallet.last_4_digits || '');
-    setAddWalletModalVisible(true);
+    navigation.navigate('AddEditWallet', { wallet });
   };
 
   const handleAddWallet = () => {
-    setEditingWallet(null);
-    setNewWalletType('cash');
-    setNewWalletName('');
-    setNewWalletBankName('');
-    setNewWalletLast4Digits('');
-    setAddWalletModalVisible(true);
-  };
-
-  const handleCloseModal = () => {
-    if (isMountedRef.current) {
-      setAddWalletModalVisible(false);
-      setEditingWallet(null);
-      setNewWalletType('cash');
-      setNewWalletName('');
-      setNewWalletBankName('');
-      setNewWalletLast4Digits('');
-    }
+    navigation.navigate('AddEditWallet');
   };
 
   const filteredWallets = wallets;
@@ -246,6 +162,7 @@ const WalletsScreen = ({ navigation }) => {
           <FlatList
             data={filteredWallets}
             keyExtractor={item => item.id.toString()}
+            removeClippedSubviews={false}
             renderItem={({ item }) => {
               const walletColor = getWalletTypeColor(item.type);
               return (
@@ -306,123 +223,6 @@ const WalletsScreen = ({ navigation }) => {
           />
         )}
       </View>
-
-      {/* Add/Edit Wallet Modal */}
-      <Portal>
-        <Modal
-          visible={addWalletModalVisible}
-          onDismiss={handleCloseModal}
-          contentContainerStyle={[styles.modal, { backgroundColor: theme.colors.surface }]}
-        >
-          <View style={styles.modalHeader}>
-            <Text variant="titleLarge" style={[styles.modalTitle, { color: theme.colors.onSurface }]}>
-              {editingWallet ? 'Edit Wallet' : 'Add New Wallet'}
-            </Text>
-            <IconButton
-              icon="close"
-              size={24}
-              iconColor={theme.colors.onSurface}
-              onPress={handleCloseModal}
-            />
-          </View>
-
-          <ScrollView style={styles.modalContent}>
-            <Text variant="bodyMedium" style={[styles.formLabel, { color: theme.colors.onSurface }]}>
-              Wallet Type
-            </Text>
-            <View style={styles.walletTypeContainer}>
-              {['cash', 'bank', 'upi', 'credit_card'].map(walletType => (
-                <TouchableOpacity
-                  key={walletType}
-                  onPress={() => setNewWalletType(walletType)}
-                  style={[
-                    styles.walletTypeButton,
-                    { backgroundColor: theme.colors.surface },
-                    newWalletType === walletType && [
-                      styles.walletTypeButtonActive,
-                      { backgroundColor: theme.colors.primary },
-                    ],
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.walletTypeButtonText,
-                      { color: theme.colors.onSurface },
-                      newWalletType === walletType && styles.walletTypeButtonTextActive,
-                    ]}
-                  >
-                    {walletType === 'cash' ? 'Cash' : walletType === 'bank' ? 'Bank' : walletType === 'upi' ? 'UPI' : 'Credit Card'}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <TextInput
-              mode="outlined"
-              label="Wallet Name"
-              value={newWalletName}
-              onChangeText={setNewWalletName}
-              placeholder={getWalletNamePlaceholder(newWalletType)}
-              style={styles.input}
-              outlineColor="#E0E0E0"
-              activeOutlineColor={theme.colors.primary}
-            />
-
-            {(newWalletType === 'bank' || newWalletType === 'credit_card') && (
-              <TextInput
-                mode="outlined"
-                label="Bank Name"
-                value={newWalletBankName}
-                onChangeText={setNewWalletBankName}
-                placeholder="e.g. HDFC Bank, SBI, ICICI"
-                style={styles.input}
-                outlineColor="#E0E0E0"
-                activeOutlineColor={theme.colors.primary}
-              />
-            )}
-
-            {newWalletType === 'credit_card' && (
-              <TextInput
-                mode="outlined"
-                label="Last 4 Digits"
-                value={newWalletLast4Digits}
-                onChangeText={(text) => {
-                  if (text.length <= 4 && /^\d*$/.test(text)) {
-                    setNewWalletLast4Digits(text);
-                  }
-                }}
-                placeholder="1234"
-                keyboardType="numeric"
-                maxLength={4}
-                style={styles.input}
-                outlineColor="#E0E0E0"
-                activeOutlineColor={theme.colors.primary}
-              />
-            )}
-
-            <View style={styles.modalActions}>
-              {editingWallet && (
-                <Button
-                  mode="text"
-                  textColor="#E91E63"
-                  onPress={() => handleDeleteWallet(editingWallet)}
-                  style={styles.deleteButton}
-                >
-                  Delete
-                </Button>
-              )}
-              <Button
-                mode="contained"
-                onPress={handleSaveWallet}
-                disabled={!newWalletName.trim()}
-                style={styles.saveButton}
-              >
-                {editingWallet ? 'Update' : 'Save'}
-              </Button>
-            </View>
-          </ScrollView>
-        </Modal>
-      </Portal>
     </>
   );
 };
@@ -513,80 +313,5 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 16,
-  },
-  modal: {
-    margin: 20,
-    borderRadius: 16,
-    maxHeight: '85%',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.1)',
-  },
-  modalTitle: {
-    fontWeight: '600',
-    flex: 1,
-  },
-  modalContent: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    maxHeight: 500,
-  },
-  formLabel: {
-    marginBottom: 12,
-    marginTop: 8,
-    fontWeight: '600',
-  },
-  walletTypeContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 16,
-  },
-  walletTypeButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  walletTypeButtonActive: {
-    borderColor: '#1E4E7C',
-  },
-  walletTypeButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  walletTypeButtonTextActive: {
-    color: '#FFFFFF',
-  },
-  input: {
-    marginBottom: 16,
-    backgroundColor: '#FFFFFF',
-  },
-  modalActions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 20,
-    gap: 12,
-  },
-  deleteButton: {
-    minWidth: 80,
-  },
-  saveButton: {
-    minWidth: 80,
   },
 });

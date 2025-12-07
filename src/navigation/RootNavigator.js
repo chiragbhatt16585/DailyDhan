@@ -11,6 +11,7 @@ import DashboardScreen from '../screens/Dashboard/DashboardScreen';
 import AddTransactionScreen from '../screens/AddTransaction/AddTransactionScreen';
 import CategoriesScreen from '../screens/Categories/CategoriesScreen';
 import WalletsScreen from '../screens/Wallets/WalletsScreen';
+import AddEditWalletScreen from '../screens/Wallets/AddEditWalletScreen';
 import TransactionsScreen from '../screens/Transactions/TransactionsScreen';
 import AnalyticsScreen from '../screens/Analytics/AnalyticsScreen';
 import SettingsScreen from '../screens/Settings/SettingsScreen';
@@ -24,6 +25,11 @@ import MonthlySummaryReportScreen from '../screens/MonthlySummaryReport/MonthlyS
 import WalletWiseReportScreen from '../screens/WalletWiseReport/WalletWiseReportScreen';
 import TopSpendingReportScreen from '../screens/TopSpendingReport/TopSpendingReportScreen';
 import IncomeTrendsReportScreen from '../screens/IncomeTrendsReport/IncomeTrendsReportScreen';
+import PremiumScreen from '../screens/Premium/PremiumScreen';
+import BudgetsScreen from '../screens/Budgets/BudgetsScreen';
+import RecurringTransactionsScreen from '../screens/RecurringTransactions/RecurringTransactionsScreen';
+import AddEditRecurringTransactionScreen from '../screens/RecurringTransactions/AddEditRecurringTransactionScreen';
+import MasterDataScreen from '../screens/MasterData/MasterDataScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -35,10 +41,16 @@ const DashboardStack = () => {
       <Stack.Screen name="Dashboard" component={DashboardScreen} />
       <Stack.Screen name="AddTransaction" component={AddTransactionScreen} />
       <Stack.Screen name="Wallets" component={WalletsScreen} />
+      <Stack.Screen name="AddEditWallet" component={AddEditWalletScreen} />
       <Stack.Screen name="Transactions" component={TransactionsScreen} />
       <Stack.Screen name="Analytics" component={AnalyticsScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="Categories" component={CategoriesScreen} />
       <Stack.Screen name="AffiliateAccounts" component={AffiliateAccountsScreen} />
+      <Stack.Screen name="Premium" component={PremiumScreen} />
+      <Stack.Screen name="RecurringTransactions" component={RecurringTransactionsScreen} />
+      <Stack.Screen name="AddEditRecurringTransaction" component={AddEditRecurringTransactionScreen} />
+      <Stack.Screen name="MasterData" component={MasterDataScreen} />
     </Stack.Navigator>
   );
 };
@@ -55,14 +67,23 @@ const ReportsStack = () => {
       <Stack.Screen name="WalletWiseReport" component={WalletWiseReportScreen} />
       <Stack.Screen name="TopSpendingReport" component={TopSpendingReportScreen} />
       <Stack.Screen name="IncomeTrendsReport" component={IncomeTrendsReportScreen} />
+      <Stack.Screen name="Premium" component={PremiumScreen} />
     </Stack.Navigator>
   );
 };
 
-const CategoriesStack = () => {
+const BudgetsStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Categories" component={CategoriesScreen} />
+      <Stack.Screen name="Budgets" component={BudgetsScreen} />
+    </Stack.Navigator>
+  );
+};
+
+const AffiliateStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="AffiliateAccounts" component={AffiliateAccountsScreen} />
     </Stack.Navigator>
   );
 };
@@ -100,8 +121,11 @@ const MainTabs = () => {
           if (route.name === 'ReportsTab') {
             iconName = 'file-chart';
           }
-          if (route.name === 'CategoriesTab') {
-            iconName = 'shape';
+          if (route.name === 'BudgetsTab') {
+            iconName = 'chart-line-variant';
+          }
+          if (route.name === 'AffiliateTab') {
+            iconName = 'shopping';
           }
           return (
             <Icon 
@@ -125,9 +149,14 @@ const MainTabs = () => {
         options={{ title: 'Reports', tabBarLabel: 'Reports' }}
       />
       <Tab.Screen
-        name="CategoriesTab"
-        component={CategoriesStack}
-        options={{ title: 'Categories', tabBarLabel: 'Categories' }}
+        name="BudgetsTab"
+        component={BudgetsStack}
+        options={{ title: 'Budgets', tabBarLabel: 'Budgets' }}
+      />
+      <Tab.Screen
+        name="AffiliateTab"
+        component={AffiliateStack}
+        options={{ title: 'Shop', tabBarLabel: 'Shop' }}
       />
     </Tab.Navigator>
   );

@@ -612,6 +612,437 @@ export const getCategoryAnalysis = async (limit = 20) => {
   return rows;
 };
 
+// ==================== BUDGET MANAGEMENT FUNCTIONS ====================
+
+// Create or update a budget
+export const saveBudget = async (categoryId, amount, period, year, month) => {
+  const db = await getDB();
+  
+  // Check if budget already exists
+  let query, params;
+  if (period === 'monthly') {
+    query = 'SELECT id FROM budgets WHERE category_id = ? AND period = ? AND year = ? AND month = ?';
+    params = [categoryId, period, year, month];
+  } else {
+    query = 'SELECT id FROM budgets WHERE category_id = ? AND period = ? AND year = ?';
+    params = [categoryId, period, year];
+  }
+  
+  const [existing] = await db.executeSql(query, params);
+  
+  if (existing.rows.length > 0) {
+    // Update existing budget
+    const budgetId = existing.rows.item(0).id;
+    if (period === 'monthly') {
+      await db.executeSql(
+        'UPDATE budgets SET amount = ? WHERE id = ?',
+        [amount, budgetId]
+      );
+    } else {
+      await db.executeSql(
+        'UPDATE budgets SET amount = ? WHERE id = ?',
+        [amount, budgetId]
+      );
+    }
+    return budgetId;
+  } else {
+    // Create new budget
+    const [result] = await db.executeSql(
+      'INSERT INTO budgets (category_id, amount, period, year, month) VALUES (?, ?, ?, ?, ?)',
+      [categoryId, amount, period, year, month]
+    );
+    return result.insertId;
+  }
+};
+
+// Get all budgets for a specific period
+export const getBudgets = async (period, year, month = null) => {
+  const db = await getDB();
+  let query, params;
+  
+  if (period === 'monthly' && month !== null) {
+    query = `
+      SELECT 
+        b.id,
+        b.category_id,
+        b.amount,
+        b.period,
+        b.year,
+        b.month,
+        c.name AS category_name,
+        c.icon AS category_icon,
+        c.color AS category_color,
+        c.type AS category_type
+      FROM budgets b
+      JOIN categories c ON c.id = b.category_id
+      WHERE b.period = ? AND b.year = ? AND b.month = ?
+      ORDER BY c.name ASC
+    `;
+    params = [period, year, month];
+  } else if (period === 'yearly') {
+    query = `
+      SELECT 
+        b.id,
+        b.category_id,
+        b.amount,
+        b.period,
+        b.year,
+        b.month,
+        c.name AS category_name,
+        c.icon AS category_icon,
+        c.color AS category_color,
+        c.type AS category_type
+      FROM budgets b
+      JOIN categories c ON c.id = b.category_id
+      WHERE b.period = ? AND b.year = ?
+      ORDER BY c.name ASC
+    `;
+    params = [period, year];
+  } else {
+    return [];
+  }
+  
+  const [result] = await db.executeSql(query, params);
+  const rows = [];
+  for (let i = 0; i < result.rows.length; i += 1) {
+    rows.push(result.rows.item(i));
+  }
+  return rows;
+};
+
+// Get budget vs actual spending for a period
+export const getBudgetVsActual = async (period, year, month = null) => {
+  const db = await getDB();
+  let monthStart, monthEnd, yearStart, yearEnd, query, params;
+  
+  if (period === 'monthly' && month !== null) {
+    monthStart = `${year}-${String(month).padStart(2, '0')}-01`;
+    const nextMonth = month === 12 ? 1 : month + 1;
+    const nextYear = month === 12 ? year + 1 : year;
+    monthEnd = `${nextYear}-${String(nextMonth).padStart(2, '0')}-01`;
+    
+    query = `
+      SELECT 
+        b.id AS budget_id,
+        b.category_id,
+        b.amount AS budget_amount,
+        b.period,
+        b.year,
+        b.month,
+        c.name AS category_name,
+        c.icon AS category_icon,
+        c.color AS category_color,
+        COALESCE(SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END), 0) AS actual_spending,
+        COUNT(t.id) AS transaction_count
+      FROM budgets b
+      JOIN categories c ON c.id = b.category_id
+      LEFT JOIN transactions t ON t.category_id = b.category_id AND t.date >= ? AND t.date < ?
+      WHERE b.period = ? AND b.year = ? AND b.month = ?
+      GROUP BY b.id, b.category_id, b.amount, b.period, b.year, b.month, c.name, c.icon, c.color
+      ORDER BY c.name ASC
+    `;
+    params = [monthStart, monthEnd, period, year, month];
+  } else if (period === 'yearly') {
+    yearStart = `${year}-01-01`;
+    yearEnd = `${year + 1}-01-01`;
+    
+    query = `
+      SELECT 
+        b.id AS budget_id,
+        b.category_id,
+        b.amount AS budget_amount,
+        b.period,
+        b.year,
+        b.month,
+        c.name AS category_name,
+        c.icon AS category_icon,
+        c.color AS category_color,
+        COALESCE(SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END), 0) AS actual_spending,
+        COUNT(t.id) AS transaction_count
+      FROM budgets b
+      JOIN categories c ON c.id = b.category_id
+      LEFT JOIN transactions t ON t.category_id = b.category_id AND t.date >= ? AND t.date < ?
+      WHERE b.period = ? AND b.year = ?
+      GROUP BY b.id, b.category_id, b.amount, b.period, b.year, b.month, c.name, c.icon, c.color
+      ORDER BY c.name ASC
+    `;
+    params = [yearStart, yearEnd, period, year];
+  } else {
+    return [];
+  }
+  
+  const [result] = await db.executeSql(query, params);
+  const rows = [];
+  for (let i = 0; i < result.rows.length; i += 1) {
+    const row = result.rows.item(i);
+    const budgetAmount = row.budget_amount || 0;
+    const actualSpending = row.actual_spending || 0;
+    const remaining = budgetAmount - actualSpending;
+    const percentage = budgetAmount > 0 ? (actualSpending / budgetAmount) * 100 : 0;
+    const isOverBudget = actualSpending > budgetAmount;
+    
+    rows.push({
+      ...row,
+      remaining,
+      percentage: Math.min(percentage, 100),
+      isOverBudget,
+    });
+  }
+  return rows;
+};
+
+// Delete a budget
+export const deleteBudget = async (budgetId) => {
+  const db = await getDB();
+  await db.executeSql('DELETE FROM budgets WHERE id = ?', [budgetId]);
+};
+
+// Get all budgets (for management screen)
+export const getAllBudgets = async () => {
+  const db = await getDB();
+  const [result] = await db.executeSql(
+    `
+      SELECT 
+        b.id,
+        b.category_id,
+        b.amount,
+        b.period,
+        b.year,
+        b.month,
+        c.name AS category_name,
+        c.icon AS category_icon,
+        c.color AS category_color,
+        c.type AS category_type
+      FROM budgets b
+      JOIN categories c ON c.id = b.category_id
+      ORDER BY b.year DESC, b.month DESC, c.name ASC
+    `
+  );
+  
+  const rows = [];
+  for (let i = 0; i < result.rows.length; i += 1) {
+    rows.push(result.rows.item(i));
+  }
+  return rows;
+};
+
+// ==================== RECURRING TRANSACTIONS FUNCTIONS ====================
+
+// Calculate next due date based on frequency
+const calculateNextDueDate = (currentDate, frequency) => {
+  const date = new Date(currentDate);
+  
+  switch (frequency) {
+    case 'daily':
+      date.setDate(date.getDate() + 1);
+      break;
+    case 'weekly':
+      date.setDate(date.getDate() + 7);
+      break;
+    case 'monthly':
+      date.setMonth(date.getMonth() + 1);
+      break;
+    case 'yearly':
+      date.setFullYear(date.getFullYear() + 1);
+      break;
+    default:
+      date.setDate(date.getDate() + 1);
+  }
+  
+  return date.toISOString().split('T')[0];
+};
+
+// Create or update a recurring transaction
+export const saveRecurringTransaction = async (recurringData) => {
+  const db = await getDB();
+  const {
+    id,
+    amount,
+    type,
+    categoryId,
+    walletId,
+    frequency,
+    startDate,
+    note,
+    isActive = 1,
+  } = recurringData;
+  
+  const nextDueDate = calculateNextDueDate(startDate, frequency);
+  
+  if (id) {
+    // Update existing
+    await db.executeSql(
+      `UPDATE recurring_transactions 
+       SET amount = ?, type = ?, category_id = ?, wallet_id = ?, frequency = ?, 
+           start_date = ?, next_due_date = ?, note = ?, is_active = ?
+       WHERE id = ?`,
+      [amount, type, categoryId, walletId, frequency, startDate, nextDueDate, note, isActive, id]
+    );
+    return id;
+  } else {
+    // Create new
+    const [result] = await db.executeSql(
+      `INSERT INTO recurring_transactions 
+       (amount, type, category_id, wallet_id, frequency, start_date, next_due_date, note, is_active)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [amount, type, categoryId, walletId, frequency, startDate, nextDueDate, note, isActive]
+    );
+    return result.insertId;
+  }
+};
+
+// Get all recurring transactions
+export const getAllRecurringTransactions = async () => {
+  const db = await getDB();
+  const [result] = await db.executeSql(
+    `
+      SELECT 
+        r.id,
+        r.amount,
+        r.type,
+        r.category_id,
+        r.wallet_id,
+        r.frequency,
+        r.start_date,
+        r.next_due_date,
+        r.note,
+        r.is_active,
+        r.last_created_date,
+        c.name AS category_name,
+        c.icon AS category_icon,
+        c.color AS category_color,
+        w.name AS wallet_name
+      FROM recurring_transactions r
+      LEFT JOIN categories c ON c.id = r.category_id
+      LEFT JOIN wallets w ON w.id = r.wallet_id
+      ORDER BY r.next_due_date ASC, r.created_at DESC
+    `
+  );
+  
+  const rows = [];
+  for (let i = 0; i < result.rows.length; i += 1) {
+    rows.push(result.rows.item(i));
+  }
+  return rows;
+};
+
+// Get active recurring transactions that are due
+export const getDueRecurringTransactions = async () => {
+  const db = await getDB();
+  const today = new Date().toISOString().split('T')[0];
+  
+  const [result] = await db.executeSql(
+    `
+      SELECT 
+        r.id,
+        r.amount,
+        r.type,
+        r.category_id,
+        r.wallet_id,
+        r.frequency,
+        r.start_date,
+        r.next_due_date,
+        r.note,
+        r.last_created_date,
+        c.name AS category_name,
+        c.icon AS category_icon,
+        c.color AS category_color,
+        w.name AS wallet_name
+      FROM recurring_transactions r
+      LEFT JOIN categories c ON c.id = r.category_id
+      LEFT JOIN wallets w ON w.id = r.wallet_id
+      WHERE r.is_active = 1 AND r.next_due_date <= ?
+      ORDER BY r.next_due_date ASC
+    `,
+    [today]
+  );
+  
+  const rows = [];
+  for (let i = 0; i < result.rows.length; i += 1) {
+    rows.push(result.rows.item(i));
+  }
+  return rows;
+};
+
+// Create a transaction from a recurring template
+export const createTransactionFromRecurring = async (recurringId) => {
+  const db = await getDB();
+  
+  // Get the recurring transaction
+  const [recurringResult] = await db.executeSql(
+    'SELECT * FROM recurring_transactions WHERE id = ?',
+    [recurringId]
+  );
+  
+  if (recurringResult.rows.length === 0) {
+    throw new Error('Recurring transaction not found');
+  }
+  
+  const recurring = recurringResult.rows.item(0);
+  
+  // Create the transaction
+  const [transactionResult] = await db.executeSql(
+    `INSERT INTO transactions (amount, type, category_id, wallet_id, date, note)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [
+      recurring.amount,
+      recurring.type,
+      recurring.category_id,
+      recurring.wallet_id,
+      recurring.next_due_date,
+      recurring.note || `Recurring: ${recurring.frequency}`,
+    ]
+  );
+  
+  // Update next due date and last created date
+  const nextDueDate = calculateNextDueDate(recurring.next_due_date, recurring.frequency);
+  const today = new Date().toISOString().split('T')[0];
+  
+  await db.executeSql(
+    'UPDATE recurring_transactions SET next_due_date = ?, last_created_date = ? WHERE id = ?',
+    [nextDueDate, today, recurringId]
+  );
+  
+  return transactionResult.insertId;
+};
+
+// Process all due recurring transactions
+export const processDueRecurringTransactions = async () => {
+  const dueRecurring = await getDueRecurringTransactions();
+  const createdTransactions = [];
+  
+  for (const recurring of dueRecurring) {
+    try {
+      const transactionId = await createTransactionFromRecurring(recurring.id);
+      createdTransactions.push({
+        recurringId: recurring.id,
+        transactionId,
+        categoryName: recurring.category_name,
+        amount: recurring.amount,
+      });
+    } catch (error) {
+      console.warn(`Failed to create transaction from recurring ${recurring.id}:`, error);
+    }
+  }
+  
+  return createdTransactions;
+};
+
+// Delete a recurring transaction
+export const deleteRecurringTransaction = async (recurringId) => {
+  const db = await getDB();
+  await db.executeSql('DELETE FROM recurring_transactions WHERE id = ?', [recurringId]);
+};
+
+// Toggle active status of recurring transaction
+export const toggleRecurringTransactionStatus = async (recurringId, isActive) => {
+  const db = await getDB();
+  await db.executeSql(
+    'UPDATE recurring_transactions SET is_active = ? WHERE id = ?',
+    [isActive ? 1 : 0, recurringId]
+  );
+};
+
 const initSchema = async db => {
   const schema = `
     CREATE TABLE IF NOT EXISTS wallets (
@@ -641,8 +1072,36 @@ const initSchema = async db => {
       FOREIGN KEY (category_id) REFERENCES categories(id),
       FOREIGN KEY (wallet_id) REFERENCES wallets(id)
     );
+    CREATE TABLE IF NOT EXISTS budgets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      category_id INTEGER NOT NULL,
+      amount REAL NOT NULL,
+      period TEXT NOT NULL,
+      year INTEGER,
+      month INTEGER,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (category_id) REFERENCES categories(id)
+    );
+    CREATE TABLE IF NOT EXISTS recurring_transactions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      amount REAL NOT NULL,
+      type TEXT NOT NULL,
+      category_id INTEGER,
+      wallet_id INTEGER,
+      frequency TEXT NOT NULL,
+      start_date TEXT NOT NULL,
+      next_due_date TEXT NOT NULL,
+      note TEXT,
+      is_active INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      last_created_date TEXT,
+      FOREIGN KEY (category_id) REFERENCES categories(id),
+      FOREIGN KEY (wallet_id) REFERENCES wallets(id)
+    );
     CREATE UNIQUE INDEX IF NOT EXISTS idx_categories_name_type
       ON categories(name, type);
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_budgets_category_period
+      ON budgets(category_id, period, year, month);
   `;
 
   const statements = schema
@@ -679,6 +1138,57 @@ const initSchema = async db => {
     `);
   } catch (e) {
     // Column might already exist, ignore
+  }
+  
+  // Create budgets table if it doesn't exist (for existing databases)
+  try {
+    await db.executeSql(`
+      CREATE TABLE IF NOT EXISTS budgets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        category_id INTEGER NOT NULL,
+        amount REAL NOT NULL,
+        period TEXT NOT NULL,
+        year INTEGER,
+        month INTEGER,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (category_id) REFERENCES categories(id)
+      );
+    `);
+  } catch (e) {
+    // Table might already exist, ignore
+  }
+  
+  try {
+    await db.executeSql(`
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_budgets_category_period
+      ON budgets(category_id, period, year, month);
+    `);
+  } catch (e) {
+    // Index might already exist, ignore
+  }
+  
+  // Create recurring_transactions table if it doesn't exist (for existing databases)
+  try {
+    await db.executeSql(`
+      CREATE TABLE IF NOT EXISTS recurring_transactions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        amount REAL NOT NULL,
+        type TEXT NOT NULL,
+        category_id INTEGER,
+        wallet_id INTEGER,
+        frequency TEXT NOT NULL,
+        start_date TEXT NOT NULL,
+        next_due_date TEXT NOT NULL,
+        note TEXT,
+        is_active INTEGER DEFAULT 1,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        last_created_date TEXT,
+        FOREIGN KEY (category_id) REFERENCES categories(id),
+        FOREIGN KEY (wallet_id) REFERENCES wallets(id)
+      );
+    `);
+  } catch (e) {
+    // Table might already exist, ignore
   }
 };
 

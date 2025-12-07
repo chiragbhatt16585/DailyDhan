@@ -4,7 +4,7 @@ import { Text, useTheme, Card, List, IconButton, Icon } from 'react-native-paper
 import { useNavigation } from '@react-navigation/native';
 import { PieChart } from 'react-native-chart-kit';
 import { AppHeader } from '../../components/AppHeader';
-import { getMonthlySummary, getDB, getExpenseBreakdownByCategory } from '../../database';
+import { getMonthlySummary, getDB, getExpenseBreakdownByCategory, getBudgetVsActual } from '../../database';
 import AdBanner from '../../components/AdBanner';
 import { useAppStore } from '../../store/useAppStore';
 import { formatCurrency } from '../../utils/currencies';
@@ -25,6 +25,7 @@ const DashboardScreen = () => {
   const balance = income - expense;
   const [recent, setRecent] = useState([]);
   const [expenseBreakdown, setExpenseBreakdown] = useState([]);
+  const [budgetData, setBudgetData] = useState([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [activeTab, setActiveTab] = useState('transactions'); // 'transactions' or 'categorywise'
@@ -108,6 +109,15 @@ const DashboardScreen = () => {
       } catch (e) {
         // eslint-disable-next-line no-console
         console.warn('Failed to load expense breakdown', e);
+      }
+
+      // Load budget vs actual data
+      try {
+        const budgets = await getBudgetVsActual('monthly', selectedYear, selectedMonth);
+        setBudgetData(budgets);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('Failed to load budget data', e);
       }
     };
     load();
@@ -252,6 +262,88 @@ const DashboardScreen = () => {
           </View>
         </View>
 
+        {/* Budget Tracking Section */}
+        {budgetData.length > 0 && (
+          <Card style={styles.fullCard}>
+            <Card.Title 
+              title="Budget Tracking" 
+              right={(props) => (
+                <IconButton
+                  {...props}
+                  icon="chart-line-variant"
+                  size={20}
+                  onPress={() => navigation.navigate('Budgets')}
+                  iconColor={theme.colors.primary}
+                />
+              )}
+            />
+            <Card.Content>
+              {budgetData.slice(0, 3).map((budget) => {
+                const percentage = Math.min(budget.percentage, 100);
+                const isOverBudget = budget.isOverBudget;
+                const remaining = budget.remaining;
+                
+                return (
+                  <View key={budget.budget_id} style={styles.budgetItem}>
+                    <View style={styles.budgetHeader}>
+                      <View style={styles.budgetCategoryInfo}>
+                        <View style={[styles.budgetCategoryIcon, { backgroundColor: '#F5F5F5' }]}>
+                          <Icon source={budget.category_icon || 'wallet'} size={16} color={budget.category_color} />
+                        </View>
+                        <View style={styles.budgetCategoryText}>
+                          <Text variant="bodyMedium" style={{ color: theme.colors.onSurface, fontWeight: '500' }}>
+                            {budget.category_name}
+                          </Text>
+                          <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+                            {formatCurrency(budget.actual_spending, currency)} / {formatCurrency(budget.budget_amount, currency)}
+                          </Text>
+                        </View>
+                      </View>
+                      <View style={styles.budgetStatus}>
+                        {isOverBudget ? (
+                          <Text style={[styles.budgetStatusText, { color: '#E91E63' }]}>
+                            Over by {formatCurrency(Math.abs(remaining), currency)}
+                          </Text>
+                        ) : (
+                          <Text style={[styles.budgetStatusText, { color: '#34A853' }]}>
+                            {formatCurrency(remaining, currency)} left
+                          </Text>
+                        )}
+                      </View>
+                    </View>
+                    <View style={styles.budgetProgressContainer}>
+                      <View style={[styles.budgetProgressBar, { backgroundColor: theme.colors.surfaceVariant }]}>
+                        <View
+                          style={[
+                            styles.budgetProgressFill,
+                            {
+                              width: `${percentage}%`,
+                              backgroundColor: isOverBudget ? '#E91E63' : '#34A853',
+                            },
+                          ]}
+                        />
+                      </View>
+                      <Text variant="bodySmall" style={[styles.budgetPercentage, { color: theme.colors.onSurfaceVariant }]}>
+                        {percentage.toFixed(0)}%
+                      </Text>
+                    </View>
+                  </View>
+                );
+              })}
+              {budgetData.length > 3 && (
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Budgets')}
+                  style={styles.viewAllBudgets}
+                >
+                  <Text style={[styles.viewAllText, { color: theme.colors.primary }]}>
+                    View All Budgets ({budgetData.length})
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </Card.Content>
+          </Card>
+        )}
+
         {/* Quick Access to All Transactions with Search */}
         <TouchableOpacity
           onPress={() => navigation.navigate('Transactions')}
@@ -292,7 +384,7 @@ const DashboardScreen = () => {
           <Card style={styles.fullCard}>
             <Card.Title title="Expense Breakdown" />
             <Card.Content>
-              <View style={[styles.chartContainer, { backgroundColor: theme.colors.surface }]}>
+              <View style={[styles.chartContainer, { backgroundColor: '#FFFFFF' }]}>
                 <PieChart
                   data={pieData}
                   width={screenWidth - 64}
@@ -629,6 +721,7 @@ const styles = StyleSheet.create({
   },
   fullCard: {
     marginBottom: 16,
+    backgroundColor: '#FFFFFF',
   },
   sectionTitle: {
     marginTop: 8,
@@ -953,6 +1046,69 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '300',
     lineHeight: 32,
+  },
+  budgetItem: {
+    marginBottom: 20,
+  },
+  budgetHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  budgetCategoryInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  budgetCategoryIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  budgetCategoryText: {
+    flex: 1,
+  },
+  budgetStatus: {
+    alignItems: 'flex-end',
+  },
+  budgetStatusText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  budgetProgressContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  budgetProgressBar: {
+    flex: 1,
+    height: 8,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  budgetProgressFill: {
+    height: '100%',
+    borderRadius: 4,
+  },
+  budgetPercentage: {
+    minWidth: 40,
+    textAlign: 'right',
+    fontSize: 11,
+  },
+  viewAllBudgets: {
+    marginTop: 8,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+    alignItems: 'center',
+  },
+  viewAllText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
 

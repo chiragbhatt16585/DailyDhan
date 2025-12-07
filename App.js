@@ -8,17 +8,31 @@ import { RootNavigator } from './src/navigation/RootNavigator';
 import { ThemeProvider, useAppTheme } from './src/theme/ThemeProvider';
 import { lightPaperTheme, darkPaperTheme } from './src/theme/theme';
 import { useAppStore } from './src/store/useAppStore';
+import { processDueRecurringTransactions } from './src/database';
 
 function AppContent() {
   const { isDark } = useAppTheme();
-  const { initializeCurrency } = useAppStore();
+  const { initializeCurrency, initializePremium } = useAppStore();
 
   const theme = isDark ? darkPaperTheme : lightPaperTheme;
 
   useEffect(() => {
     // Initialize currency preference on app start
     initializeCurrency();
-  }, [initializeCurrency]);
+    // Initialize premium status on app start
+    initializePremium();
+    
+    // Process due recurring transactions on app start
+    const processRecurring = async () => {
+      try {
+        await processDueRecurringTransactions();
+      } catch (error) {
+        // Silently fail - don't interrupt app startup
+        console.warn('Failed to process recurring transactions on startup:', error);
+      }
+    };
+    processRecurring();
+  }, [initializeCurrency, initializePremium]);
 
   return (
     <PaperProvider theme={theme}>

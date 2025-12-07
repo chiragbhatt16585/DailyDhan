@@ -154,8 +154,8 @@ const WalletWiseReportScreen = () => {
                   </View>
                 </View>
                 <Text style={styles.summaryValue}>
-                  {formatCurrency(totalIncome, currency)}
-                </Text>
+                {formatCurrency(totalIncome, currency)}
+              </Text>
               </View>
             </View>
           </View>
@@ -171,8 +171,8 @@ const WalletWiseReportScreen = () => {
                   </View>
                 </View>
                 <Text style={styles.summaryValue}>
-                  {formatCurrency(totalExpense, currency)}
-                </Text>
+                {formatCurrency(totalExpense, currency)}
+              </Text>
               </View>
             </View>
           </View>
@@ -221,9 +221,9 @@ const WalletWiseReportScreen = () => {
         )}
 
         <View style={styles.sectionTitleContainer}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.onBackground }]}>
-            Wallet Breakdown
-          </Text>
+        <Text style={[styles.sectionTitle, { color: theme.colors.onBackground }]}>
+          Wallet Breakdown
+        </Text>
         </View>
 
         {walletData.length === 0 ? (
@@ -258,9 +258,9 @@ const WalletWiseReportScreen = () => {
                       />
                     </View>
                     <View style={styles.walletHeaderInfo}>
-                      <Text style={[styles.walletName, { color: theme.colors.onSurface }]}>
-                        {wallet.name}
-                      </Text>
+                  <Text style={[styles.walletName, { color: theme.colors.onSurface }]}>
+                    {wallet.name}
+                  </Text>
                       <View style={styles.walletMeta}>
                         <View style={[styles.walletTypeBadgeContainer, { backgroundColor: walletColor + '15' }]}>
                           <Text style={[styles.walletTypeBadge, { color: walletColor }]}>
@@ -294,8 +294,8 @@ const WalletWiseReportScreen = () => {
                           <Text style={[styles.walletDetailLabel, { color: '#065F46' }]}>Income</Text>
                         </View>
                         <Text style={[styles.walletDetailValue, { color: '#10B981' }]}>
-                          +{formatCurrency(wallet.total_income || 0, currency)}
-                        </Text>
+                        +{formatCurrency(wallet.total_income || 0, currency)}
+                      </Text>
                         {totalAmount > 0 && (
                           <Text style={[styles.walletDetailPercentage, { color: '#059669' }]}>
                             {incomePercentage}%
@@ -308,10 +308,10 @@ const WalletWiseReportScreen = () => {
                             <List.Icon icon="arrow-up" size={18} color="#FFFFFF" />
                           </View>
                           <Text style={[styles.walletDetailLabel, { color: '#991B1B' }]}>Expense</Text>
-                        </View>
+                    </View>
                         <Text style={[styles.walletDetailValue, { color: '#EF4444' }]}>
-                          -{formatCurrency(wallet.total_expense || 0, currency)}
-                        </Text>
+                        -{formatCurrency(wallet.total_expense || 0, currency)}
+                      </Text>
                         {totalAmount > 0 && (
                           <Text style={[styles.walletDetailPercentage, { color: '#DC2626' }]}>
                             {expensePercentage}%
@@ -326,11 +326,11 @@ const WalletWiseReportScreen = () => {
                           <Text style={[styles.walletNetBalanceLabel, { color: netBalance >= 0 ? '#065F46' : '#991B1B' }]}>Net Balance</Text>
                           <Text style={[styles.walletNetBalanceSubtext, { color: netBalance >= 0 ? '#059669' : '#DC2626' }]}>
                             {netBalance >= 0 ? 'Positive' : 'Negative'}
-                          </Text>
+                      </Text>
                         </View>
                         <Text style={[styles.walletNetBalanceValue, { color: netBalance >= 0 ? '#10B981' : '#EF4444' }]}>
                           {netBalance >= 0 ? '+' : '-'}{formatCurrency(Math.abs(netBalance), currency)}
-                        </Text>
+                      </Text>
                       </View>
                     </View>
                   </View>

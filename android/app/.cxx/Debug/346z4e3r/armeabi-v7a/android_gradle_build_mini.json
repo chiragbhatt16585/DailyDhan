@@ -1,9 +1,12 @@
 {
   "buildFiles": [
     "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-document-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
     "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-google-mobile-ads/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-iap/android/build/generated/source/codegen/jni/CMakeLists.txt",
     "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
     "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
+    "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-share/android/build/generated/source/codegen/jni/CMakeLists.txt",
     "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-svg/android/src/main/jni/CMakeLists.txt",
     "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/CMakeLists.txt",
     "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt"
@@ -38,6 +41,11 @@
         "/Users/chiragbhatt/.gradle/caches/8.10.2/transforms/5cd2cbc1b333eed575972d1ab45c2d56/transformed/react-android-0.76.0-debug/prefab/modules/reactnative/libs/android.armeabi-v7a/libreactnative.so"
       ]
     },
+    "react_codegen_RNIap::@91a736e576f79a9e87b9": {
+      "artifactName": "react_codegen_RNIap",
+      "abi": "armeabi-v7a",
+      "runtimeFiles": []
+    },
     "react_codegen_rnscreens::@25bcbd507e98d3a854ad": {
       "artifactName": "react_codegen_rnscreens",
       "abi": "armeabi-v7a",
@@ -66,6 +74,11 @@
       "abi": "armeabi-v7a",
       "runtimeFiles": []
     },
+    "react_codegen_rndocumentpicker::@1e246c1f1267e461f98b": {
+      "artifactName": "react_codegen_rndocumentpicker",
+      "abi": "armeabi-v7a",
+      "runtimeFiles": []
+    },
     "react_codegen_rnsvg::@4f40eb209d0c0b4a3b65": {
       "artifactName": "react_codegen_rnsvg",
       "abi": "armeabi-v7a",
@@ -75,6 +88,11 @@
         "/Users/chiragbhatt/.gradle/caches/8.10.2/transforms/5cd2cbc1b333eed575972d1ab45c2d56/transformed/react-android-0.76.0-debug/prefab/modules/jsi/libs/android.armeabi-v7a/libjsi.so",
         "/Users/chiragbhatt/.gradle/caches/8.10.2/transforms/3edf1a87345f97a0a10d63bef50c344e/transformed/fbjni-0.6.0/prefab/modules/fbjni/libs/android.armeabi-v7a/libfbjni.so"
       ]
+    },
+    "react_codegen_RNShareSpec::@e6c4c2b5aedb2ea213b7": {
+      "artifactName": "react_codegen_RNShareSpec",
+      "abi": "armeabi-v7a",
+      "runtimeFiles": []
     },
     "react_codegen_rnasyncstorage::@1596841e19ec5b9eeffe": {
       "artifactName": "react_codegen_rnasyncstorage",

@@ -41,6 +41,31 @@
         "android": null
       }
     },
+    "react-native-document-picker": {
+      "root": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-document-picker",
+      "name": "react-native-document-picker",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-document-picker/react-native-document-picker.podspec",
+          "version": "9.3.1",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-document-picker/android",
+          "packageImportPath": "import com.reactnativedocumentpicker.RNDocumentPickerPackage;",
+          "packageInstance": "new RNDocumentPickerPackage()",
+          "buildTypes": [],
+          "libraryName": "rndocumentpicker",
+          "componentDescriptors": [],
+          "cmakeListsPath": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-document-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
     "react-native-fs": {
       "root": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-fs",
       "name": "react-native-fs",
@@ -96,6 +121,31 @@
             "RNGoogleMobileAdsNativeViewComponentDescriptor"
           ],
           "cmakeListsPath": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-google-mobile-ads/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
+    "react-native-iap": {
+      "root": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-iap",
+      "name": "react-native-iap",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-iap/RNIap.podspec",
+          "version": "12.16.4",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-iap/android",
+          "packageImportPath": "import com.dooboolab.rniap.RNIapPackage;",
+          "packageInstance": "new RNIapPackage()",
+          "buildTypes": [],
+          "libraryName": "RNIap",
+          "componentDescriptors": [],
+          "cmakeListsPath": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-iap/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -161,6 +211,31 @@
             "RNSModalScreenComponentDescriptor"
           ],
           "cmakeListsPath": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
+    "react-native-share": {
+      "root": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-share",
+      "name": "react-native-share",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-share/RNShare.podspec",
+          "version": "10.2.1",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-share/android",
+          "packageImportPath": "import cl.json.RNSharePackage;",
+          "packageInstance": "new RNSharePackage()",
+          "buildTypes": [],
+          "libraryName": "RNShareSpec",
+          "componentDescriptors": [],
+          "cmakeListsPath": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-share/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -481,8 +556,7 @@
         },
         {
           "name": "--terminal <string>",
-          "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
-          "default": "vscode"
+          "description": "Launches the Metro Bundler in a new window using the specified terminal path."
         },
         {
           "name": "--binary-path <string>",
@@ -641,8 +715,7 @@
         },
         {
           "name": "--terminal <string>",
-          "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
-          "default": "vscode"
+          "description": "Launches the Metro Bundler in a new window using the specified terminal path."
         },
         {
           "name": "--appId <string>",
@@ -728,8 +801,8 @@
     "android": {
       "sourceDir": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android",
       "appName": "app",
-      "packageName": "com.google.hrivya.dailydhan",
-      "applicationId": "com.google.hrivya.dailydhan",
+      "packageName": "com.dailydhan",
+      "applicationId": "com.dailydhan",
       "mainActivity": ".MainActivity",
       "assets": []
     }

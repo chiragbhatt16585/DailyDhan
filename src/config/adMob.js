@@ -13,6 +13,11 @@ export const ADMOB_CONFIG = {
   
   // Rewarded Ad Unit ID (optional - for future use)
   REWARDED_AD_UNIT_ID: '', // Add your Rewarded Ad Unit ID here if needed
+  
+  // Logging Configuration
+  // Set to true to see detailed AdMob error logs (useful for debugging)
+  // Set to false to reduce console noise (recommended for production)
+  VERBOSE_LOGGING: false, // Set to true if you want to see all AdMob errors in console
 };
 
 // Use test ads in development, live ads in production

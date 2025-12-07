@@ -45,9 +45,12 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/x86/rnasyncstorage_autolinked_build/cmake_install.cmake")
+  include("/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/x86/rndocumentpicker_autolinked_build/cmake_install.cmake")
   include("/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/x86/RNGoogleMobileAdsSpec_autolinked_build/cmake_install.cmake")
+  include("/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/x86/RNIap_autolinked_build/cmake_install.cmake")
   include("/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/x86/safeareacontext_autolinked_build/cmake_install.cmake")
   include("/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/x86/rnscreens_autolinked_build/cmake_install.cmake")
+  include("/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/x86/RNShareSpec_autolinked_build/cmake_install.cmake")
   include("/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/x86/rnsvg_autolinked_build/cmake_install.cmake")
   include("/Users/chiragbhatt/Desktop/Hriday/DailyDhan/android/app/.cxx/Debug/346z4e3r/x86/RNVectorIconsSpec_autolinked_build/cmake_install.cmake")
 
