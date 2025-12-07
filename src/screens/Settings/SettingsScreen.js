@@ -318,7 +318,8 @@ const SettingsScreen = ({ navigation }) => {
           />
         )}
 
-      <List.Item
+      {/* Backup and Restore features temporarily hidden */}
+      {/* <List.Item
           title="Backup data"
           description={isBackingUp ? 'Creating backup...' : 'Save a backup of your data to device storage or Google Drive'}
           onPress={handleBackupPress}
@@ -343,7 +344,7 @@ const SettingsScreen = ({ navigation }) => {
               <List.Icon {...props} icon="chevron-right" />
             )
           }
-        />
+        /> */}
         <View style={styles.footer}>
           <Text variant="bodySmall">DailyDhan · Track Today, Save for Tomorrow</Text>
           <Text variant="bodySmall" style={styles.versionText}>
