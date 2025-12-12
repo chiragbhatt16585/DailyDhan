@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { View, StyleSheet, ScrollView, Platform, TouchableOpacity, Dimensions, TextInput as RNTextInput, BackHandler } from 'react-native';
-import { Button, Text, List, Portal, Modal, useTheme, TextInput } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, Platform, TouchableOpacity, Dimensions, TextInput as RNTextInput, BackHandler, Alert } from 'react-native';
+import { Button, Text, List, Portal, Modal, useTheme, TextInput, IconButton } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { getDB } from '../../database';
 import { AppHeader } from '../../components/AppHeader';
 import { useFocusEffect } from '@react-navigation/native';
@@ -29,6 +28,8 @@ const AddTransactionScreen = ({ navigation }) => {
   const [categoryPickerVisible, setCategoryPickerVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [tempSelectedDate, setTempSelectedDate] = useState(new Date());
+  const [showAmountModal, setShowAmountModal] = useState(false);
   const [walletModalVisible, setWalletModalVisible] = useState(false);
   const [showAddWalletModal, setShowAddWalletModal] = useState(false);
   const [editingWallet, setEditingWallet] = useState(null);
@@ -39,13 +40,15 @@ const AddTransactionScreen = ({ navigation }) => {
 
   // Custom back handler that closes modals before navigating
   const handleBackPress = useCallback(() => {
-    if (categoryPickerVisible || walletModalVisible || showAddWalletModal || showDatePicker) {
+    if (categoryPickerVisible || walletModalVisible || showAddWalletModal || showDatePicker || showAmountModal) {
       // Close all modals first
       setCategoryPickerVisible(false);
       setWalletModalVisible(false);
       setShowAddWalletModal(false);
       setShowDatePicker(false);
+      setShowAmountModal(false);
       setEditingWallet(null);
+      setTempSelectedDate(selectedDate);
       // Small delay to ensure modals are fully closed before navigation
       setTimeout(() => {
         if (isMountedRef.current) {
@@ -55,17 +58,18 @@ const AddTransactionScreen = ({ navigation }) => {
     } else {
       navigation.goBack();
     }
-  }, [navigation, categoryPickerVisible, walletModalVisible, showAddWalletModal, showDatePicker]);
+  }, [navigation, categoryPickerVisible, walletModalVisible, showAddWalletModal, showDatePicker, showAmountModal, selectedDate]);
 
   // Handle Android hardware back button
   useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (categoryPickerVisible || walletModalVisible || showAddWalletModal || showDatePicker) {
+      if (categoryPickerVisible || walletModalVisible || showAddWalletModal || showDatePicker || showAmountModal) {
         // Close modals first
         setCategoryPickerVisible(false);
         setWalletModalVisible(false);
         setShowAddWalletModal(false);
         setShowDatePicker(false);
+        setShowAmountModal(false);
         setEditingWallet(null);
         return true; // Prevent default back behavior
       }
@@ -73,7 +77,7 @@ const AddTransactionScreen = ({ navigation }) => {
     });
 
     return () => backHandler.remove();
-  }, [categoryPickerVisible, walletModalVisible, showAddWalletModal, showDatePicker]);
+  }, [categoryPickerVisible, walletModalVisible, showAddWalletModal, showDatePicker, showAmountModal]);
 
   // Ensure modals are closed when leaving this screen to avoid Android ViewGroup errors
   useFocusEffect(
@@ -86,6 +90,7 @@ const AddTransactionScreen = ({ navigation }) => {
         setWalletModalVisible(false);
         setShowAddWalletModal(false);
         setShowDatePicker(false);
+        setShowAmountModal(false);
         setEditingWallet(null);
       };
     }, []),
@@ -335,7 +340,10 @@ const AddTransactionScreen = ({ navigation }) => {
             })}
             left={props => <List.Icon {...props} icon="calendar" />}
             right={props => <List.Icon {...props} icon="chevron-right" />}
-            onPress={() => setShowDatePicker(true)}
+            onPress={() => {
+              setTempSelectedDate(selectedDate);
+              setShowDatePicker(true);
+            }}
             style={styles.listItem}
           />
           
@@ -345,11 +353,12 @@ const AddTransactionScreen = ({ navigation }) => {
               displayAmount 
                 ? (calculatedAmount 
                     ? formatCurrency(Number(displayAmount), currency)
-                    : displayAmount) // Show expression while typing, formatted currency after calculation
-                : 'Enter amount'
+                    : formatCurrency(Number(displayAmount) || 0, currency))
+                : 'Tap to enter amount'
             }
             left={props => <List.Icon {...props} icon="currency-usd" />}
             right={props => <List.Icon {...props} icon="chevron-right" />}
+            onPress={() => setShowAmountModal(true)}
             style={styles.listItem}
           />
           
@@ -391,106 +400,23 @@ const AddTransactionScreen = ({ navigation }) => {
         </View>
         </ScrollView>
 
-        {/* Numeric Keypad - Fixed at bottom */}
+        {/* Save Button - Fixed at bottom */}
         <View style={[
-          styles.keypadContainer, 
+          styles.saveContainer, 
           { 
             backgroundColor: theme.colors.surface,
-            paddingBottom: Math.max(insets.bottom, 8),
+            paddingBottom: Math.max(insets.bottom, 16),
           }
         ]}>
-          <View style={styles.keypadRow}>
-            {[1, 2, 3].map(num => (
-              <TouchableOpacity
-                key={num}
-                style={[styles.keypadButton, { backgroundColor: '#FFFFFF' }]}
-                onPress={() => handleNumberPress(num.toString())}
-              >
-                <Text style={styles.keypadButtonText}>{num}</Text>
-              </TouchableOpacity>
-            ))}
-            <TouchableOpacity
-              style={[styles.keypadButton, styles.operatorButton, { backgroundColor: '#E0E0E0' }]}
-              onPress={handleBackspace}
-            >
-              <Text style={styles.keypadButtonText}>⌫</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.keypadButton, styles.operatorButton, { backgroundColor: '#E0E0E0' }]}
-              onPress={() => handleOperatorPress('÷')}
-            >
-              <Text style={styles.keypadButtonText}>÷</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <View style={styles.keypadRow}>
-            {[4, 5, 6].map(num => (
-              <TouchableOpacity
-                key={num}
-                style={[styles.keypadButton, { backgroundColor: '#FFFFFF' }]}
-                onPress={() => handleNumberPress(num.toString())}
-              >
-                <Text style={styles.keypadButtonText}>{num}</Text>
-              </TouchableOpacity>
-            ))}
-            <TouchableOpacity
-              style={[styles.keypadButton, styles.operatorButton, { backgroundColor: '#E0E0E0' }]}
-              onPress={() => handleOperatorPress('×')}
-            >
-              <Text style={styles.keypadButtonText}>×</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.keypadButton, styles.operatorButton, { backgroundColor: '#E0E0E0' }]}
-              onPress={() => handleOperatorPress('–')}
-            >
-              <Text style={styles.keypadButtonText}>–</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <View style={styles.keypadRow}>
-            {[7, 8, 9].map(num => (
-              <TouchableOpacity
-                key={num}
-                style={[styles.keypadButton, { backgroundColor: '#FFFFFF' }]}
-                onPress={() => handleNumberPress(num.toString())}
-              >
-                <Text style={styles.keypadButtonText}>{num}</Text>
-              </TouchableOpacity>
-            ))}
-            <TouchableOpacity
-              style={[styles.keypadButton, styles.operatorButton, { backgroundColor: '#E0E0E0' }]}
-              onPress={() => handleOperatorPress('+')}
-            >
-              <Text style={styles.keypadButtonText}>+</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.keypadButton, styles.equalsButton, { backgroundColor: theme.colors.primary }]}
-              onPress={calculateResult}
-            >
-              <Text style={[styles.keypadButtonText, { color: '#FFFFFF', fontSize: 24 }]}>=</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <View style={styles.keypadRow}>
-            <TouchableOpacity
-              style={[styles.keypadButton, styles.zeroButton, { backgroundColor: '#FFFFFF' }]}
-              onPress={() => handleNumberPress('0')}
-            >
-              <Text style={styles.keypadButtonText}>0</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.keypadButton, { backgroundColor: '#FFFFFF' }]}
-              onPress={handleDecimal}
-            >
-              <Text style={styles.keypadButtonText}>.</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.keypadButton, styles.saveButtonKeypad, { backgroundColor: theme.colors.primary }]}
-              onPress={onSave}
-            >
-              <Text style={[styles.keypadButtonText, { color: '#FFFFFF' }]}>Save</Text>
-            </TouchableOpacity>
-          </View>
+          <Button
+            mode="contained"
+            onPress={onSave}
+            style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
+            contentStyle={styles.saveButtonContent}
+            disabled={!amount && !calculatedAmount}
+          >
+            Save Transaction
+          </Button>
         </View>
       </View>
 
@@ -848,55 +774,344 @@ const AddTransactionScreen = ({ navigation }) => {
         </Modal>
       </Portal>
 
-      {/* Date Picker */}
-      {Platform.OS === 'ios' && showDatePicker && (
-        <Portal>
-          <Modal
-            visible={showDatePicker}
-            onDismiss={() => {
-              if (isMountedRef.current) {
-                setShowDatePicker(false);
-              }
-            }}
-            contentContainerStyle={[styles.dateModal, { backgroundColor: theme.colors.surface }]}
-          >
-            <Text variant="titleMedium" style={[styles.modalTitle, { color: theme.colors.onSurface }]}>
-              Select Date
-            </Text>
-            <DateTimePicker
-              value={selectedDate}
-              mode="date"
-              display="spinner"
-              onChange={(event, date) => {
-                if (isMountedRef.current && date) {
-                  setSelectedDate(date);
-                }
-              }}
-              style={styles.datePickerIOS}
-            />
-            <Button onPress={() => {
-              if (isMountedRef.current) {
-                setShowDatePicker(false);
-              }
-            }}>Done</Button>
-          </Modal>
-        </Portal>
-      )}
-      {Platform.OS === 'android' && showDatePicker && (
-        <DateTimePicker
-          value={selectedDate}
-          mode="date"
-          display="default"
-          onChange={(event, date) => {
+      {/* Amount Calculator Modal */}
+      <Portal>
+        <Modal
+          visible={showAmountModal}
+          onDismiss={() => {
             if (isMountedRef.current) {
-            setShowDatePicker(false);
-            if (event.type !== 'dismissed' && date) {
-              setSelectedDate(date);
-              }
+              setShowAmountModal(false);
             }
           }}
-        />
-      )}
+          contentContainerStyle={[styles.amountModal, { backgroundColor: theme.colors.surface }]}
+        >
+          <View style={styles.amountModalHeader}>
+            <Text variant="titleLarge" style={[styles.amountModalTitle, { color: theme.colors.onSurface }]}>
+              Enter Amount
+            </Text>
+            <IconButton
+              icon="close"
+              onPress={() => {
+                if (isMountedRef.current) {
+                  setShowAmountModal(false);
+                }
+              }}
+              size={24}
+            />
+          </View>
+
+          {/* Amount Display */}
+          <View style={styles.amountDisplaySection}>
+            <Text variant="labelMedium" style={[styles.amountDisplayLabel, { color: theme.colors.onSurfaceVariant }]}>
+              Amount
+            </Text>
+            <Text variant="displaySmall" style={[styles.amountDisplayText, { color: theme.colors.onSurface }]}>
+              {displayAmount 
+                ? (calculatedAmount 
+                    ? formatCurrency(Number(displayAmount), currency)
+                    : displayAmount.includes('+') || displayAmount.includes('–') || displayAmount.includes('×') || displayAmount.includes('÷')
+                      ? displayAmount + ' = ?'
+                      : formatCurrency(Number(displayAmount) || 0, currency))
+                : '0.00'}
+            </Text>
+            {displayAmount && !calculatedAmount && (displayAmount.includes('+') || displayAmount.includes('–') || displayAmount.includes('×') || displayAmount.includes('÷')) && (
+              <Button
+                mode="contained"
+                onPress={calculateResult}
+                style={[styles.calculateButton, { backgroundColor: theme.colors.primary }]}
+                compact
+              >
+                Calculate
+              </Button>
+            )}
+          </View>
+
+          {/* Numeric Keypad */}
+          <View style={styles.keypadContainer}>
+            <View style={styles.keypadRow}>
+              {[1, 2, 3].map(num => (
+                <TouchableOpacity
+                  key={num}
+                  style={[styles.keypadButton, { backgroundColor: '#FFFFFF' }]}
+                  onPress={() => handleNumberPress(num.toString())}
+                >
+                  <Text style={styles.keypadButtonText}>{num}</Text>
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity
+                style={[styles.keypadButton, styles.operatorButton, { backgroundColor: '#E0E0E0' }]}
+                onPress={handleBackspace}
+              >
+                <Text style={styles.keypadButtonText}>⌫</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.keypadButton, styles.operatorButton, { backgroundColor: '#E0E0E0' }]}
+                onPress={() => handleOperatorPress('÷')}
+              >
+                <Text style={styles.keypadButtonText}>÷</Text>
+              </TouchableOpacity>
+            </View>
+            
+            <View style={styles.keypadRow}>
+              {[4, 5, 6].map(num => (
+                <TouchableOpacity
+                  key={num}
+                  style={[styles.keypadButton, { backgroundColor: '#FFFFFF' }]}
+                  onPress={() => handleNumberPress(num.toString())}
+                >
+                  <Text style={styles.keypadButtonText}>{num}</Text>
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity
+                style={[styles.keypadButton, styles.operatorButton, { backgroundColor: '#E0E0E0' }]}
+                onPress={() => handleOperatorPress('×')}
+              >
+                <Text style={styles.keypadButtonText}>×</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.keypadButton, styles.operatorButton, { backgroundColor: '#E0E0E0' }]}
+                onPress={() => handleOperatorPress('–')}
+              >
+                <Text style={styles.keypadButtonText}>–</Text>
+              </TouchableOpacity>
+            </View>
+            
+            <View style={styles.keypadRow}>
+              {[7, 8, 9].map(num => (
+                <TouchableOpacity
+                  key={num}
+                  style={[styles.keypadButton, { backgroundColor: '#FFFFFF' }]}
+                  onPress={() => handleNumberPress(num.toString())}
+                >
+                  <Text style={styles.keypadButtonText}>{num}</Text>
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity
+                style={[styles.keypadButton, styles.operatorButton, { backgroundColor: '#E0E0E0' }]}
+                onPress={() => handleOperatorPress('+')}
+              >
+                <Text style={styles.keypadButtonText}>+</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.keypadButton, styles.equalsButton, { backgroundColor: theme.colors.primary }]}
+                onPress={calculateResult}
+              >
+                <Text style={[styles.keypadButtonText, { color: '#FFFFFF', fontSize: 24 }]}>=</Text>
+              </TouchableOpacity>
+            </View>
+            
+            <View style={styles.keypadRow}>
+              <TouchableOpacity
+                style={[styles.keypadButton, styles.zeroButton, { backgroundColor: '#FFFFFF' }]}
+                onPress={() => handleNumberPress('0')}
+              >
+                <Text style={styles.keypadButtonText}>0</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.keypadButton, { backgroundColor: '#FFFFFF' }]}
+                onPress={handleDecimal}
+              >
+                <Text style={styles.keypadButtonText}>.</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.keypadButton, styles.clearButton, { backgroundColor: '#E0E0E0' }]}
+                onPress={handleClear}
+              >
+                <Text style={styles.keypadButtonText}>Clear</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.amountModalActions}>
+            <Button
+              mode="outlined"
+              onPress={() => {
+                if (isMountedRef.current) {
+                  setShowAmountModal(false);
+                }
+              }}
+              style={styles.amountModalButton}
+            >
+              Cancel
+            </Button>
+            <Button
+              mode="contained"
+              onPress={() => {
+                if (isMountedRef.current) {
+                  setShowAmountModal(false);
+                }
+              }}
+              style={styles.amountModalButton}
+            >
+              Done
+            </Button>
+          </View>
+        </Modal>
+      </Portal>
+
+      {/* Custom Date Picker Modal */}
+      <Portal>
+        <Modal
+          visible={showDatePicker}
+          onDismiss={() => {
+            if (isMountedRef.current) {
+              setShowDatePicker(false);
+              setTempSelectedDate(selectedDate);
+            }
+          }}
+          contentContainerStyle={[styles.dateModal, { backgroundColor: theme.colors.surface }]}
+        >
+          <Text variant="titleMedium" style={[styles.modalTitle, { color: theme.colors.onSurface }]}>
+            Select Date
+          </Text>
+          
+          <View style={styles.datePickerCompact}>
+            {/* Day Selection */}
+            <View style={styles.daySelectorContainer}>
+              <Text variant="labelMedium" style={[styles.selectorLabel, { color: theme.colors.onSurface }]}>
+                Day
+              </Text>
+              <View style={styles.daySelectorRow}>
+                <IconButton
+                  icon="chevron-left"
+                  size={20}
+                  onPress={() => {
+                    const newDate = new Date(tempSelectedDate);
+                    const currentDay = newDate.getDate();
+                    if (currentDay > 1) {
+                      newDate.setDate(currentDay - 1);
+                    } else {
+                      newDate.setMonth(newDate.getMonth() - 1);
+                      newDate.setDate(0);
+                    }
+                    setTempSelectedDate(newDate);
+                  }}
+                />
+                <Text variant="titleLarge" style={[styles.dayText, { color: theme.colors.onSurface }]}>
+                  {tempSelectedDate.getDate()}
+                </Text>
+                <IconButton
+                  icon="chevron-right"
+                  size={20}
+                  onPress={() => {
+                    const newDate = new Date(tempSelectedDate);
+                    const currentDay = newDate.getDate();
+                    const lastDayOfMonth = new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0).getDate();
+                    if (currentDay < lastDayOfMonth) {
+                      newDate.setDate(currentDay + 1);
+                    } else {
+                      newDate.setMonth(newDate.getMonth() + 1);
+                      newDate.setDate(1);
+                    }
+                    setTempSelectedDate(newDate);
+                  }}
+                />
+              </View>
+            </View>
+
+            {/* Month Selection Grid - Compact 4 columns */}
+            <View style={styles.monthGridContainer}>
+              <Text variant="labelMedium" style={[styles.selectorLabel, { color: theme.colors.onSurface }]}>
+                Month
+              </Text>
+              <View style={styles.monthGrid}>
+                {[
+                  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                ].map((month, index) => {
+                  const isSelected = tempSelectedDate.getMonth() === index;
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      style={[
+                        styles.monthButton,
+                        isSelected && [styles.monthButtonActive, { backgroundColor: theme.colors.primary }],
+                      ]}
+                      onPress={() => {
+                        const newDate = new Date(tempSelectedDate);
+                        const currentDay = newDate.getDate();
+                        newDate.setMonth(index);
+                        const lastDayOfNewMonth = new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0).getDate();
+                        if (currentDay > lastDayOfNewMonth) {
+                          newDate.setDate(lastDayOfNewMonth);
+                        }
+                        setTempSelectedDate(newDate);
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.monthButtonText,
+                          isSelected && { color: '#FFFFFF' },
+                          !isSelected && { color: theme.colors.onSurface },
+                        ]}
+                      >
+                        {month}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+
+            {/* Year Selection */}
+            <View style={styles.dateSelectorContainer}>
+              <Text variant="labelMedium" style={[styles.selectorLabel, { color: theme.colors.onSurface }]}>
+                Year
+              </Text>
+              <View style={styles.yearSelectorRow}>
+                <IconButton
+                  icon="chevron-left"
+                  size={20}
+                  onPress={() => {
+                    const newDate = new Date(tempSelectedDate);
+                    newDate.setFullYear(newDate.getFullYear() - 1);
+                    setTempSelectedDate(newDate);
+                  }}
+                />
+                <Text variant="titleLarge" style={[styles.yearText, { color: theme.colors.onSurface }]}>
+                  {tempSelectedDate.getFullYear()}
+                </Text>
+                <IconButton
+                  icon="chevron-right"
+                  size={20}
+                  onPress={() => {
+                    const newDate = new Date(tempSelectedDate);
+                    newDate.setFullYear(newDate.getFullYear() + 1);
+                    setTempSelectedDate(newDate);
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.datePickerActions}>
+            <Button
+              mode="outlined"
+              onPress={() => {
+                if (isMountedRef.current) {
+                  setShowDatePicker(false);
+                  setTempSelectedDate(selectedDate);
+                }
+              }}
+              style={styles.datePickerButton}
+            >
+              Cancel
+            </Button>
+            <Button
+              mode="contained"
+              onPress={() => {
+                if (isMountedRef.current) {
+                  setSelectedDate(new Date(tempSelectedDate));
+                  setShowDatePicker(false);
+                }
+              }}
+              style={styles.datePickerButton}
+            >
+              Done
+            </Button>
+          </View>
+        </Modal>
+      </Portal>
     </>
   );
 };
@@ -937,7 +1152,7 @@ const styles = StyleSheet.create({
   },
   noteInputContainer: {
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 12,
   },
   noteInput: {
     backgroundColor: '#FFFFFF',
@@ -945,11 +1160,12 @@ const styles = StyleSheet.create({
   },
   noteInputContent: {
     minHeight: 100,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
+    paddingTop: 20,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
   },
-  keypadContainer: {
-    padding: 8,
+  saveContainer: {
+    padding: 16,
     paddingTop: 12,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -961,14 +1177,63 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
+  saveButton: {
+    borderRadius: 12,
+    elevation: 2,
+  },
+  saveButtonContent: {
+    paddingVertical: 8,
+  },
+  amountModal: {
+    margin: 20,
+    borderRadius: 12,
+    maxHeight: '85%',
+    padding: 0,
+  },
+  amountModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  amountModalTitle: {
+    fontWeight: '600',
+  },
+  amountDisplaySection: {
+    padding: 20,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  amountDisplayLabel: {
+    marginBottom: 8,
+    opacity: 0.7,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  amountDisplayText: {
+    fontWeight: '700',
+    fontSize: 36,
+    marginBottom: 12,
+  },
+  calculateButton: {
+    marginTop: 8,
+  },
+  keypadContainer: {
+    padding: 12,
+    paddingTop: 8,
+  },
   keypadRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 8,
-    paddingHorizontal: 4,
+    gap: 8,
   },
   keypadButton: {
-    width: (screenWidth - 48) / 5,
+    flex: 1,
+    minWidth: 0,
     height: 50,
     borderRadius: 8,
     alignItems: 'center',
@@ -978,18 +1243,34 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+    marginHorizontal: 2,
   },
   operatorButton: {
-    width: (screenWidth - 48) / 5,
+    flex: 1,
+    minWidth: 0,
   },
   equalsButton: {
-    width: (screenWidth - 48) / 5,
+    flex: 1,
+    minWidth: 0,
   },
   zeroButton: {
-    width: ((screenWidth - 48) / 5) * 2 + 8,
+    flex: 2,
+    minWidth: 0,
   },
-  saveButtonKeypad: {
-    width: ((screenWidth - 48) / 5) * 2 + 8,
+  clearButton: {
+    flex: 2,
+    minWidth: 0,
+  },
+  amountModalActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+    gap: 12,
+  },
+  amountModalButton: {
+    flex: 1,
   },
   keypadButtonText: {
     fontSize: 20,
@@ -1010,10 +1291,86 @@ const styles = StyleSheet.create({
     margin: 16,
     padding: 16,
     borderRadius: 12,
+    maxHeight: '70%',
   },
-  datePickerIOS: {
-    width: '100%',
-    height: 200,
+  datePickerCompact: {
+    paddingVertical: 8,
+  },
+  dateSelectorContainer: {
+    marginBottom: 16,
+  },
+  selectorLabel: {
+    marginBottom: 8,
+    fontWeight: '600',
+    fontSize: 12,
+  },
+  yearSelectorRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  yearText: {
+    minWidth: 70,
+    textAlign: 'center',
+    fontWeight: '700',
+    fontSize: 20,
+  },
+  monthGridContainer: {
+    marginBottom: 16,
+  },
+  monthGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+    justifyContent: 'space-between',
+  },
+  monthButton: {
+    width: '23%',
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F5F5F5',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  monthButtonActive: {
+    borderColor: '#1E4E7C',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+  },
+  monthButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  daySelectorContainer: {
+    marginBottom: 16,
+  },
+  daySelectorRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  dayText: {
+    minWidth: 50,
+    textAlign: 'center',
+    fontWeight: '700',
+    fontSize: 20,
+  },
+  datePickerActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+    marginTop: 8,
+  },
+  datePickerButton: {
+    flex: 1,
   },
   categoryScroll: {
     maxHeight: 300,

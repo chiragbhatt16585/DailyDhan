@@ -232,6 +232,9 @@ const AddEditRecurringTransactionScreen = ({ navigation, route }) => {
                 keyboardType="numeric"
                 mode="outlined"
                 style={styles.amountInput}
+                autoCorrect={false}
+                autoCapitalize="none"
+                textContentType="none"
               />
             </View>
 
@@ -264,8 +267,12 @@ const AddEditRecurringTransactionScreen = ({ navigation, route }) => {
                 multiline
                 numberOfLines={3}
                 style={styles.noteInput}
+                contentStyle={styles.noteInputContent}
                 outlineColor="#E0E0E0"
                 activeOutlineColor={theme.colors.primary}
+                autoCorrect={false}
+                autoCapitalize="sentences"
+                textContentType="none"
               />
             </View>
           </View>
@@ -499,6 +506,9 @@ const styles = StyleSheet.create({
   },
   noteInput: {
     minHeight: 80,
+  },
+  noteInputContent: {
+    paddingTop: 16,
   },
   activeSection: {
     marginTop: 8,

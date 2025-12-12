@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import {
   Button,
   Text,
@@ -103,8 +103,17 @@ const AddEditWalletScreen = ({ navigation, route }) => {
   return (
     <>
       <AppHeader showBack title={isEditing ? 'Edit Wallet' : 'Add New Wallet'} />
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
+        <ScrollView 
+          style={styles.scrollView} 
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.scrollContent}
+        >
           <Text variant="bodyMedium" style={[styles.label, { color: theme.colors.onSurface }]}>
             Wallet Type
           </Text>
@@ -130,6 +139,9 @@ const AddEditWalletScreen = ({ navigation, route }) => {
             style={styles.input}
             outlineColor="#E0E0E0"
             activeOutlineColor={theme.colors.primary}
+            autoCorrect={false}
+            autoCapitalize="words"
+            textContentType="none"
           />
 
           {(walletType === 'bank' || walletType === 'credit_card') && (
@@ -142,6 +154,9 @@ const AddEditWalletScreen = ({ navigation, route }) => {
               style={styles.input}
               outlineColor="#E0E0E0"
               activeOutlineColor={theme.colors.primary}
+              autoCorrect={false}
+              autoCapitalize="words"
+              textContentType="none"
             />
           )}
 
@@ -161,6 +176,9 @@ const AddEditWalletScreen = ({ navigation, route }) => {
               style={styles.input}
               outlineColor="#E0E0E0"
               activeOutlineColor={theme.colors.primary}
+              autoCorrect={false}
+              autoCapitalize="none"
+              textContentType="none"
             />
           )}
 
@@ -185,7 +203,7 @@ const AddEditWalletScreen = ({ navigation, route }) => {
             </Button>
           </View>
         </ScrollView>
-      </View>
+      </KeyboardAvoidingView>
     </>
   );
 };
@@ -198,7 +216,10 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  scrollContent: {
     padding: 16,
+    paddingBottom: 32,
   },
   label: {
     marginBottom: 12,

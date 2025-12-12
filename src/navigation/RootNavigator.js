@@ -1,8 +1,9 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTheme } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import SplashScreen from '../screens/Splash/SplashScreen';
@@ -90,6 +91,7 @@ const AffiliateStack = () => {
 
 const MainTabs = () => {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   
   return (
     <Tab.Navigator
@@ -98,12 +100,15 @@ const MainTabs = () => {
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.dark ? '#888888' : '#666666',
         tabBarStyle: {
-          backgroundColor: theme.colors.surface,
-          borderTopWidth: 0,
-          elevation: 0,
-          shadowOpacity: 0,
-          height: 65,
-          paddingBottom: 8,
+          backgroundColor: theme.colors.surface || '#FFFFFF',
+          borderTopWidth: 1,
+          borderTopColor: theme.dark ? '#333333' : '#E0E0E0',
+          elevation: Platform.OS === 'android' ? 8 : 0,
+          shadowOpacity: Platform.OS === 'ios' ? 0.1 : 0,
+          shadowOffset: { width: 0, height: -2 },
+          shadowRadius: 4,
+          height: 60 + insets.bottom,
+          paddingBottom: insets.bottom + 4,
           paddingTop: 6,
         },
         tabBarShowLabel: true,

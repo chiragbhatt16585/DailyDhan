@@ -380,36 +380,40 @@ const TransactionsScreen = ({ navigation }) => {
         </View>
 
         {/* Quick Filters */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.quickFiltersContainer}
-          contentContainerStyle={styles.quickFiltersContent}
-        >
-          {QUICK_FILTERS.map(filter => {
-            const isActive = activeQuickFilter === filter.id;
-            return (
-              <TouchableOpacity
-                key={filter.id}
-                onPress={() => handleQuickFilter(filter.id)}
-                activeOpacity={0.7}
-                style={[
-                  styles.quickFilterChip,
-                  isActive && styles.quickFilterChipActive,
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.quickFilterChipText,
-                    isActive && styles.quickFilterChipTextActive,
-                  ]}
-                >
-                  {filter.label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
+        <View style={styles.quickFiltersContainer}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.quickFiltersContent}
+          >
+            <View style={[styles.segmentedControl, { backgroundColor: theme.colors.surfaceVariant }]}>
+              {QUICK_FILTERS.map(filter => {
+                const isActive = activeQuickFilter === filter.id;
+                return (
+                  <TouchableOpacity
+                    key={filter.id}
+                    onPress={() => handleQuickFilter(filter.id)}
+                    activeOpacity={0.7}
+                    style={[
+                      styles.quickFilterButton,
+                      isActive && [styles.quickFilterButtonActive, { backgroundColor: theme.colors.primary }],
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.quickFilterButtonText,
+                        isActive && { color: '#FFFFFF' },
+                        !isActive && { color: theme.colors.onSurface },
+                      ]}
+                    >
+                      {filter.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </ScrollView>
+        </View>
 
         {/* Filter Button and Active Filters */}
         <View style={styles.filterHeader}>
@@ -844,43 +848,32 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   quickFiltersContainer: {
-    maxHeight: 60,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     marginBottom: 12,
   },
   quickFiltersContent: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    gap: 8,
+    flexGrow: 1,
   },
-  quickFilterChip: {
-    marginRight: 8,
-    borderRadius: 20,
-    height: 36,
+  segmentedControl: {
+    flexDirection: 'row',
+    borderRadius: 12,
+    padding: 4,
+  },
+  quickFilterButton: {
+    paddingVertical: 10,
     paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: '#F5F5F5',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    justifyContent: 'center',
+    borderRadius: 8,
     alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 80,
   },
-  quickFilterChipActive: {
-    backgroundColor: '#1E4E7C',
-    borderColor: '#1E4E7C',
+  quickFilterButtonActive: {
     elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
   },
-  quickFilterChipText: {
-    fontSize: 13,
+  quickFilterButtonText: {
+    fontSize: 14,
     fontWeight: '600',
-    color: '#666',
-  },
-  quickFilterChipTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '700',
   },
   filterHeader: {
     flexDirection: 'row',
