@@ -31,6 +31,7 @@ import BudgetsScreen from '../screens/Budgets/BudgetsScreen';
 import RecurringTransactionsScreen from '../screens/RecurringTransactions/RecurringTransactionsScreen';
 import AddEditRecurringTransactionScreen from '../screens/RecurringTransactions/AddEditRecurringTransactionScreen';
 import MasterDataScreen from '../screens/MasterData/MasterDataScreen';
+import SIPCalculatorScreen from '../screens/SIPCalculator/SIPCalculatorScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -52,6 +53,7 @@ const DashboardStack = () => {
       <Stack.Screen name="RecurringTransactions" component={RecurringTransactionsScreen} />
       <Stack.Screen name="AddEditRecurringTransaction" component={AddEditRecurringTransactionScreen} />
       <Stack.Screen name="MasterData" component={MasterDataScreen} />
+      <Stack.Screen name="SIPCalculator" component={SIPCalculatorScreen} />
     </Stack.Navigator>
   );
 };

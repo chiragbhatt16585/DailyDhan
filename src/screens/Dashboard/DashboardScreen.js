@@ -176,13 +176,13 @@ const DashboardScreen = () => {
     <>
       <AppHeader />
       <ScrollView 
-        style={styles.container} 
+        style={[styles.container, { backgroundColor: theme.colors.background }]} 
         contentContainerStyle={[styles.content, { paddingBottom: 80 }]}
       >
         <View style={styles.monthSelector}>
           <IconButton icon="chevron-left" size={24} onPress={() => changeMonth(-1)} />
           <TouchableOpacity style={styles.monthLabelContainer}>
-            <Text variant="titleMedium" style={styles.monthLabel}>
+            <Text variant="titleMedium" style={[styles.monthLabel, { color: theme.colors.onSurface }]}>
               {monthLabel}
             </Text>
           </TouchableOpacity>
@@ -199,10 +199,17 @@ const DashboardScreen = () => {
             ]}
           >
             <View style={styles.financialCardHeader}>
-              <View style={[styles.financialIconContainer, { backgroundColor: '#F5F5F5' }]}>
+              <View style={[
+                styles.financialIconContainer, 
+                { 
+                  backgroundColor: theme.dark 
+                    ? 'rgba(52, 168, 83, 0.2)' 
+                    : theme.colors.surfaceVariant 
+                }
+              ]}>
                 <Icon source="arrow-down" size={18} color="#34A853" />
               </View>
-              <Text style={styles.financialCardLabel}>Income</Text>
+              <Text style={[styles.financialCardLabel, { color: theme.colors.onSurfaceVariant }]}>Income</Text>
             </View>
             <Text style={[styles.financialCardAmount, { color: theme.colors.onSurface }]}>
               {formatCurrency(income, currency)}
@@ -218,10 +225,17 @@ const DashboardScreen = () => {
             ]}
           >
             <View style={styles.financialCardHeader}>
-              <View style={[styles.financialIconContainer, { backgroundColor: '#F5F5F5' }]}>
+              <View style={[
+                styles.financialIconContainer, 
+                { 
+                  backgroundColor: theme.dark 
+                    ? 'rgba(233, 30, 99, 0.2)' 
+                    : theme.colors.surfaceVariant 
+                }
+              ]}>
                 <Icon source="arrow-up" size={18} color="#E91E63" />
               </View>
-              <Text style={styles.financialCardLabel}>Expense</Text>
+              <Text style={[styles.financialCardLabel, { color: theme.colors.onSurfaceVariant }]}>Expense</Text>
             </View>
             <Text style={[styles.financialCardAmount, { color: theme.colors.onSurface }]}>
               {formatCurrency(expense, currency)}
@@ -249,12 +263,16 @@ const DashboardScreen = () => {
               <View style={[styles.financialIconContainer, { backgroundColor: balance >= 0 ? '#34A853' : '#E91E63' }]}>
                 <Icon source="wallet" size={18} color="#FFFFFF" />
               </View>
-              <Text style={styles.financialCardLabel}>Balance</Text>
+              <Text style={[styles.financialCardLabel, { color: theme.colors.onSurfaceVariant }]}>Balance</Text>
             </View>
             <Text
               style={[
                 styles.financialCardAmount,
-                { color: balance >= 0 ? '#2E7D32' : '#C62828' },
+                { 
+                  color: theme.dark 
+                    ? (balance >= 0 ? '#81C784' : '#EF5350')
+                    : (balance >= 0 ? '#2E7D32' : '#C62828')
+                },
               ]}
             >
               {formatCurrency(Math.abs(balance), currency)}
@@ -266,7 +284,8 @@ const DashboardScreen = () => {
         {budgetData.length > 0 && (
           <Card style={styles.fullCard}>
             <Card.Title 
-              title="Budget Tracking" 
+              title="Budget Tracking"
+              titleStyle={{ color: theme.colors.onSurface }}
               right={(props) => (
                 <IconButton
                   {...props}
@@ -287,8 +306,15 @@ const DashboardScreen = () => {
                   <View key={budget.budget_id} style={styles.budgetItem}>
                     <View style={styles.budgetHeader}>
                       <View style={styles.budgetCategoryInfo}>
-                        <View style={[styles.budgetCategoryIcon, { backgroundColor: '#F5F5F5' }]}>
-                          <Icon source={budget.category_icon || 'wallet'} size={16} color={budget.category_color} />
+                        <View style={[
+                          styles.budgetCategoryIcon, 
+                          { 
+                            backgroundColor: theme.dark 
+                              ? (budget.category_color ? budget.category_color + '30' : theme.colors.surfaceVariant)
+                              : theme.colors.surfaceVariant 
+                          }
+                        ]}>
+                          <Icon source={budget.category_icon || 'wallet'} size={16} color={budget.category_color || theme.colors.primary} />
                         </View>
                         <View style={styles.budgetCategoryText}>
                           <Text variant="bodyMedium" style={{ color: theme.colors.onSurface, fontWeight: '500' }}>
@@ -333,7 +359,7 @@ const DashboardScreen = () => {
               {budgetData.length > 3 && (
                 <TouchableOpacity
                   onPress={() => navigation.navigate('Budgets')}
-                  style={styles.viewAllBudgets}
+                  style={[styles.viewAllBudgets, { borderTopColor: theme.colors.outline }]}
                 >
                   <Text style={[styles.viewAllText, { color: theme.colors.primary }]}>
                     View All Budgets ({budgetData.length})
@@ -382,9 +408,12 @@ const DashboardScreen = () => {
         {/* Expense Breakdown Chart */}
         {expense > 0 && expenseBreakdown.length > 0 && (
           <Card style={styles.fullCard}>
-            <Card.Title title="Expense Breakdown" />
+            <Card.Title 
+              title="Expense Breakdown" 
+              titleStyle={{ color: theme.colors.onSurface }}
+            />
             <Card.Content>
-              <View style={[styles.chartContainer, { backgroundColor: '#FFFFFF' }]}>
+              <View style={[styles.chartContainer, { backgroundColor: theme.colors.surface }]}>
                 <PieChart
                   data={pieData}
                   width={screenWidth - 64}
@@ -412,7 +441,16 @@ const DashboardScreen = () => {
                       <View
                         style={[styles.categoryColorDot, { backgroundColor: categoryColor }]}
                       />
-                      <Text style={styles.categoryName}>
+                      <Text 
+                        style={[
+                          styles.categoryName, 
+                          { 
+                            color: theme.colors.onSurface,
+                            marginBottom: 0, // Remove margin for list items
+                            fontSize: 14,
+                          }
+                        ]}
+                      >
                         {item.name}: {formatCurrency(item.total_amount, currency)} ({percentage}%)
                       </Text>
                     </View>
@@ -425,7 +463,7 @@ const DashboardScreen = () => {
 
         {/* Modern Segmented Control Style Tab Menu */}
         <View style={styles.tabWrapper}>
-          <View style={styles.tabContainer}>
+          <View style={[styles.tabContainer, { backgroundColor: theme.colors.surfaceVariant }]}>
             <TouchableOpacity
               style={styles.tabButton}
               onPress={() => handleTabChange('transactions')}
@@ -434,11 +472,12 @@ const DashboardScreen = () => {
               <Icon
                 source="history"
                 size={20}
-                color={activeTab === 'transactions' ? '#FFFFFF' : '#666'}
+                color={activeTab === 'transactions' ? '#FFFFFF' : theme.colors.onSurfaceVariant}
               />
               <Text
                 style={[
                   styles.tabButtonText,
+                  { color: activeTab === 'transactions' ? '#FFFFFF' : theme.colors.onSurfaceVariant },
                   activeTab === 'transactions' && styles.tabButtonTextActive,
                 ]}
               >
@@ -453,11 +492,12 @@ const DashboardScreen = () => {
               <Icon
                 source="chart-bar"
                 size={20}
-                color={activeTab === 'categorywise' ? '#FFFFFF' : '#666'}
+                color={activeTab === 'categorywise' ? '#FFFFFF' : theme.colors.onSurfaceVariant}
               />
               <Text
                 style={[
                   styles.tabButtonText,
+                  { color: activeTab === 'categorywise' ? '#FFFFFF' : theme.colors.onSurfaceVariant },
                   activeTab === 'categorywise' && styles.tabButtonTextActive,
                 ]}
               >
@@ -489,7 +529,7 @@ const DashboardScreen = () => {
             {recent.length === 0 ? (
               <Card style={styles.fullCard}>
                 <Card.Content style={styles.emptyCardContent}>
-                  <Text style={styles.emptyText}>No transactions yet.</Text>
+                  <Text style={[styles.emptyText, { color: theme.colors.onSurfaceVariant }]}>No transactions yet.</Text>
                 </Card.Content>
               </Card>
             ) : (
@@ -501,15 +541,23 @@ const DashboardScreen = () => {
                   </Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate('Transactions')}
-                    style={styles.viewAllButton}
+                    style={[
+                      styles.viewAllButton,
+                      {
+                        backgroundColor: theme.dark ? 'rgba(30, 78, 124, 0.3)' : 'rgba(30, 78, 124, 0.1)',
+                        paddingHorizontal: 12,
+                        paddingVertical: 6,
+                      }
+                    ]}
+                    activeOpacity={0.7}
                   >
-                    <Text style={[styles.viewAllText, { color: theme.colors.primary }]}>
+                    <Text style={[styles.viewAllText, { color: theme.dark ? '#64B5F6' : theme.colors.primary, fontWeight: '600' }]}>
                       View All
                     </Text>
                     <IconButton
                       icon="chevron-right"
                       size={18}
-                      iconColor={theme.colors.primary}
+                      iconColor={theme.dark ? '#64B5F6' : theme.colors.primary}
                       style={styles.viewAllIcon}
                     />
                   </TouchableOpacity>
@@ -528,21 +576,25 @@ const DashboardScreen = () => {
                       <View
                         style={[
                           styles.transactionIconContainer,
-                          { backgroundColor: '#F5F5F5' },
+                          { 
+                            backgroundColor: theme.dark 
+                              ? (isIncome ? 'rgba(52, 168, 83, 0.3)' : 'rgba(233, 30, 99, 0.3)')
+                              : (isIncome ? 'rgba(52, 168, 83, 0.12)' : 'rgba(233, 30, 99, 0.12)')
+                          },
                         ]}
                       >
-                        <List.Icon
-                          icon={
+                        <Icon
+                          source={
                             item.category_icon ||
                             (isIncome ? 'arrow-down' : 'arrow-up')
                           }
-                          color={isIncome ? '#34A853' : '#E91E63'}
-                          size={20}
+                          color={isIncome ? (theme.dark ? '#66BB6A' : '#34A853') : (theme.dark ? '#EF5350' : '#E91E63')}
+                          size={22}
                         />
                       </View>
                       <View style={styles.transactionDetails}>
                         <View style={styles.transactionCategoryRow}>
-                          <Text style={styles.transactionCategory}>
+                          <Text style={[styles.transactionCategory, { color: theme.colors.onSurface }]}>
                             {item.category_name || (isIncome ? 'Income' : 'Expense')}
                           </Text>
                           <Text
@@ -554,11 +606,11 @@ const DashboardScreen = () => {
                             {isIncome ? '+' : '-'} {formatCurrency(item.amount, currency)}
                           </Text>
                         </View>
-                        <Text style={styles.transactionDate}>
+                        <Text style={[styles.transactionDate, { color: theme.colors.onSurfaceVariant }]}>
                           {dateStr} • {timeStr}
                         </Text>
                         {item.note ? (
-                          <Text style={styles.transactionNote} numberOfLines={1}>
+                          <Text style={[styles.transactionNote, { color: theme.colors.onSurfaceVariant }]} numberOfLines={1}>
                             {item.note}
                           </Text>
                         ) : null}
@@ -577,7 +629,7 @@ const DashboardScreen = () => {
             {expenseBreakdown.length === 0 ? (
               <Card style={styles.fullCard}>
                 <Card.Content style={styles.emptyCardContent}>
-                  <Text style={styles.emptyText}>No expenses found for this month.</Text>
+                  <Text style={[styles.emptyText, { color: theme.colors.onSurfaceVariant }]}>No expenses found for this month.</Text>
                 </Card.Content>
               </Card>
             ) : (
@@ -602,8 +654,8 @@ const DashboardScreen = () => {
                               ]}
                             />
                             <View style={styles.categoryInfo}>
-                              <Text style={styles.categoryName}>{item.name}</Text>
-                              <Text style={styles.categoryPercentage}>{percentage}% of total</Text>
+                              <Text style={[styles.categoryName, { color: theme.colors.onSurface }]}>{item.name}</Text>
+                              <Text style={[styles.categoryPercentage, { color: theme.colors.onSurfaceVariant }]}>{percentage}% of total</Text>
                             </View>
                           </View>
                           <View style={styles.categoryRight}>
@@ -628,7 +680,7 @@ const DashboardScreen = () => {
       </ScrollView>
       
       {/* Ad Banner - Fixed at bottom of screen */}
-      <View style={styles.fixedAdContainer}>
+      <View style={[styles.fixedAdContainer, { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.outline }]}>
         <AdBanner />
       </View>
       
@@ -696,14 +748,12 @@ const styles = StyleSheet.create({
   financialCardLabel: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#666',
     textTransform: 'uppercase',
     letterSpacing: 0.3,
   },
   financialCardAmount: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#000',
   },
   chartContainer: {
     paddingVertical: 8,
@@ -721,7 +771,6 @@ const styles = StyleSheet.create({
   },
   fullCard: {
     marginBottom: 16,
-    backgroundColor: '#FFFFFF',
   },
   sectionTitle: {
     marginTop: 8,
@@ -783,16 +832,13 @@ const styles = StyleSheet.create({
   },
   categoryPercentage: {
     fontSize: 12,
-    color: '#666',
   },
   categoryAmount: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#000',
   },
   emptyText: {
     textAlign: 'center',
-    color: '#999',
   },
   tabWrapper: {
     marginTop: 20,
@@ -801,7 +847,6 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: '#F0F0F0',
     borderRadius: 14,
     padding: 4,
     width: '100%',
@@ -830,7 +875,6 @@ const styles = StyleSheet.create({
   tabButtonText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#666',
     letterSpacing: 0.2,
   },
   tabButtonTextActive: {
@@ -864,13 +908,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#000',
   },
   viewAllButton: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 4,
     paddingHorizontal: 8,
+    borderRadius: 8,
   },
   viewAllText: {
     fontSize: 14,
@@ -892,7 +936,6 @@ const styles = StyleSheet.create({
   transactionCard: {
     marginBottom: 0,
     elevation: 1,
-    backgroundColor: '#FFFFFF',
   },
   transactionContent: {
     paddingVertical: 8,
@@ -927,18 +970,15 @@ const styles = StyleSheet.create({
   },
   transactionDate: {
     fontSize: 12,
-    color: '#666',
     marginBottom: 2,
   },
   transactionNote: {
     fontSize: 12,
-    color: '#999',
     fontStyle: 'italic',
   },
   transactionAmount: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#000',
   },
   emptyCardContent: {
     paddingVertical: 20,
@@ -949,7 +989,6 @@ const styles = StyleSheet.create({
   categoryCard: {
     marginBottom: 0,
     elevation: 2,
-    backgroundColor: '#FFFFFF',
   },
   categoryCardContent: {
     paddingVertical: 12,
@@ -993,11 +1032,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 4,
-    color: '#000',
   },
   quickAccessSubtitle: {
     fontSize: 12,
-    color: '#666',
   },
   adContainer: {
     marginTop: 20,
@@ -1012,13 +1049,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#FFFFFF',
     paddingVertical: 8,
     paddingHorizontal: 16,
     alignItems: 'center',
     justifyContent: 'center',
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
     elevation: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
@@ -1103,7 +1138,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
     alignItems: 'center',
   },
   viewAllText: {

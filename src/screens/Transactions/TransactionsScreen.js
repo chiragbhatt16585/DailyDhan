@@ -78,7 +78,7 @@ const TransactionsScreen = ({ navigation }) => {
           categoryRows.push(categoriesResult.rows.item(i));
         }
         if (isMountedRef.current) {
-          setCategories(categoryRows);
+        setCategories(categoryRows);
         }
 
         // Load wallets
@@ -90,7 +90,7 @@ const TransactionsScreen = ({ navigation }) => {
           walletRows.push(walletsResult.rows.item(i));
         }
         if (isMountedRef.current) {
-          setWallets(walletRows);
+        setWallets(walletRows);
         }
       } catch (e) {
         console.warn('Failed to load categories/wallets', e);
@@ -126,7 +126,7 @@ const TransactionsScreen = ({ navigation }) => {
         // Use setTimeout to ensure we're not updating during unmount
         setTimeout(() => {
           if (isMountedRef.current) {
-            setAllItems(rows);
+      setAllItems(rows);
           }
         }, 0);
       } catch (e) {
@@ -291,18 +291,20 @@ const TransactionsScreen = ({ navigation }) => {
             <View
               style={[
                 styles.transactionIconContainer,
-                { backgroundColor: '#F5F5F5' },
+                { 
+                  backgroundColor: isIncome ? 'rgba(52, 168, 83, 0.12)' : 'rgba(233, 30, 99, 0.12)'
+                },
               ]}
             >
-              <List.Icon
-                icon={item.category_icon || (isIncome ? 'arrow-down' : 'arrow-up')}
+              <Icon
+                source={item.category_icon || (isIncome ? 'arrow-down' : 'arrow-up')}
                 color={categoryColor}
-                size={20}
+                size={22}
               />
             </View>
             <View style={styles.transactionDetails}>
               <View style={styles.transactionCategoryRow}>
-                <Text style={styles.transactionCategory}>
+                <Text style={[styles.transactionCategory, { color: theme.colors.onSurface }]}>
                   {item.category_name || (isIncome ? 'Income' : 'Expense')}
                 </Text>
                 <Text
@@ -314,16 +316,16 @@ const TransactionsScreen = ({ navigation }) => {
                   {isIncome ? '+' : '-'} {formatCurrency(item.amount, currency)}
                 </Text>
               </View>
-              <Text style={styles.transactionDate}>
+              <Text style={[styles.transactionDate, { color: theme.colors.onSurfaceVariant }]}>
                 {dateStr} • {timeStr}
               </Text>
               {item.wallet_name && (
-                <Text style={styles.transactionWallet}>
+                <Text style={[styles.transactionWallet, { color: theme.colors.onSurfaceVariant }]}>
                   💳 {item.wallet_name}
                 </Text>
               )}
               {item.note ? (
-                <Text style={styles.transactionNote} numberOfLines={1}>
+                <Text style={[styles.transactionNote, { color: theme.colors.onSurfaceVariant }]} numberOfLines={1}>
                   {item.note}
                 </Text>
               ) : null}
@@ -337,7 +339,7 @@ const TransactionsScreen = ({ navigation }) => {
   return (
     <>
       <AppHeader showBack title="Transactions" />
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={[styles.container, { backgroundColor: '#FFFFFF' }]}>
         {/* Search Bar */}
         <View style={styles.searchContainer}>
           <Card style={styles.searchCard}>
@@ -471,7 +473,7 @@ const TransactionsScreen = ({ navigation }) => {
         {/* Transactions List */}
         {filteredItems.length === 0 ? (
           <View style={styles.empty}>
-            <Text variant="bodyLarge" style={styles.emptyText}>
+            <Text variant="bodyLarge" style={[styles.emptyText, { color: theme.colors.onSurfaceVariant }]}>
               {allItems.length === 0
                 ? 'No transactions yet. Add your first one from Dashboard.'
                 : 'No transactions match your filters.'}
@@ -495,8 +497,8 @@ const TransactionsScreen = ({ navigation }) => {
 
         {/* Results Count */}
         {filteredItems.length > 0 && (
-          <View style={styles.resultsCount}>
-            <Text variant="bodySmall" style={styles.resultsText}>
+          <View style={[styles.resultsCount, { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.outline }]}>
+            <Text variant="bodySmall" style={[styles.resultsText, { color: theme.colors.onSurfaceVariant }]}>
               Showing {filteredItems.length} of {allItems.length} transactions
             </Text>
           </View>
@@ -517,8 +519,8 @@ const TransactionsScreen = ({ navigation }) => {
             { backgroundColor: theme.colors.surface },
           ]}
         >
-          <View style={styles.modalHeader}>
-            <Text variant="titleLarge" style={styles.modalTitle}>
+          <View style={[styles.modalHeader, { borderBottomColor: theme.colors.outline }]}>
+            <Text variant="titleLarge" style={[styles.modalTitle, { color: theme.colors.onSurface }]}>
               Advanced Filters
             </Text>
             <IconButton
@@ -535,7 +537,7 @@ const TransactionsScreen = ({ navigation }) => {
           <ScrollView style={styles.modalContent}>
             {/* Type Filter */}
             <View style={styles.filterSection}>
-              <Text variant="titleMedium" style={styles.filterSectionTitle}>
+              <Text variant="titleMedium" style={[styles.filterSectionTitle, { color: theme.colors.onSurface }]}>
                 Transaction Type
               </Text>
               <RadioButton.Group
@@ -545,15 +547,15 @@ const TransactionsScreen = ({ navigation }) => {
                 <View style={styles.radioGroup}>
                   <View style={styles.radioOption}>
                     <RadioButton value="all" />
-                    <Text onPress={() => setFilterType('all')}>All</Text>
+                    <Text style={{ color: theme.colors.onSurface }} onPress={() => setFilterType('all')}>All</Text>
                   </View>
                   <View style={styles.radioOption}>
                     <RadioButton value="income" />
-                    <Text onPress={() => setFilterType('income')}>Income</Text>
+                    <Text style={{ color: theme.colors.onSurface }} onPress={() => setFilterType('income')}>Income</Text>
                   </View>
                   <View style={styles.radioOption}>
                     <RadioButton value="expense" />
-                    <Text onPress={() => setFilterType('expense')}>Expense</Text>
+                    <Text style={{ color: theme.colors.onSurface }} onPress={() => setFilterType('expense')}>Expense</Text>
                   </View>
                 </View>
               </RadioButton.Group>
@@ -563,7 +565,7 @@ const TransactionsScreen = ({ navigation }) => {
 
             {/* Category Filter */}
             <View style={styles.filterSection}>
-              <Text variant="titleMedium" style={styles.filterSectionTitle}>
+              <Text variant="titleMedium" style={[styles.filterSectionTitle, { color: theme.colors.onSurface }]}>
                 Category
               </Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -599,7 +601,7 @@ const TransactionsScreen = ({ navigation }) => {
             {wallets.length > 0 && (
               <>
                 <View style={styles.filterSection}>
-                  <Text variant="titleMedium" style={styles.filterSectionTitle}>
+                  <Text variant="titleMedium" style={[styles.filterSectionTitle, { color: theme.colors.onSurface }]}>
                     Wallet
                   </Text>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -634,7 +636,7 @@ const TransactionsScreen = ({ navigation }) => {
 
             {/* Date Range Filter */}
             <View style={styles.filterSection}>
-              <Text variant="titleMedium" style={styles.filterSectionTitle}>
+              <Text variant="titleMedium" style={[styles.filterSectionTitle, { color: theme.colors.onSurface }]}>
                 Date Range
               </Text>
               <List.Item
@@ -672,7 +674,7 @@ const TransactionsScreen = ({ navigation }) => {
             </View>
           </ScrollView>
 
-          <View style={styles.modalActions}>
+          <View style={[styles.modalActions, { borderTopColor: theme.colors.outline }]}>
             <Button
               mode="outlined"
               onPress={clearFilters}
@@ -705,7 +707,7 @@ const TransactionsScreen = ({ navigation }) => {
                 setShowStartDatePicker(false);
               }
             }}
-            contentContainerStyle={styles.datePickerModal}
+            contentContainerStyle={[styles.datePickerModal, { backgroundColor: theme.colors.surface }]}
           >
             <DateTimePicker
               value={filterStartDate || new Date()}
@@ -752,7 +754,7 @@ const TransactionsScreen = ({ navigation }) => {
                 setShowEndDatePicker(false);
               }
             }}
-            contentContainerStyle={styles.datePickerModal}
+            contentContainerStyle={[styles.datePickerModal, { backgroundColor: theme.colors.surface }]}
           >
             <DateTimePicker
               value={filterEndDate || new Date()}
@@ -887,7 +889,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 4,
     borderRadius: 12,
-    backgroundColor: '#FFFFFF',
   },
   transactionContent: {
     paddingVertical: 12,
@@ -919,7 +920,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     flex: 1,
-    color: '#000',
   },
   transactionAmount: {
     fontSize: 16,
@@ -927,17 +927,14 @@ const styles = StyleSheet.create({
   },
   transactionDate: {
     fontSize: 12,
-    color: '#666',
     marginBottom: 2,
   },
   transactionWallet: {
     fontSize: 11,
-    color: '#999',
     marginBottom: 2,
   },
   transactionNote: {
     fontSize: 12,
-    color: '#999',
     fontStyle: 'italic',
   },
   empty: {
@@ -948,7 +945,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     textAlign: 'center',
-    color: '#666',
     marginBottom: 16,
   },
   clearButton: {
@@ -959,14 +955,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     padding: 8,
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
   },
   resultsText: {
-    color: '#666',
   },
   modalContainer: {
     margin: 20,
@@ -980,7 +973,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
   },
   modalTitle: {
     fontWeight: '600',
@@ -1023,14 +1015,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
     gap: 12,
   },
   modalButton: {
     flex: 1,
   },
   datePickerModal: {
-    backgroundColor: 'white',
     margin: 20,
     borderRadius: 12,
     padding: 16,

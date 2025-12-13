@@ -1,30 +1,22 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Button, Text } from 'react-native-paper';
-import { useAppTheme } from '../../theme/ThemeProvider';
+import { Button, Text, useTheme } from 'react-native-paper';
 
 const OnboardingScreen = ({ navigation }) => {
-  const { isDark, toggleTheme } = useAppTheme();
+  const theme = useTheme();
 
   const handleContinue = () => {
     navigation.replace('Main');
   };
 
   return (
-    <View style={styles.container}>
-      <Text variant="headlineMedium" style={styles.title}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <Text variant="headlineMedium" style={[styles.title, { color: theme.colors.onBackground }]}>
         Welcome to DailyDhan
       </Text>
-      <Text style={styles.text}>
+      <Text style={[styles.text, { color: theme.colors.onSurfaceVariant }]}>
         Track your daily income and expenses, visualize insights, and stay on top of your money.
       </Text>
-
-      <View style={styles.card}>
-        <Text style={styles.cardText}>Choose your theme</Text>
-        <Button mode="outlined" onPress={toggleTheme}>
-          Switch to {isDark ? 'Light' : 'Dark'} Mode
-        </Button>
-      </View>
 
       <Button mode="contained" onPress={handleContinue} style={styles.cta}>
         Get Started
@@ -46,16 +38,6 @@ const styles = StyleSheet.create({
   },
   text: {
     marginBottom: 32,
-  },
-  card: {
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    marginBottom: 32,
-  },
-  cardText: {
-    marginBottom: 12,
   },
   cta: {
     marginTop: 'auto',

@@ -1,5 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
-import { useColorScheme } from 'react-native';
+import React, { createContext, useContext } from 'react';
 
 const ThemeContext = createContext({
   isDark: false,
@@ -7,10 +6,11 @@ const ThemeContext = createContext({
 });
 
 export const ThemeProvider = ({ children }) => {
-  const systemScheme = useColorScheme();
-  const [isDark, setIsDark] = useState(systemScheme === 'dark');
-
-  const toggleTheme = () => setIsDark(prev => !prev);
+  // Force light mode only - always return false for isDark
+  const isDark = false;
+  
+  // Toggle function does nothing since we're forcing light mode
+  const toggleTheme = () => {};
 
   return (
     <ThemeContext.Provider value={{ isDark, toggleTheme }}>

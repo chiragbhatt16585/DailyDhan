@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { List, Switch, Text, Portal, Modal, TextInput, Searchbar, ActivityIndicator, Button, useTheme } from 'react-native-paper';
-import { useAppTheme } from '../../theme/ThemeProvider';
 import { AppHeader } from '../../components/AppHeader';
 import { useAppStore } from '../../store/useAppStore';
 import { useFocusEffect } from '@react-navigation/native';
@@ -10,7 +9,6 @@ import { createDatabaseBackup, shareBackupToDrive, getAvailableBackups, restoreD
 import { ENABLE_PREMIUM_FEATURES } from '../../config/premium';
 
 const SettingsScreen = ({ navigation }) => {
-  const { isDark, toggleTheme } = useAppTheme();
   const theme = useTheme();
   const { isPremium } = useAppStore();
   // If premium features are disabled, treat all users as premium
@@ -260,11 +258,6 @@ const SettingsScreen = ({ navigation }) => {
     <>
       <AppHeader showBack title="Settings" />
       <View style={styles.container}>
-        {/* <List.Item
-          title="Dark Mode"
-          right={() => <Switch value={isDark} onValueChange={toggleTheme} />}
-        />
-         */}
         <List.Item
           title="Reports"
           description="View detailed financial reports and analysis"
@@ -306,6 +299,13 @@ const SettingsScreen = ({ navigation }) => {
           description="Manage your affiliate accounts and links"
           onPress={() => navigation.navigate('AffiliateAccounts')}
           left={props => <List.Icon {...props} icon="link-variant" />}
+          right={props => <List.Icon {...props} icon="chevron-right" />}
+        />
+        <List.Item
+          title="SIP Calculator"
+          description="Calculate future value of your Systematic Investment Plan"
+          onPress={() => navigation.navigate('SIPCalculator')}
+          left={props => <List.Icon {...props} icon="calculator" />}
           right={props => <List.Icon {...props} icon="chevron-right" />}
         />
         {ENABLE_PREMIUM_FEATURES && (

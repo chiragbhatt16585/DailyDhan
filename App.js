@@ -5,16 +5,16 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import { MobileAds } from 'react-native-google-mobile-ads';
 
 import { RootNavigator } from './src/navigation/RootNavigator';
-import { ThemeProvider, useAppTheme } from './src/theme/ThemeProvider';
-import { lightPaperTheme, darkPaperTheme } from './src/theme/theme';
+import { ThemeProvider } from './src/theme/ThemeProvider';
+import { lightPaperTheme } from './src/theme/theme';
 import { useAppStore } from './src/store/useAppStore';
 import { processDueRecurringTransactions } from './src/database';
 
 function AppContent() {
-  const { isDark } = useAppTheme();
   const { initializeCurrency, initializePremium } = useAppStore();
 
-  const theme = isDark ? darkPaperTheme : lightPaperTheme;
+  // Always use light theme - ignore system dark mode settings
+  const theme = lightPaperTheme;
 
   useEffect(() => {
     // Initialize currency preference on app start
@@ -36,7 +36,7 @@ function AppContent() {
 
   return (
     <PaperProvider theme={theme}>
-      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle="dark-content" />
       <NavigationContainer theme={theme}>
         <RootNavigator />
       </NavigationContainer>
