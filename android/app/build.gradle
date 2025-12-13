@@ -101,7 +101,7 @@ android {
         applicationId "com.dailydhan"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 6
+        versionCode 7
         versionName getVersionFromPackageJson()
         // Specify which flavor of react-native-iap to use (Google Play)
         missingDimensionStrategy 'store', 'play'

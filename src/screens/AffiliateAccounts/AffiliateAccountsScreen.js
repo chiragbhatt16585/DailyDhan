@@ -78,29 +78,35 @@ const AffiliateAccountsScreen = ({ navigation }) => {
     }
   };
 
-  // Handle open platform website
-  const handleOpenWebsite = (platform) => {
-    if (platform.website) {
-      Linking.openURL(platform.website).catch(err =>
-        console.warn('Failed to open URL:', err)
-      );
-    }
-  };
-
   const renderAccountItem = ({ item }) => {
     const platform = getPlatformById(item.platformId);
     const isAmazon = platform.id === 'amazon' || platform.id === 'amazon_in';
+    const isFlipkart = platform.id === 'flipkart';
+    const isMyntra = platform.id === 'myntra';
+    const useLogo = isAmazon || isFlipkart || isMyntra;
+    
+    // Get logo source based on platform
+    const getLogoSource = () => {
+      if (isAmazon) {
+        return require('../../assets/amazon-logo.webp');
+      } else if (isFlipkart) {
+        return require('../../assets/flipkart-logo.png');
+      } else if (isMyntra) {
+        return require('../../assets/myntra-logo.jpg');
+      }
+      return null;
+    };
     
     return (
       <Card style={styles.accountCard}>
         <Card.Content>
           <View style={styles.accountHeader}>
             <View style={styles.accountInfo}>
-              <View style={[styles.platformIcon, { backgroundColor: isAmazon ? '#F5F5F5' : platform.color + '20' }]}>
-                {isAmazon ? (
+              <View style={[styles.platformIcon, { backgroundColor: useLogo ? '#F5F5F5' : platform.color + '20' }]}>
+                {useLogo ? (
                   <Image 
-                    source={require('../../assets/amazon-logo.webp')} 
-                    style={styles.amazonLogo}
+                    source={getLogoSource()} 
+                    style={styles.platformLogo}
                     resizeMode="contain"
                   />
                 ) : (
@@ -123,17 +129,6 @@ const AffiliateAccountsScreen = ({ navigation }) => {
             >
               Open Link
             </Button>
-            {platform.website && (
-              <Button
-                mode="text"
-                icon="web"
-                onPress={() => handleOpenWebsite(platform)}
-                style={styles.actionButton}
-                compact
-              >
-                Website
-              </Button>
-            )}
           </View>
         </Card.Content>
       </Card>
@@ -315,7 +310,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 12,
   },
-  amazonLogo: {
+  platformLogo: {
     width: 40,
     height: 40,
   },

@@ -2,12 +2,12 @@
 // Add your affiliate IDs/links for each platform you're part of
 
 export const AFFILIATE_ACCOUNTS = [
-  // Example: Flipkart
-  // {
-  //   platformId: 'flipkart',
-  //   name: 'Flipkart',
-  //   affiliateId: 'your-flipkart-affiliate-id',
-  // },
+  //Example: Flipkart
+  {
+    platformId: 'flipkart',
+    name: 'Flipkart',
+    affiliateId: 'https://fkrt.co/6p38Gq',
+  },
 
   // Example: Amazon
   // {
@@ -24,11 +24,11 @@ export const AFFILIATE_ACCOUNTS = [
   // },
 
   // Example: Myntra
-  // {
-  //   platformId: 'myntra',
-  //   name: 'Myntra',
-  //   affiliateId: 'your-myntra-affiliate-id',
-  // },
+  {
+    platformId: 'myntra',
+    name: 'Myntra',
+    affiliateId: 'https://myntr.in/FhIObc',
+  },
 
   // Example: Paytm
   // {

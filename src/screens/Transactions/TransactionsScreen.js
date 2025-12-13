@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { View, StyleSheet, FlatList, ScrollView, TouchableOpacity, Platform, BackHandler } from 'react-native';
+import { View, StyleSheet, FlatList, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import {
   List,
   Text,
@@ -51,50 +51,14 @@ const TransactionsScreen = ({ navigation }) => {
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
 
-  // Custom back handler that closes modals before navigating
-  const handleBackPress = useCallback(() => {
-    if (showFilterModal || showStartDatePicker || showEndDatePicker) {
-      // Close all modals first
-      setShowFilterModal(false);
-      setShowStartDatePicker(false);
-      setShowEndDatePicker(false);
-      // Small delay to ensure modals are fully closed before navigation
-      setTimeout(() => {
-        if (isMountedRef.current) {
-          navigation.goBack();
-        }
-      }, 100);
-    } else {
-      navigation.goBack();
-    }
-  }, [navigation, showFilterModal, showStartDatePicker, showEndDatePicker]);
+  // No custom back handler - let React Navigation handle it naturally
+  // Modals will close on unmount via useFocusEffect
 
-  // Handle Android hardware back button
-  useEffect(() => {
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (showFilterModal || showStartDatePicker || showEndDatePicker) {
-        // Close modals first
-        setShowFilterModal(false);
-        setShowStartDatePicker(false);
-        setShowEndDatePicker(false);
-        return true; // Prevent default back behavior
-      }
-      return false; // Allow default back behavior
-    });
-
-    return () => backHandler.remove();
-  }, [showFilterModal, showStartDatePicker, showEndDatePicker]);
-
-  // Ensure modals are closed when leaving this screen to avoid Android ViewGroup errors
   useFocusEffect(
     useCallback(() => {
       isMountedRef.current = true;
       return () => {
         isMountedRef.current = false;
-        // Close all modals before unmounting
-        setShowFilterModal(false);
-        setShowStartDatePicker(false);
-        setShowEndDatePicker(false);
       };
     }, []),
   );
@@ -113,7 +77,9 @@ const TransactionsScreen = ({ navigation }) => {
         for (let i = 0; i < categoriesResult.rows.length; i += 1) {
           categoryRows.push(categoriesResult.rows.item(i));
         }
-        setCategories(categoryRows);
+        if (isMountedRef.current) {
+          setCategories(categoryRows);
+        }
 
         // Load wallets
         const [walletsResult] = await db.executeSql(
@@ -123,7 +89,9 @@ const TransactionsScreen = ({ navigation }) => {
         for (let i = 0; i < walletsResult.rows.length; i += 1) {
           walletRows.push(walletsResult.rows.item(i));
         }
-        setWallets(walletRows);
+        if (isMountedRef.current) {
+          setWallets(walletRows);
+        }
       } catch (e) {
         console.warn('Failed to load categories/wallets', e);
       }
@@ -155,7 +123,12 @@ const TransactionsScreen = ({ navigation }) => {
         for (let i = 0; i < result.rows.length; i += 1) {
           rows.push(result.rows.item(i));
         }
-      setAllItems(rows);
+        // Use setTimeout to ensure we're not updating during unmount
+        setTimeout(() => {
+          if (isMountedRef.current) {
+            setAllItems(rows);
+          }
+        }, 0);
       } catch (e) {
         console.warn('Failed to load transactions', e);
       }
@@ -363,7 +336,7 @@ const TransactionsScreen = ({ navigation }) => {
 
   return (
     <>
-      <AppHeader showBack title="Transactions" onBackPress={handleBackPress} />
+      <AppHeader showBack title="Transactions" />
       <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
         {/* Search Bar */}
         <View style={styles.searchContainer}>
@@ -516,6 +489,7 @@ const TransactionsScreen = ({ navigation }) => {
             renderItem={renderTransactionItem}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
+            removeClippedSubviews={false}
           />
         )}
 
