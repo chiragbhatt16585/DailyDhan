@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SIP Calculator - Calculate Your Mutual Fund SIP Returns | DailyDhan</title>
+    <meta
+      name="description"
+      content="Free SIP Calculator to calculate your Systematic Investment Plan returns. Calculate future value, total invested, and returns with interactive charts."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+      .sip-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 16px;
+      }
+      .sip-header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+      .sip-header h1 {
+        font-size: 36px;
+        margin: 0 0 12px;
+        color: #0f172a;
+      }
+      .sip-header p {
+        font-size: 16px;
+        color: #4b5563;
+        margin: 0;
+      }
+      .sip-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 32px;
+      }
+      .sip-card {
+        background-color: #ffffff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+        border: 1px solid #e5e7eb;
+      }
+      .sip-card h2 {
+        font-size: 20px;
+        margin: 0 0 20px;
+        color: #0f172a;
+      }
+      .sip-input-group {
+        margin-bottom: 20px;
+      }
+      .sip-input-group label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #374151;
+      }
+      .sip-input-group input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.2s;
+      }
+      .sip-input-group input:focus {
+        outline: none;
+        border-color: #1e4e7c;
+      }
+      .sip-input-hint {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 4px;
+      }
+      .sip-button-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+      }
+      .sip-btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .sip-btn-primary {
+        background-color: #1e4e7c;
+        color: #ffffff;
+      }
+      .sip-btn-primary:hover {
+        background-color: #163858;
+      }
+      .sip-btn-outline {
+        background-color: #ffffff;
+        color: #1e4e7c;
+        border: 1px solid #1e4e7c;
+      }
+      .sip-btn-outline:hover {
+        background-color: #f3f4f6;
+      }
+      .sip-results {
+        margin-top: 24px;
+      }
+      .sip-result-item {
+        text-align: center;
+        padding: 16px;
+        border-radius: 12px;
+        margin-bottom: 16px;
+      }
+      .sip-result-label {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 8px;
+      }
+      .sip-result-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #0f172a;
+      }
+      .sip-result-value.returns {
+        color: #16a34a;
+      }
+      .sip-result-value.maturity {
+        color: #1e4e7c;
+        font-size: 36px;
+      }
+      .sip-return-percentage {
+        margin-top: 20px;
+        padding: 16px;
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: 600;
+        color: #333;
+      }
+      .sip-chart-container {
+        position: relative;
+        height: 300px;
+        margin-top: 20px;
+      }
+      .sip-info-section {
+        background-color: #f9fafb;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 24px;
+      }
+      .sip-info-toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        padding: 12px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        margin-bottom: 16px;
+      }
+      .sip-info-content {
+        display: none;
+        padding: 16px;
+        background-color: #ffffff;
+        border-radius: 8px;
+      }
+      .sip-info-content.active {
+        display: block;
+      }
+      .sip-info-section h3 {
+        font-size: 16px;
+        margin: 0 0 12px;
+        color: #0f172a;
+      }
+      .sip-info-section p {
+        font-size: 14px;
+        color: #4b5563;
+        line-height: 1.6;
+        margin: 0 0 12px;
+      }
+      .sip-formula-box {
+        background-color: #f5f5f5;
+        padding: 16px;
+        border-radius: 8px;
+        margin: 12px 0;
+        border-left: 3px solid #1e4e7c;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+        color: #333;
+      }
+      .sip-disclaimer {
+        background-color: #fff3e0;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 32px;
+      }
+      .sip-disclaimer strong {
+        color: #333;
+      }
+      @media (max-width: 960px) {
+        .sip-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="dd-header">
+      <div class="dd-container dd-header-inner">
+        <div class="dd-logo-block">
+          <a href="./index.html" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit;">
+            <img src="./logo.png" alt="DailyDhan Logo" class="dd-logo" />
+            <span class="dd-logo-text">DailyDhan</span>
+          </a>
+        </div>
+        <nav class="dd-nav">
+          <a href="./index.html#features">Features</a>
+          <a href="./index.html#reports">Reports</a>
+          <a href="./sip-calculator.html">SIP Calculator</a>
+          <a href="./index.html#pricing">Pricing</a>
+          <a href="./index.html#affiliate">Shop</a>
+          <a href="./index.html#contact">Contact</a>
+          <a href="./index.html#faq">FAQ</a>
+          <a href="./index.html#download">Download App</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="sip-container">
+        <div class="sip-header">
+          <h1>SIP Calculator</h1>
+          <p>Calculate your Systematic Investment Plan returns and see how your investments grow over time</p>
+        </div>
+
+        <div class="sip-grid">
+          <!-- Input Card -->
+          <div class="sip-card">
+            <h2>Investment Details</h2>
+            <div class="sip-input-group">
+              <label for="monthlyInvestment">Monthly Investment Amount (₹)</label>
+              <input
+                type="number"
+                id="monthlyInvestment"
+                placeholder="e.g., 5000"
+                min="0"
+                step="100"
+              />
+            </div>
+            <div class="sip-input-group">
+              <label for="expectedReturn">Expected Annual Return (%)</label>
+              <input
+                type="number"
+                id="expectedReturn"
+                placeholder="e.g., 12"
+                min="0"
+                max="30"
+                step="0.1"
+              />
+              <div class="sip-input-hint">
+                Typical returns: 10-15% for equity funds, 7-9% for debt funds
+              </div>
+            </div>
+            <div class="sip-input-group">
+              <label for="investmentPeriod">Investment Period (Years)</label>
+              <input
+                type="number"
+                id="investmentPeriod"
+                placeholder="e.g., 10"
+                min="1"
+                max="50"
+                step="1"
+              />
+            </div>
+            <div class="sip-button-group">
+              <button class="sip-btn sip-btn-primary" onclick="calculateSIP()">Calculate</button>
+              <button class="sip-btn sip-btn-outline" onclick="resetSIP()">Reset</button>
+            </div>
+          </div>
+
+          <!-- Results Card -->
+          <div class="sip-card">
+            <h2>Investment Summary</h2>
+            <div class="sip-results" id="sipResults" style="display: none;">
+              <div class="sip-result-item">
+                <div class="sip-result-label">Total Amount Invested</div>
+                <div class="sip-result-value" id="totalInvested">₹ 0</div>
+              </div>
+              <div class="sip-result-item">
+                <div class="sip-result-label">Estimated Returns</div>
+                <div class="sip-result-value returns" id="totalReturns">₹ 0</div>
+              </div>
+              <div class="sip-result-item">
+                <div class="sip-result-label">Maturity Value</div>
+                <div class="sip-result-value maturity" id="futureValue">₹ 0</div>
+              </div>
+              <div class="sip-return-percentage" id="returnPercentage">
+                Return on Investment: 0%
+              </div>
+            </div>
+            <div id="sipNoResults" style="text-align: center; color: #6b7280; padding: 40px 0;">
+              Enter your investment details and click Calculate to see results
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div id="sipCharts" style="display: none;">
+          <div class="sip-grid">
+            <!-- Pie Chart -->
+            <div class="sip-card">
+              <h2>Investment Breakdown</h2>
+              <div class="sip-chart-container">
+                <canvas id="pieChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Line Chart -->
+            <div class="sip-card">
+              <h2>Growth Over Time</h2>
+              <div class="sip-chart-container">
+                <canvas id="lineChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="sip-info-section">
+          <div class="sip-info-toggle" onclick="toggleInfo()">
+            <h3 style="margin: 0;">Learn About SIP Calculator</h3>
+            <span id="infoToggle">▼</span>
+          </div>
+          <div class="sip-info-content" id="infoContent">
+            <div style="margin-bottom: 24px;">
+              <h3>What is a SIP Calculator?</h3>
+              <p>
+                A SIP Calculator is a simple and quick tool to help investors calculate the potential returns they can get from their mutual fund SIPs. A recent trend shows the increasing popularity of SIPs among millennials and Gen Zs, both as they are much more convenient and allow you to build long-term wealth gradually through disciplined monthly contributions.
+              </p>
+              <p>
+                This SIP plan calculator lets you know the value of your investments based on three things, namely amount, tenure, and expected rate of return. While this SIP plan calculator provides a quick estimate, the actual returns of a mutual fund scheme might vary depending on various factors. The SIP Calculator doesn't take into consideration the expense ratio or the exit load. Still, it can guide you with a rough projection of your corpus and help you compare it with a lump-sum investment.
+              </p>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+              <h3>What is SIP?</h3>
+              <p>
+                Systematic Investment Plan (SIP) allows you to invest a fixed amount regularly into mutual funds or even stocks, helping you grow your money over time. Imagine that you are saving a fixed amount every month by putting X amount of money in a box. It is surely a disciplined way to save money, but that money just sits there and doesn't actually grow. Hence, you invest money through weekly, quarterly, or monthly Systematic Investment Plans (SIPs).
+              </p>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+              <h3>Why do you need SIP?</h3>
+              <p>
+                The best part of SIPs is their convenience. You don't have to worry about the timing of the market or remembering to invest. Once set up, your contributions happen automatically. This builds consistency, helps you benefit from rupee cost averaging, and grows your money through the power of compounding.
+              </p>
+              <p>
+                SIPs are flexible, so you can start small and increase your amount as your income rises. If you want to calculate how much your investments can grow with an increase in SIPs amount, try using a Step up SIP calculator online to estimate the potential returns.
+              </p>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+              <h3>SIP Calculator Formula</h3>
+              <p>To calculate the amount you will receive upon maturity of an SIP, also known as the future value, the following formula is used:</p>
+              <div class="sip-formula-box">
+                M = P × {(1 + r)^n - 1} / {r} × (1 + r)
+              </div>
+              <p>Where:</p>
+              <p>
+                • M is the future value of the SIP<br>
+                • P is the monthly SIP amount<br>
+                • n is the total number of installments you made<br>
+                • r is the periodic rate of interest
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="sip-disclaimer">
+          <p>
+            <strong>Disclaimer:</strong> This calculator provides estimates only. Actual returns may vary based on market conditions, fund performance, and other factors. Past performance does not guarantee future results. Please consult with a financial advisor before making investment decisions.
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <footer class="dd-footer">
+      <div class="dd-container dd-footer-inner">
+        <div>
+          <strong>DailyDhan</strong>
+          <p class="dd-footer-copy">Track Today, Save for Tomorrow.</p>
+          <p class="dd-footer-copy" style="margin-top: 8px; font-size: 14px;">
+            Contact: <a href="mailto:chiragbhatt16585@gmail.com" style="color: inherit; text-decoration: underline;">chiragbhatt16585@gmail.com</a>
+          </p>
+        </div>
+        <div class="dd-footer-links">
+          <a href="./index.html#top">Back to top</a>
+          <a href="./index.html#features">Features</a>
+          <a href="./index.html#download">Download</a>
+          <a href="./terms.html">Terms &amp; Conditions</a>
+        </div>
+      </div>
+      <div class="dd-footer-bottom">
+        <div class="dd-container dd-footer-bottom-inner">
+          <span>© <span id="dd-year"></span> DailyDhan. All rights reserved.</span>
+          <span class="dd-footer-meta">Official site: DailyDhan.in | Email: chiragbhatt16585@gmail.com</span>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      let pieChartInstance = null;
+      let lineChartInstance = null;
+
+      function formatCurrency(amount) {
+        return '₹ ' + Math.round(amount).toLocaleString('en-IN');
+      }
+
+      function calculateSIP() {
+        const monthlyAmount = parseFloat(document.getElementById('monthlyInvestment').value) || 0;
+        const annualReturn = parseFloat(document.getElementById('expectedReturn').value) || 0;
+        const years = parseFloat(document.getElementById('investmentPeriod').value) || 0;
+
+        if (monthlyAmount > 0 && annualReturn >= 0 && years > 0) {
+          // Convert annual return to monthly return
+          const monthlyReturn = annualReturn > 0 
+            ? Math.pow(1 + annualReturn / 100, 1/12) - 1
+            : 0;
+          const months = years * 12;
+
+          // SIP Formula
+          let fv = 0;
+          if (monthlyReturn > 0) {
+            const compoundFactor = Math.pow(1 + monthlyReturn, months);
+            fv = monthlyAmount * ((compoundFactor - 1) / monthlyReturn) * (1 + monthlyReturn);
+          } else {
+            fv = monthlyAmount * months;
+          }
+
+          const invested = monthlyAmount * months;
+          const returns = fv - invested;
+          const returnPercentage = invested > 0 ? ((returns / invested) * 100).toFixed(2) : 0;
+
+          // Update results
+          document.getElementById('totalInvested').textContent = formatCurrency(invested);
+          document.getElementById('totalReturns').textContent = formatCurrency(returns);
+          document.getElementById('futureValue').textContent = formatCurrency(fv);
+          document.getElementById('returnPercentage').textContent = 
+            `Return on Investment: ${returnPercentage}%`;
+
+          document.getElementById('sipResults').style.display = 'block';
+          document.getElementById('sipNoResults').style.display = 'none';
+          document.getElementById('sipCharts').style.display = 'block';
+
+          // Calculate yearly breakdown
+          const yearlyData = [];
+          for (let year = 1; year <= years; year++) {
+            const monthsInYear = year * 12;
+            const investedInYear = monthlyAmount * monthsInYear;
+            let cumulativeValue = 0;
+            
+            if (monthlyReturn > 0) {
+              const compoundFactor = Math.pow(1 + monthlyReturn, monthsInYear);
+              cumulativeValue = monthlyAmount * ((compoundFactor - 1) / monthlyReturn) * (1 + monthlyReturn);
+            } else {
+              cumulativeValue = investedInYear;
+            }
+            
+            yearlyData.push({
+              year: year,
+              invested: investedInYear,
+              value: cumulativeValue,
+              returns: cumulativeValue - investedInYear,
+            });
+          }
+
+          // Update charts
+          updatePieChart(invested, returns);
+          updateLineChart(yearlyData);
+        } else {
+          alert('Please enter valid values for all fields');
+        }
+      }
+
+      function updatePieChart(invested, returns) {
+        const ctx = document.getElementById('pieChart').getContext('2d');
+        
+        if (pieChartInstance) {
+          pieChartInstance.destroy();
+        }
+
+        pieChartInstance = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: ['Invested', 'Returns'],
+            datasets: [{
+              data: [invested, returns],
+              backgroundColor: ['#1e4e7c', '#34A853'],
+            }],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+              },
+            },
+          },
+        });
+      }
+
+      function updateLineChart(yearlyData) {
+        const ctx = document.getElementById('lineChart').getContext('2d');
+        
+        if (lineChartInstance) {
+          lineChartInstance.destroy();
+        }
+
+        lineChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: yearlyData.map(d => String(d.year)),
+            datasets: [
+              {
+                label: 'Total Invested',
+                data: yearlyData.map(d => Math.round(d.invested)),
+                borderColor: '#1e4e7c',
+                backgroundColor: 'rgba(30, 78, 124, 0.1)',
+                tension: 0.4,
+              },
+              {
+                label: 'Maturity Value',
+                data: yearlyData.map(d => Math.round(d.value)),
+                borderColor: '#34A853',
+                backgroundColor: 'rgba(52, 168, 83, 0.1)',
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function(value) {
+                    return '₹' + (value / 1000).toFixed(0) + 'k';
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+
+      function resetSIP() {
+        document.getElementById('monthlyInvestment').value = '';
+        document.getElementById('expectedReturn').value = '';
+        document.getElementById('investmentPeriod').value = '';
+        document.getElementById('sipResults').style.display = 'none';
+        document.getElementById('sipNoResults').style.display = 'block';
+        document.getElementById('sipCharts').style.display = 'none';
+        
+        if (pieChartInstance) {
+          pieChartInstance.destroy();
+          pieChartInstance = null;
+        }
+        if (lineChartInstance) {
+          lineChartInstance.destroy();
+          lineChartInstance = null;
+        }
+      }
+
+      function toggleInfo() {
+        const content = document.getElementById('infoContent');
+        const toggle = document.getElementById('infoToggle');
+        content.classList.toggle('active');
+        toggle.textContent = content.classList.contains('active') ? '▲' : '▼';
+      }
+
+      // Set current year
+      document.getElementById('dd-year').textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
+
