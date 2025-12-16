@@ -209,6 +209,48 @@
         .sip-grid {
           grid-template-columns: 1fr;
         }
+        .sip-container {
+          padding: 24px 16px;
+        }
+        .sip-header h1 {
+          font-size: 28px;
+        }
+        .sip-card {
+          padding: 20px;
+        }
+        .sip-result-value.maturity {
+          font-size: 28px;
+        }
+        .sip-chart-container {
+          height: 250px;
+        }
+      }
+      
+      @media (max-width: 720px) {
+        .sip-header h1 {
+          font-size: 24px;
+        }
+        .sip-header p {
+          font-size: 14px;
+        }
+        .sip-card h2 {
+          font-size: 18px;
+        }
+        .sip-result-value {
+          font-size: 24px;
+        }
+        .sip-result-value.maturity {
+          font-size: 24px;
+        }
+        .sip-chart-container {
+          height: 200px;
+        }
+        .sip-button-group {
+          flex-direction: column;
+        }
+        .sip-btn {
+          width: 100%;
+        }
       }
     </style>
   </head>
@@ -231,6 +273,20 @@
           <a href="./index.html#faq">FAQ</a>
           <a href="./index.html#download">Download App</a>
         </nav>
+        <button class="dd-mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">☰</button>
+      </div>
+      <div class="dd-mobile-menu" id="mobileMenu">
+        <nav class="dd-mobile-nav">
+          <a href="./index.html#features" onclick="closeMobileMenu()">Features</a>
+          <a href="./index.html#reports" onclick="closeMobileMenu()">Reports</a>
+          <a href="./sip-calculator.html" onclick="closeMobileMenu()">SIP Calculator</a>
+          <a href="./index.html#pricing" onclick="closeMobileMenu()">Pricing</a>
+          <a href="./index.html#affiliate" onclick="closeMobileMenu()">Shop</a>
+          <a href="./index.html#contact" onclick="closeMobileMenu()">Contact</a>
+          <a href="./index.html#faq" onclick="closeMobileMenu()">FAQ</a>
+          <a href="./index.html#download" onclick="closeMobileMenu()">Download App</a>
+        </nav>
+      </div>
       </div>
     </header>
 
@@ -415,6 +471,7 @@
           <span class="dd-footer-meta">Official site: DailyDhan.in | Email: chiragbhatt16585@gmail.com</span>
         </div>
       </div>
+      <script src="./script.js"></script>
     </footer>
 
     <script>
@@ -595,7 +652,67 @@
       }
 
       // Set current year
-      document.getElementById('dd-year').textContent = new Date().getFullYear();
+      const yearSpan = document.getElementById('dd-year');
+      if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+      }
+
+      // Make closeMobileMenu globally accessible
+      window.closeMobileMenu = function() {
+        const menu = document.getElementById('mobileMenu');
+        const toggle = document.getElementById('mobileMenuToggle');
+        if (menu) {
+          menu.classList.remove('active');
+        }
+        if (toggle) {
+          toggle.textContent = '☰';
+        }
+      };
+
+      // Ensure mobile menu is initialized - run after script.js loads
+      function initSIPMobileMenu() {
+        const toggle = document.getElementById('mobileMenuToggle');
+        const menu = document.getElementById('mobileMenu');
+        
+        if (toggle && menu) {
+          // Remove existing event listeners by replacing the button
+          const newToggle = toggle.cloneNode(true);
+          toggle.parentNode.replaceChild(newToggle, toggle);
+          
+          newToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const isActive = menu.classList.contains('active');
+            if (isActive) {
+              menu.classList.remove('active');
+              newToggle.textContent = '☰';
+            } else {
+              menu.classList.add('active');
+              newToggle.textContent = '✕';
+            }
+          });
+          
+          // Close menu when clicking outside
+          document.addEventListener('click', function(event) {
+            if (menu.classList.contains('active') && 
+                !menu.contains(event.target) && 
+                !newToggle.contains(event.target)) {
+              window.closeMobileMenu();
+            }
+          });
+        }
+      }
+
+      // Initialize after page loads
+      window.addEventListener('load', function() {
+        // Small delay to ensure script.js has run
+        setTimeout(initSIPMobileMenu, 100);
+      });
+      
+      // Also try immediately if DOM is already ready
+      if (document.readyState === 'complete') {
+        setTimeout(initSIPMobileMenu, 100);
+      }
     </script>
   </body>
 </html>

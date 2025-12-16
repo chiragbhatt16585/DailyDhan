@@ -176,7 +176,7 @@ const DashboardScreen = () => {
     <>
       <AppHeader />
       <ScrollView 
-        style={[styles.container, { backgroundColor: theme.colors.background }]} 
+        style={[styles.container, { backgroundColor: '#FFFFFF' }]} 
         contentContainerStyle={[styles.content, { paddingBottom: 80 }]}
       >
         <View style={styles.monthSelector}>
@@ -195,7 +195,7 @@ const DashboardScreen = () => {
             style={[
               styles.financialCard,
               styles.incomeCard,
-              { backgroundColor: theme.colors.surface },
+              { backgroundColor: '#FFFFFF' },
             ]}
           >
             <View style={styles.financialCardHeader}>
@@ -221,7 +221,7 @@ const DashboardScreen = () => {
             style={[
               styles.financialCard,
               styles.expenseCard,
-              { backgroundColor: theme.colors.surface },
+              { backgroundColor: '#FFFFFF' },
             ]}
           >
             <View style={styles.financialCardHeader}>
@@ -248,14 +248,8 @@ const DashboardScreen = () => {
               styles.financialCard,
               styles.balanceCardRow,
               {
-                // In light mode keep the original solid cards, in dark mode use subtle tints
-                backgroundColor: theme.dark
-                  ? balance >= 0
-                    ? 'rgba(76, 175, 80, 0.18)'
-                    : 'rgba(244, 67, 54, 0.18)'
-                  : balance >= 0
-                    ? '#E8F5E9'
-                    : '#FFEBEE',
+                // Keep balance card simple white background
+                backgroundColor: '#FFFFFF',
               },
             ]}
           >
@@ -375,7 +369,7 @@ const DashboardScreen = () => {
           onPress={() => navigation.navigate('Transactions')}
           activeOpacity={0.7}
         >
-          <Card style={styles.fullCard}>
+          <Card style={[styles.fullCard, { backgroundColor: '#FFFFFF' }]}>
             <Card.Content style={styles.quickAccessCard}>
               <View style={styles.quickAccessContent}>
                 <View style={styles.quickAccessLeft}>
@@ -407,7 +401,7 @@ const DashboardScreen = () => {
 
         {/* Expense Breakdown Chart */}
         {expense > 0 && expenseBreakdown.length > 0 && (
-          <Card style={styles.fullCard}>
+          <Card style={[styles.fullCard, { backgroundColor: '#FFFFFF' }]}>
             <Card.Title 
               title="Expense Breakdown" 
               titleStyle={{ color: theme.colors.onSurface }}
@@ -463,7 +457,7 @@ const DashboardScreen = () => {
 
         {/* Modern Segmented Control Style Tab Menu */}
         <View style={styles.tabWrapper}>
-          <View style={[styles.tabContainer, { backgroundColor: theme.colors.surfaceVariant }]}>
+          <View style={[styles.tabContainer, { backgroundColor: '#FFFFFF' }]}>
             <TouchableOpacity
               style={styles.tabButton}
               onPress={() => handleTabChange('transactions')}
@@ -527,7 +521,7 @@ const DashboardScreen = () => {
         {activeTab === 'transactions' ? (
           <>
             {recent.length === 0 ? (
-              <Card style={styles.fullCard}>
+              <Card style={[styles.fullCard, { backgroundColor: '#FFFFFF' }]}>
                 <Card.Content style={styles.emptyCardContent}>
                   <Text style={[styles.emptyText, { color: theme.colors.onSurfaceVariant }]}>No transactions yet.</Text>
                 </Card.Content>
@@ -570,7 +564,11 @@ const DashboardScreen = () => {
               const isIncome = item.type === 'income';
               
               return (
-                <Card key={item.id} style={styles.transactionCard}>
+              <Card
+                key={item.id}
+                style={[styles.transactionCard, { backgroundColor: '#FFFFFF' }]}
+                onPress={() => navigation.navigate('AddTransaction', { transactionId: item.id })}
+              >
                   <Card.Content style={styles.transactionContent}>
                     <View style={styles.transactionLeft}>
                       <View
@@ -627,7 +625,7 @@ const DashboardScreen = () => {
         ) : (
           <>
             {expenseBreakdown.length === 0 ? (
-              <Card style={styles.fullCard}>
+              <Card style={[styles.fullCard, { backgroundColor: '#FFFFFF' }]}>
                 <Card.Content style={styles.emptyCardContent}>
                   <Text style={[styles.emptyText, { color: theme.colors.onSurfaceVariant }]}>No expenses found for this month.</Text>
                 </Card.Content>
@@ -936,6 +934,8 @@ const styles = StyleSheet.create({
   transactionCard: {
     marginBottom: 0,
     elevation: 1,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
   transactionContent: {
     paddingVertical: 8,
@@ -989,6 +989,7 @@ const styles = StyleSheet.create({
   categoryCard: {
     marginBottom: 0,
     elevation: 2,
+    backgroundColor: '#FFFFFF',
   },
   categoryCardContent: {
     paddingVertical: 12,

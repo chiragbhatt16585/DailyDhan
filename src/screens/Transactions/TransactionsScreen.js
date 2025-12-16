@@ -282,10 +282,12 @@ const TransactionsScreen = ({ navigation }) => {
     const categoryColor = item.category_color || (isIncome ? '#34A853' : '#E91E63');
     
     return (
-      <Card style={styles.transactionCard} onPress={() => {
-        // Navigate to transaction details or edit screen
-        // You can implement this later
-      }}>
+      <Card
+        style={styles.transactionCard}
+        onPress={() => {
+          navigation.navigate('AddTransaction', { transactionId: item.id });
+        }}
+      >
         <Card.Content style={styles.transactionContent}>
           <View style={styles.transactionLeft}>
             <View
@@ -361,7 +363,7 @@ const TransactionsScreen = ({ navigation }) => {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.quickFiltersContent}
           >
-            <View style={[styles.segmentedControl, { backgroundColor: theme.colors.surfaceVariant }]}>
+            <View style={[styles.segmentedControl, { backgroundColor: '#FFFFFF' }]}>
               {QUICK_FILTERS.map(filter => {
                 const isActive = activeQuickFilter === filter.id;
                 return (
@@ -814,6 +816,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 4,
     borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
   searchbar: {
     elevation: 0,
@@ -889,6 +894,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 4,
     borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
   transactionContent: {
     paddingVertical: 12,

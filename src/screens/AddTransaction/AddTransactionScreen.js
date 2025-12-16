@@ -10,11 +10,12 @@ import { formatCurrency } from '../../utils/currencies';
 
 const screenWidth = Dimensions.get('window').width;
 
-const AddTransactionScreen = ({ navigation }) => {
+const AddTransactionScreen = ({ navigation, route }) => {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { currency } = useAppStore();
   const isMountedRef = useRef(true);
+  const editingTransactionId = route?.params?.transactionId ?? null;
   const [amount, setAmount] = useState('');
   const [calculatedAmount, setCalculatedAmount] = useState('');
   const [type, setType] = useState('expense');
@@ -95,6 +96,61 @@ const AddTransactionScreen = ({ navigation }) => {
       };
     }, []),
   );
+
+  // Load existing transaction details when editing
+  useEffect(() => {
+    if (!editingTransactionId) return;
+
+    const loadTransaction = async () => {
+      try {
+        const db = await getDB();
+        const [result] = await db.executeSql(
+          `SELECT 
+            t.id,
+            t.amount,
+            t.type,
+            t.category_id,
+            t.wallet_id,
+            t.date,
+            t.note,
+            c.name as category_name,
+            w.name as wallet_name,
+            w.last_4_digits as wallet_last4
+          FROM transactions t
+          LEFT JOIN categories c ON c.id = t.category_id
+          LEFT JOIN wallets w ON w.id = t.wallet_id
+          WHERE t.id = ?`,
+          [editingTransactionId],
+        );
+
+        if (result.rows.length === 0) {
+          return;
+        }
+
+        const tx = result.rows.item(0);
+
+        setAmount(String(tx.amount ?? ''));
+        setCalculatedAmount('');
+        setType(tx.type || 'expense');
+        setCategoryId(tx.category_id || null);
+        setCategoryName(tx.category_name || '');
+        setWalletId(tx.wallet_id || null);
+        setWalletName(
+          tx.wallet_name
+            ? tx.wallet_name + (tx.wallet_last4 ? ` • ${tx.wallet_last4}` : '')
+            : '',
+        );
+        setNote(tx.note || '');
+        setSelectedDate(tx.date ? new Date(tx.date) : new Date());
+        setTempSelectedDate(tx.date ? new Date(tx.date) : new Date());
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('Failed to load transaction for editing', e);
+      }
+    };
+
+    loadTransaction();
+  }, [editingTransactionId]);
 
   const loadCategories = async () => {
     try {
@@ -230,10 +286,27 @@ const AddTransactionScreen = ({ navigation }) => {
       const db = await getDB();
       let categoryIdToUse = categoryId;
 
-      await db.executeSql(
-        'INSERT INTO transactions (amount, type, category_id, wallet_id, date, note) VALUES (?, ?, ?, ?, ?, ?)',
-        [Number(finalAmount), type, categoryIdToUse, walletId, selectedDate.toISOString(), note],
-      );
+      if (editingTransactionId) {
+        // Update existing transaction
+        await db.executeSql(
+          'UPDATE transactions SET amount = ?, type = ?, category_id = ?, wallet_id = ?, date = ?, note = ? WHERE id = ?',
+          [
+            Number(finalAmount),
+            type,
+            categoryIdToUse,
+            walletId,
+            selectedDate.toISOString(),
+            note,
+            editingTransactionId,
+          ],
+        );
+      } else {
+        // Create new transaction
+        await db.executeSql(
+          'INSERT INTO transactions (amount, type, category_id, wallet_id, date, note) VALUES (?, ?, ?, ?, ?, ?)',
+          [Number(finalAmount), type, categoryIdToUse, walletId, selectedDate.toISOString(), note],
+        );
+      }
 
       navigation.goBack();
     } catch (e) {
@@ -278,7 +351,11 @@ const AddTransactionScreen = ({ navigation }) => {
 
   return (
     <>
-      <AppHeader showBack title="New Transaction" onBackPress={handleBackPress} />
+      <AppHeader
+        showBack
+        title={editingTransactionId ? 'Edit Transaction' : 'New Transaction'}
+        onBackPress={handleBackPress}
+      />
       <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <ScrollView 
           style={styles.scrollView}
@@ -398,26 +475,92 @@ const AddTransactionScreen = ({ navigation }) => {
             />
           </View>
         </View>
-        </ScrollView>
 
-        {/* Save Button - Fixed at bottom */}
-        <View style={[
-          styles.saveContainer, 
-          { 
-            backgroundColor: theme.colors.surface,
-            paddingBottom: Math.max(insets.bottom, 16),
-          }
-        ]}>
-          <Button
-            mode="contained"
-            onPress={onSave}
-            style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
-            contentStyle={styles.saveButtonContent}
-            disabled={!amount && !calculatedAmount}
-          >
-            Save Transaction
-          </Button>
+        {/* Save and Cancel Buttons - at bottom of form */}
+        <View
+          style={[
+            styles.saveContainer,
+            {
+              backgroundColor: theme.colors.surface,
+              paddingBottom: Math.max(insets.bottom, 16),
+            },
+          ]}
+        >
+          {editingTransactionId ? (
+            <View style={styles.saveButtonsRow}>
+              <Button
+                mode="outlined"
+                onPress={() => navigation.goBack()}
+                style={[styles.saveButton, styles.cancelButton]}
+                contentStyle={styles.saveButtonContent}
+              >
+                Cancel
+              </Button>
+              <Button
+                mode="contained"
+                onPress={onSave}
+                style={[styles.saveButton, styles.primarySaveButton, { backgroundColor: theme.colors.primary }]}
+                contentStyle={styles.saveButtonContent}
+                disabled={!amount && !calculatedAmount}
+              >
+                Save Transaction
+              </Button>
+              <Button
+                mode="outlined"
+                onPress={() => {
+                  Alert.alert(
+                    'Delete Transaction',
+                    'Are you sure you want to delete this transaction? This action cannot be undone.',
+                    [
+                      { text: 'Cancel', style: 'cancel' },
+                      {
+                        text: 'Delete',
+                        style: 'destructive',
+                        onPress: async () => {
+                          try {
+                            const db = await getDB();
+                            await db.executeSql('DELETE FROM transactions WHERE id = ?', [
+                              editingTransactionId,
+                            ]);
+                            navigation.goBack();
+                          } catch (e) {
+                            // eslint-disable-next-line no-console
+                            console.warn('Failed to delete transaction', e);
+                          }
+                        },
+                      },
+                    ],
+                  );
+                }}
+                style={[styles.saveButton, styles.deleteTransactionButton]}
+                contentStyle={styles.saveButtonContent}
+              >
+                Delete
+              </Button>
+            </View>
+          ) : (
+            <View style={styles.saveButtonsRow}>
+              <Button
+                mode="outlined"
+                onPress={() => navigation.goBack()}
+                style={[styles.saveButton, styles.cancelButton]}
+                contentStyle={styles.saveButtonContent}
+              >
+                Cancel
+              </Button>
+              <Button
+                mode="contained"
+                onPress={onSave}
+                style={[styles.saveButton, styles.primarySaveButton, { backgroundColor: theme.colors.primary }]}
+                contentStyle={styles.saveButtonContent}
+                disabled={!amount && !calculatedAmount}
+              >
+                Save Transaction
+              </Button>
+            </View>
+          )}
         </View>
+        </ScrollView>
       </View>
 
       {/* Category Picker Modal */}
@@ -1178,8 +1321,23 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   saveButton: {
+    flex: 1,
     borderRadius: 12,
+  },
+  primarySaveButton: {
     elevation: 2,
+  },
+  saveButtonsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  deleteTransactionButton: {
+    elevation: 0,
+  },
+  cancelButton: {
+    elevation: 0,
   },
   saveButtonContent: {
     paddingVertical: 8,

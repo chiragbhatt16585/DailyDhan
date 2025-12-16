@@ -7,7 +7,62 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Setup Amazon affiliate links to open app on mobile
   setupAmazonDeepLinks();
+  
+  // Setup mobile menu toggle
+  setupMobileMenu();
 });
+
+/**
+ * Setup mobile menu toggle functionality
+ */
+function setupMobileMenu() {
+  const toggle = document.getElementById('mobileMenuToggle');
+  const menu = document.getElementById('mobileMenu');
+  
+  if (toggle && menu) {
+    toggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const isActive = menu.classList.contains('active');
+      if (isActive) {
+        menu.classList.remove('active');
+        toggle.textContent = '☰';
+      } else {
+        menu.classList.add('active');
+        toggle.textContent = '✕';
+      }
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (event) => {
+      if (menu && menu.classList.contains('active') && 
+          !menu.contains(event.target) && 
+          !toggle.contains(event.target)) {
+        closeMobileMenu();
+      }
+    });
+    
+    // Prevent menu clicks from closing the menu
+    menu.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+  }
+}
+
+/**
+ * Close mobile menu
+ * Make it globally accessible
+ */
+window.closeMobileMenu = function() {
+  const menu = document.getElementById('mobileMenu');
+  const toggle = document.getElementById('mobileMenuToggle');
+  if (menu) {
+    menu.classList.remove('active');
+  }
+  if (toggle) {
+    toggle.textContent = '☰';
+  }
+};
 
 /**
  * Detect if user is on mobile device

@@ -256,7 +256,7 @@ const BudgetsScreen = ({ navigation }) => {
               <Text variant="bodySmall" style={[styles.sectionLabel, { color: theme.colors.onSurfaceVariant }]}>
                 PERIOD
               </Text>
-              <View style={[styles.segmentedControl, { backgroundColor: theme.colors.surfaceVariant }]}>
+              <View style={[styles.segmentedControl, { backgroundColor: '#FFFFFF' }]}>
                 <TouchableOpacity
                   style={[
                     styles.segmentedButton,
@@ -711,6 +711,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 12,
     padding: 4,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
   segmentedButton: {
     flex: 1,

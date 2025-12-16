@@ -138,7 +138,10 @@ const AffiliateAccountsScreen = ({ navigation }) => {
   return (
     <>
       <AppHeader showBack title="Affiliate Programme" />
-      <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.scrollContent}
+      >
         {AFFILIATE_ACCOUNTS.length === 0 ? (
           <View style={styles.emptyContainer}>
             <List.Icon icon="link-variant" size={64} color="#9E9E9E" />
@@ -219,7 +222,7 @@ export default AffiliateAccountsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
   },
   scrollContent: {
     paddingBottom: 20,
@@ -228,7 +231,9 @@ const styles = StyleSheet.create({
     margin: 16,
     marginTop: 8,
     marginBottom: 8,
-    backgroundColor: '#E3F2FD',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
     borderLeftWidth: 4,
     borderLeftColor: '#1A73E8',
   },
@@ -291,6 +296,9 @@ const styles = StyleSheet.create({
   accountCard: {
     marginBottom: 12,
     elevation: 2,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
   accountHeader: {
     flexDirection: 'row',
