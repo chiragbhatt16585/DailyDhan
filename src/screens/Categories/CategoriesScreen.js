@@ -254,9 +254,9 @@ const CategoriesScreen = ({ navigation }) => {
   return (
     <>
       <AppHeader showBack title="Categories" onBackPress={handleBackPress} />
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={[styles.container, { backgroundColor: '#FFFFFF' }]}>
         {/* Tabs */}
-        <View style={[styles.tabContainer, { backgroundColor: theme.colors.surface }]}>
+        <View style={[styles.tabContainer, { backgroundColor: '#FFFFFF' }]}>
           <TouchableOpacity
             style={[
               styles.tab,
@@ -307,7 +307,7 @@ const CategoriesScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <Card style={[styles.card, { backgroundColor: theme.colors.surface }]}>
+        <Card style={[styles.card, { backgroundColor: '#FFFFFF' }]}>
           <Card.Content>
             {filteredItems.length === 0 ? (
               <Text style={[styles.emptyText, { color: theme.colors.onSurface }]}>
@@ -377,9 +377,9 @@ const CategoriesScreen = ({ navigation }) => {
           contentContainerStyle={[
             styles.editModal,
             {
-              backgroundColor: theme.dark ? '#1E1E1E' : theme.colors.surface,
+              backgroundColor: '#FFFFFF',
               borderWidth: 1,
-              borderColor: theme.colors.outline,
+              borderColor: '#E0E0E0',
             },
           ]}
         >
@@ -483,9 +483,9 @@ const CategoriesScreen = ({ navigation }) => {
           contentContainerStyle={[
             styles.editModal,
             {
-              backgroundColor: theme.dark ? '#1E1E1E' : theme.colors.surface,
+              backgroundColor: '#FFFFFF',
               borderWidth: 1,
-              borderColor: theme.colors.outline,
+              borderColor: '#E0E0E0',
             },
           ]}
         >
@@ -621,9 +621,9 @@ const CategoriesScreen = ({ navigation }) => {
           contentContainerStyle={[
             styles.iconModal,
             {
-              backgroundColor: theme.dark ? '#1E1E1E' : theme.colors.surface,
+              backgroundColor: '#FFFFFF',
               borderWidth: 1,
-              borderColor: theme.colors.outline,
+              borderColor: '#E0E0E0',
             },
           ]}
         >
@@ -660,11 +660,11 @@ const CategoriesScreen = ({ navigation }) => {
                     return (
                       <TouchableOpacity
                         key={option.icon}
-                        style={[
+                          style={[
                           styles.iconOption,
                           {
-                            backgroundColor: theme.colors.surface,
-                            borderColor: theme.colors.outline,
+                            backgroundColor: '#FFFFFF',
+                            borderColor: '#E0E0E0',
                           },
                           selected && styles.iconOptionSelected,
                         ]}
@@ -699,6 +699,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 12,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
   sectionTitle: {
     marginTop: 8,
@@ -884,6 +886,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
   tab: {
     flex: 1,

@@ -535,24 +535,16 @@ const DashboardScreen = () => {
                   </Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate('Transactions')}
-                    style={[
-                      styles.viewAllButton,
-                      {
-                        backgroundColor: theme.dark ? 'rgba(30, 78, 124, 0.3)' : 'rgba(30, 78, 124, 0.1)',
-                        paddingHorizontal: 12,
-                        paddingVertical: 6,
-                      }
-                    ]}
+                    style={styles.viewAllButton}
                     activeOpacity={0.7}
                   >
-                    <Text style={[styles.viewAllText, { color: theme.dark ? '#64B5F6' : theme.colors.primary, fontWeight: '600' }]}>
+                    <Text style={[styles.viewAllText, { color: theme.colors.primary, fontWeight: '600' }]}>
                       View All
                     </Text>
-                    <IconButton
-                      icon="chevron-right"
+                    <Icon
+                      source="chevron-right"
                       size={18}
-                      iconColor={theme.dark ? '#64B5F6' : theme.colors.primary}
-                      style={styles.viewAllIcon}
+                      color={theme.colors.primary}
                     />
                   </TouchableOpacity>
                 </View>
@@ -910,17 +902,11 @@ const styles = StyleSheet.create({
   viewAllButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 8,
+    gap: 4,
   },
   viewAllText: {
     fontSize: 14,
     fontWeight: '600',
-  },
-  viewAllIcon: {
-    margin: 0,
-    padding: 0,
   },
   viewAllButtonText: {
     color: '#1A73E8',

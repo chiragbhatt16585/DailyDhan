@@ -37,7 +37,8 @@ const TransactionsScreen = ({ navigation }) => {
   const [allItems, setAllItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeQuickFilter, setActiveQuickFilter] = useState('all');
+  // Default to 'thisMonth' so users see current month's transactions by default
+  const [activeQuickFilter, setActiveQuickFilter] = useState('thisMonth');
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [categories, setCategories] = useState([]);
   const [wallets, setWallets] = useState([]);

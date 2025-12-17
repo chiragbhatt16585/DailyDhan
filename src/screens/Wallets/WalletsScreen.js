@@ -135,7 +135,7 @@ const WalletsScreen = ({ navigation }) => {
   return (
     <>
       <AppHeader showBack title="Manage Wallets" />
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={[styles.container, { backgroundColor: '#FFFFFF' }]}>
         <View style={styles.header}>
           <Text variant="titleMedium" style={[styles.sectionTitle, { color: theme.colors.onBackground }]}>
             Your Wallets ({wallets.length})
@@ -151,7 +151,7 @@ const WalletsScreen = ({ navigation }) => {
         </View>
 
         {wallets.length === 0 ? (
-          <Card style={[styles.card, { backgroundColor: theme.colors.surface }]}>
+          <Card style={[styles.card, { backgroundColor: '#FFFFFF' }]}>
             <Card.Content style={styles.emptyContent}>
               <Text style={[styles.emptyText, { color: theme.colors.onSurface }]}>
                 No wallets yet. Add your first wallet to get started!
@@ -166,7 +166,7 @@ const WalletsScreen = ({ navigation }) => {
             renderItem={({ item }) => {
               const walletColor = getWalletTypeColor(item.type);
               return (
-                <Card style={[styles.card, { backgroundColor: theme.colors.surface }]}>
+                <Card style={[styles.card, { backgroundColor: '#FFFFFF' }]}>
                   <Card.Content>
                     <View style={styles.walletItem}>
                       <View style={styles.walletItemLeft}>
@@ -251,6 +251,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderRadius: 12,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
   walletItem: {
     flexDirection: 'row',

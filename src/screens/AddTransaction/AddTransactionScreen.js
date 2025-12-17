@@ -501,9 +501,11 @@ const AddTransactionScreen = ({ navigation, route }) => {
                 onPress={onSave}
                 style={[styles.saveButton, styles.primarySaveButton, { backgroundColor: theme.colors.primary }]}
                 contentStyle={styles.saveButtonContent}
+                labelStyle={{ color: '#FFFFFF' }}
+                textColor="#FFFFFF"
                 disabled={!amount && !calculatedAmount}
               >
-                Save Transaction
+                Save
               </Button>
               <Button
                 mode="outlined"
@@ -553,6 +555,8 @@ const AddTransactionScreen = ({ navigation, route }) => {
                 onPress={onSave}
                 style={[styles.saveButton, styles.primarySaveButton, { backgroundColor: theme.colors.primary }]}
                 contentStyle={styles.saveButtonContent}
+                labelStyle={{ color: '#FFFFFF' }}
+                textColor="#FFFFFF"
                 disabled={!amount && !calculatedAmount}
               >
                 Save Transaction

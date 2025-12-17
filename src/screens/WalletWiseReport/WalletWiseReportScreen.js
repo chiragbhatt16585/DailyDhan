@@ -62,8 +62,8 @@ const WalletWiseReportScreen = () => {
     return (
       <>
         <AppHeader showBack title="Wallet Wise Report" />
-        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-          <View style={[styles.emptyCard, { backgroundColor: theme.colors.surface }]}>
+        <View style={[styles.container, { backgroundColor: '#FFFFFF' }]}>
+          <View style={[styles.emptyCard, { backgroundColor: '#FFFFFF' }]}>
             <View style={styles.emptyCardContent}>
               <Text style={[styles.loadingText, { color: theme.colors.onSurface }]}>Loading wallet data...</Text>
             </View>
@@ -127,7 +127,7 @@ const WalletWiseReportScreen = () => {
     <>
       <AppHeader showBack title="Wallet Wise Report" />
       <ScrollView
-        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        style={[styles.container, { backgroundColor: '#FFFFFF' }]}
         contentContainerStyle={styles.scrollContent}
       >
         <View style={styles.monthSelector}>
@@ -197,7 +197,7 @@ const WalletWiseReportScreen = () => {
 
         {/* Expense Breakdown Chart */}
         {pieData.length > 0 && (
-          <View style={[styles.chartCard, { backgroundColor: theme.colors.surface }]}>
+          <View style={[styles.chartCard, { backgroundColor: '#FFFFFF' }]}>
             <View style={styles.chartCardHeader}>
               <Text style={[styles.chartCardTitle, { color: theme.colors.onSurface }]}>
                 Expense by Wallet
@@ -227,7 +227,7 @@ const WalletWiseReportScreen = () => {
         </View>
 
         {walletData.length === 0 ? (
-          <View style={[styles.emptyCard, { backgroundColor: theme.colors.surface }]}>
+          <View style={[styles.emptyCard, { backgroundColor: '#FFFFFF' }]}>
             <View style={styles.emptyCardContent}>
               <Text style={[styles.emptyText, { color: theme.colors.onSurface }]}>
                 No wallet transactions found for this month.
@@ -246,7 +246,7 @@ const WalletWiseReportScreen = () => {
             return (
               <View
                 key={wallet.id}
-                style={[styles.walletCard, { backgroundColor: theme.colors.surface }]}
+                style={[styles.walletCard, { backgroundColor: '#FFFFFF' }]}
               >
                 <View style={[styles.walletCardHeader, { borderLeftColor: walletColor }]}>
                   <View style={styles.walletHeaderLeft}>
@@ -360,9 +360,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 24,
     paddingVertical: 12,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     marginHorizontal: -4,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
   monthLabelContainer: {
     paddingHorizontal: 20,
@@ -491,7 +493,7 @@ const styles = StyleSheet.create({
   walletCardHeader: {
     padding: 16,
     borderLeftWidth: 4,
-    backgroundColor: '#FAFBFC',
+    backgroundColor: '#FFFFFF',
   },
   walletHeaderLeft: {
     flexDirection: 'row',
