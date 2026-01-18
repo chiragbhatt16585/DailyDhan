@@ -12,65 +12,156 @@ import { getPlatformById, formatAffiliateLink } from '../../utils/affiliatePlatf
 import { AFFILIATE_ACCOUNTS } from '../../config/affiliateAccounts';
 
 const AffiliateAccountsScreen = ({ navigation }) => {
-  // Handle open affiliate link with app preference for Amazon
+  // Platform app configuration (package names and deep link schemes)
+  const getAppConfig = (platformId) => {
+    const configs = {
+      amazon: {
+        android: {
+          package: 'com.amazon.mShop.android.shopping',
+          scheme: 'amzn://',
+          intentScheme: 'https',
+        },
+        ios: {
+          scheme: 'amzn://',
+        },
+      },
+      amazon_in: {
+        android: {
+          package: 'in.amazon.mShop.android.shopping',
+          scheme: 'amzn://',
+          intentScheme: 'https',
+        },
+        ios: {
+          scheme: 'amzn://',
+        },
+      },
+      flipkart: {
+        android: {
+          package: 'com.flipkart.android',
+          scheme: 'flipkart://',
+          intentScheme: 'https',
+        },
+        ios: {
+          scheme: 'flipkart://',
+        },
+      },
+      myntra: {
+        android: {
+          package: 'com.myntra.android',
+          scheme: 'myntra://',
+          intentScheme: 'https',
+        },
+        ios: {
+          scheme: 'myntra://',
+        },
+      },
+      firstcry: {
+        android: {
+          package: 'com.firstcry.parenting',
+          scheme: 'firstcry://',
+          intentScheme: 'https',
+        },
+        ios: {
+          scheme: 'firstcry://',
+        },
+      },
+      ajio: {
+        android: {
+          package: 'com.ril.ajio',
+          scheme: 'ajio://',
+          intentScheme: 'https',
+        },
+        ios: {
+          scheme: 'ajio://',
+        },
+      },
+    };
+    return configs[platformId] || null;
+  };
+
+  // Handle open affiliate link with app preference
   const handleOpenAffiliateLink = async (account) => {
     const platform = getPlatformById(account.platformId);
     const webLink = formatAffiliateLink(platform, account.affiliateId);
     
     if (!webLink) return;
 
-    // For Amazon platforms, try to open in app first
-    if (platform.id === 'amazon' || platform.id === 'amazon_in') {
+    const appConfig = getAppConfig(platform.id);
+    
+    // If app config exists, try to open in app first
+    if (appConfig) {
       try {
         let appScheme;
-        
-        if (Platform.OS === 'android') {
-          // Android: Package name for Amazon Shopping app
-          const packageName = platform.id === 'amazon_in' 
-            ? 'in.amazon.mShop.android.shopping' 
-            : 'com.amazon.mShop.android.shopping';
-          
-          // Try to open Amazon app using amzn:// scheme
-          // This will open the app if installed
-          appScheme = `amzn://apps/android?p=${packageName}`;
-        } else if (Platform.OS === 'ios') {
-          // iOS: Use amzn:// scheme to open Amazon app
-          appScheme = 'amzn://apps/ios';
-        }
+        let canOpenApp = false;
 
-        if (appScheme) {
-          // Check if Amazon app is installed
-          const canOpenApp = await Linking.canOpenURL(appScheme);
-          if (canOpenApp) {
+        if (Platform.OS === 'android' && appConfig.android) {
+          // Android: Use intent URL which automatically opens app if installed, browser if not
+          // Format: intent://[host]/[path]#Intent;package=[package];scheme=[scheme];S.browser_fallback_url=[fallback];end
+          try {
+            // Extract host and path from webLink for better deep linking
+            let intentUrl;
             try {
-              // For Android, use intent URL that opens app and navigates to web URL
-              if (Platform.OS === 'android') {
-                const packageName = platform.id === 'amazon_in' 
-                  ? 'in.amazon.mShop.android.shopping' 
-                  : 'com.amazon.mShop.android.shopping';
-                // Intent URL that opens app and passes the web URL
-                // This will open the Amazon app directly and navigate to the URL
-                const intentUrl = `intent://#Intent;package=${packageName};scheme=https;S.browser_fallback_url=${encodeURIComponent(webLink)};end`;
-                await Linking.openURL(intentUrl);
-                return;
-              } else {
-                // For iOS, use the web URL directly - iOS will automatically open it in the Amazon app if installed
-                // The web URL format is recognized by iOS and will open in app
-                await Linking.openURL(webLink);
-                return;
+              const urlObj = new URL(webLink);
+              const host = urlObj.host;
+              const path = urlObj.pathname + urlObj.search;
+              
+              // Create intent URL with proper format
+              intentUrl = `intent://${host}${path}#Intent;package=${appConfig.android.package};scheme=${appConfig.android.intentScheme};S.browser_fallback_url=${encodeURIComponent(webLink)};end`;
+            } catch (urlErr) {
+              // If URL parsing fails, use simpler intent format
+              intentUrl = `intent://#Intent;package=${appConfig.android.package};scheme=${appConfig.android.intentScheme};S.browser_fallback_url=${encodeURIComponent(webLink)};end`;
+            }
+            
+            // Try to check if app scheme can be opened (optional check)
+            try {
+              const checkScheme = appConfig.android.scheme;
+              if (checkScheme) {
+                canOpenApp = await Linking.canOpenURL(checkScheme);
+              }
+            } catch (checkErr) {
+              // Ignore check errors, proceed with intent URL
+            }
+            
+            // Open intent URL - Android will automatically:
+            // 1. Open app if installed
+            // 2. Open browser with webLink if app not installed (via browser_fallback_url)
+            await Linking.openURL(intentUrl);
+            return;
+          } catch (err) {
+            console.warn(`Failed to open ${platform.name} app via intent, falling back to browser:`, err);
+          }
+        } else if (Platform.OS === 'ios' && appConfig.ios) {
+          // iOS: Check if app scheme can be opened
+          appScheme = appConfig.ios.scheme;
+          if (appScheme) {
+            try {
+              canOpenApp = await Linking.canOpenURL(appScheme);
+              if (canOpenApp) {
+                // Try to open app with custom scheme first
+                try {
+                  // Convert web URL to app deep link if possible
+                  // Most apps support opening web URLs directly, so try webLink first
+                  // iOS will automatically open in app if universal links are configured
+                  await Linking.openURL(webLink);
+                  return;
+                } catch (appErr) {
+                  // If app scheme fails, fall back to web
+                  console.warn(`Failed to open ${platform.name} app on iOS, falling back to browser:`, appErr);
+                }
               }
             } catch (err) {
-              console.warn('Failed to open Amazon app, falling back to browser:', err);
+              console.warn(`Failed to check ${platform.name} app on iOS, falling back to browser:`, err);
             }
           }
         }
       } catch (err) {
-        console.warn('Error checking Amazon app availability, falling back to browser:', err);
+        console.warn(`Error checking ${platform.name} app availability, falling back to browser:`, err);
       }
     }
 
-    // Fallback to web browser (will open in app if installed, otherwise in browser)
-    // Both Android and iOS will automatically open Amazon web URLs in the app if installed
+    // Fallback to web browser
+    // On Android, intent URLs will automatically fallback to browser if app not installed
+    // On iOS, web URLs will open in browser if app not installed
     try {
       await Linking.openURL(webLink);
     } catch (err) {
@@ -83,7 +174,9 @@ const AffiliateAccountsScreen = ({ navigation }) => {
     const isAmazon = platform.id === 'amazon' || platform.id === 'amazon_in';
     const isFlipkart = platform.id === 'flipkart';
     const isMyntra = platform.id === 'myntra';
-    const useLogo = isAmazon || isFlipkart || isMyntra;
+    const isFirstCry = platform.id === 'firstcry';
+    const isAjio = platform.id === 'ajio';
+    const useLogo = isAmazon || isFlipkart || isMyntra || isFirstCry || isAjio;
     
     // Get logo source based on platform
     const getLogoSource = () => {
@@ -93,6 +186,10 @@ const AffiliateAccountsScreen = ({ navigation }) => {
         return require('../../assets/flipkart-logo.png');
       } else if (isMyntra) {
         return require('../../assets/myntra-logo.jpg');
+      } else if (isFirstCry) {
+        return require('../../assets/firstcry-logo.png');
+      } else if (isAjio) {
+        return require('../../assets/ajio-logo.png');
       }
       return null;
     };

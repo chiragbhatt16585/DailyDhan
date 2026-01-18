@@ -30,6 +30,20 @@ export const AFFILIATE_ACCOUNTS = [
     affiliateId: 'https://myntr.in/FhIObc',
   },
 
+  // First Cry
+  {
+    platformId: 'firstcry',
+    name: 'First Cry',
+    affiliateId: 'https://extp.in/lmEVgt',
+  },
+
+  // Ajio
+  {
+    platformId: 'ajio',
+    name: 'Ajio',
+    affiliateId: 'https://ajiio.co/mvrKiP',
+  },
+
   // Example: Paytm
   // {
   //   platformId: 'paytm',

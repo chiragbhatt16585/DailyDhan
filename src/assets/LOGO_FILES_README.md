@@ -5,6 +5,8 @@ This folder contains logo images for affiliate platforms:
 - `amazon-logo.webp` ✅ (WebP format)
 - `flipkart-logo.png` ✅ (PNG format)
 - `myntra-logo.jpg` ✅ (JPEG format)
+- `firstcry-logo.png` ✅ (PNG format)
+- `ajio-logo.png` ✅ (PNG format)
 
 ## Logo Details
 
