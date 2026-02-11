@@ -36,7 +36,11 @@ function AppContent() {
 
   return (
     <PaperProvider theme={theme}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar 
+        barStyle="dark-content" 
+        translucent={true}
+        backgroundColor="transparent"
+      />
       <NavigationContainer theme={theme}>
         <RootNavigator />
       </NavigationContainer>

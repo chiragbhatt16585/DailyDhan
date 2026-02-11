@@ -1,5 +1,7 @@
 package com.dailydhan
 
+import android.os.Bundle
+import androidx.core.view.WindowCompat
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
@@ -19,4 +21,12 @@ class MainActivity : ReactActivity() {
    */
   override fun createReactActivityDelegate(): ReactActivityDelegate =
       DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    // Enable edge-to-edge display for Android SDK 35+
+    // This is required for apps targeting SDK 35 or above and ensures proper edge-to-edge support
+    // WindowCompat.setDecorFitsSystemWindows(window, false) enables edge-to-edge mode
+    WindowCompat.setDecorFitsSystemWindows(window, false)
+  }
 }

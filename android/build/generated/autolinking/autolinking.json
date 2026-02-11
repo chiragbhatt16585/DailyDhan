@@ -34,7 +34,7 @@
       "platforms": {
         "ios": {
           "podspecPath": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/@react-native-community/datetimepicker/RNDateTimePicker.podspec",
-          "version": "8.5.1",
+          "version": "8.6.0",
           "configurations": [],
           "scriptPhases": []
         },
@@ -273,7 +273,7 @@
       "platforms": {
         "ios": {
           "podspecPath": "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-svg/RNSVG.podspec",
-          "version": "15.15.0",
+          "version": "15.15.1",
           "configurations": [],
           "scriptPhases": []
         },

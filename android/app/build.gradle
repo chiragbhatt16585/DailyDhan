@@ -102,7 +102,7 @@ android {
         applicationId "com.dailydhan"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 13
+        versionCode 15
         versionName getVersionFromPackageJson()
         // Specify which flavor of react-native-iap to use (Google Play)
         missingDimensionStrategy 'store', 'play'
@@ -141,9 +141,11 @@ android {
         }
     }
     
-    // Support for 16 KB page sizes
+    // Support for 16 KB page sizes (required for Android 15+ / API 35+)
+    // AGP 8.5.1+ automatically aligns native libraries to 16 KB when useLegacyPackaging = false
     packaging {
         jniLibs {
+            // useLegacyPackaging = false ensures 16 KB alignment (required for Play Store)
             useLegacyPackaging = false
             // Ensure proper alignment for 16 KB pages
             pickFirsts += ['**/libc++_shared.so', '**/libfbjni.so']

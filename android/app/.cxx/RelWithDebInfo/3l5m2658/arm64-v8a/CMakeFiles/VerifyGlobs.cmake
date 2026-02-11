@@ -249,7 +249,6 @@ set(OLD_GLOB
   "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-svg/android/src/main/jni/../../../../common/cpp/react/renderer/components/rnsvg/RNSVGImageShadowNode.cpp"
   "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-svg/android/src/main/jni/../../../../common/cpp/react/renderer/components/rnsvg/RNSVGImageState.cpp"
   "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-svg/android/src/main/jni/../../../../common/cpp/react/renderer/components/rnsvg/RNSVGLayoutableShadowNode.cpp"
-  "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-svg/android/src/main/jni/../../../../common/cpp/react/renderer/components/rnsvg/RNSVGLayoutableState.cpp"
   "/Users/chiragbhatt/Desktop/Hriday/DailyDhan/node_modules/react-native-svg/android/src/main/jni/../../../../common/cpp/react/renderer/components/rnsvg/RNSVGShadowNodes.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
